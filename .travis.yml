@@ -1,0 +1,27 @@
+language: python
+
+branches:
+  except:
+    - gh-pages
+
+python:
+  - "2.7"
+
+install:
+  - ./simple_api_testing/travis-install.sh
+
+script:
+  - ./simple_api_testing/travis-run.sh
+
+env:
+  matrix:
+    - REPO_URL=https://github.com/ckan/ckan REPO_BRANCH=master
+    - REPO_URL=https://github.com/ckan/ckan REPO_BRANCH=ckan-2.2
+    - REPO_URL=https://github.com/ckan/ckan REPO_BRANCH=ckan-2.1
+    # - REPO_URL=https://github.com/rshk/ckan REPO_BRANCH=master
+    # - REPO_URL=https://github.com/rshk/ckan REPO_BRANCH=integration
+
+# matrix:
+#   allow_failures:
+#     - env: REPO_URL=https://github.com/ckan/ckan REPO_BRANCH=master
+#     - env: REPO_URL=https://github.com/rshk/ckan REPO_BRANCH=master
