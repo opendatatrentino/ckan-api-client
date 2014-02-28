@@ -245,8 +245,10 @@ class CkanEnvironment(object):
         my_id = '{0:06d}'.format(random.randint(0, 1e6))
 
         ## Configuration file
+        conf_dir = os.path.join(self.venv_root, 'etc', 'ckan')
         self.conf_file_path = os.path.join(
-            self.venv_root, 'etc', 'ckan-{0}.ini'.format(my_id))
+            conf_dir, 'ckan-{0}.ini'.format(my_id))
+        ## Note: containing directory is created later
 
         ## Storage path
         self.storage_path = os.path.join(
