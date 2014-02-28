@@ -30,8 +30,8 @@ if [ ! -e "${CKAN_VIRTUALENV}" ]; then
 
     ## Install ckan
     cd "${CKAN_VIRTUALENV}/src/ckan"
-    pip install -r ./requirements.txt
-    python setup.py install
+    "${CKAN_VIRTUALENV}"/bin/pip install -r ./requirements.txt
+    "${CKAN_VIRTUALENV}"/bin/python setup.py install
 
     ## Copy configuration file
     mkdir -p "${CKAN_VIRTUALENV}/etc/ckan"
