@@ -15,7 +15,7 @@ if [ -z "$VIRTUAL_ENV" ]; then
 fi
 
 if [ -z "$REPO_URL" ]; then
-    REPO_URL=https://github.com/okfn/ckan
+    REPO_URL=https://github.com/ckan/ckan
 fi
 if [ -z "$REPO_BRANCH" ]; then
     REPO_BRANCH=master
