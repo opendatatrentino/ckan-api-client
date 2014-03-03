@@ -80,7 +80,7 @@ def wait_net_service(server, port, timeout):
 
 def discover_available_port(minport=5000, maxport=9000):
     for portnum in xrange(minport, maxport + 1):
-        if not check_tcp_port(portnum):
+        if not check_tcp_port(host='127.0.0.1', port=portnum, timeout=3):
             return portnum
     raise RuntimeError("No available port in range!")
 
