@@ -36,9 +36,10 @@ class CkanDataset(CkanObject):
 
         for field in DATASET_FIELDS['core']:
             if field in obj:
-                new_obj._original['core'][field] = obj[field]
-                # value = obj[field]
-                # setattr(new_obj, field, value)
+                value = obj[field]
+                if not isinstance(value, basestring):
+                    raise ValueError("Core fields must be strings!")
+                new_obj._original['core'][field] = value
 
         for field in DATASET_FIELDS['special']:
             if field == 'resources':
@@ -206,6 +207,14 @@ class CkanDatasetResources(collections.MutableSequence):
     def get_by_url(self, value):
         """Returns a resource, by url, or None"""
         return self._get_by('url', value)
+
+    def filter(self, cond):
+        # self._resources[:] = [r for r in self._resources if cond(r)]
+        ## This allows filter(None, ...) too..
+        self._resources[:] = filter(cond, self._resources)
+
+    def sort(self, *a, **kw):
+        self._resources.sort(*a, **kw)
 
 
 class CkanResource(CkanObject):
