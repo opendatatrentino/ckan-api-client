@@ -9,12 +9,10 @@ from .schema import DATASET_FIELDS, RESOURCE_FIELDS
 
 
 class CkanObject(object):
-    # __slots__ = ['_original', '_updates']
     pass
 
 
 class CkanDataset(CkanObject):
-    # __slots__ = []  # We just inherit them
 
     # todo: we need to implement comparison
 
@@ -23,28 +21,38 @@ class CkanDataset(CkanObject):
             'id': None,
             'core': {},
             'extras': {},
-            'resources': [],
             'groups': [],
             'relationships': [],
         }
-        self._updates = {
-            'core': {},
-        }
+        self._updates = {'core': {}}
+        self._resources = CkanDatasetResources()
 
     @classmethod
     def from_dict(cls, obj):
         new_obj = cls()
+
         if 'id' in obj:
             new_obj._original['id'] = obj['id']
+
         for field in DATASET_FIELDS['core']:
             if field in obj:
-                value = obj[field]
-                setattr(new_obj, field, value)
+                new_obj._original['core'][field] = obj[field]
+                # value = obj[field]
+                # setattr(new_obj, field, value)
+
         for field in DATASET_FIELDS['special']:
+            if field == 'resources':
+                continue
             if field in obj:
                 ## Just copy them over, we'll handle them
                 ## later, if needed..
                 new_obj._original[field] = obj[field]
+
+        if 'resources' in obj:
+            for res in obj['resources']:
+                new_obj._resources.append(
+                    CkanResource.from_dict(res))
+
         return new_obj
 
     def to_dict(self):
@@ -64,7 +72,7 @@ class CkanDataset(CkanObject):
             object_as_dict[field] = copy.deepcopy(getattr(self, field))
 
         object_as_dict['resources'] = []
-        for resource in self.resources:
+        for resource in self._resources:
             object_as_dict['resources'].append(resource.to_dict())
 
         return object_as_dict
@@ -76,32 +84,38 @@ class CkanDataset(CkanObject):
             if (field in self._updates) and \
                     (self._updates[field] != self._original[field]):
                 return True
-        for resource in self.resources:
-            if resource.is_modified():
-                return True
+        if self._resources.is_modified():
+            return True
         return False
 
     def __getattr__(self, name):
         if name == 'id':
             # This cannot be updated -- no CoW
             return self._original['id']
+
         if name in DATASET_FIELDS['core']:
             # CoW :)
-            if name in self._updates:
-                return self._updates[name]
-            return self._original.get(name)
+            if name in self._updates['core']:
+                return self._updates['core'][name]
+            return self._original['core'].get(name)
+
         if name == 'groups':
             return self._get_groups()
+
         if name == 'extras':
             return self._get_extras()
+
         if name == 'relationships':
             return self._get_relationships()
+
         if name == 'resources':
-            return self._get_resources()
+            ## Just to disallow assignment / replacement..
+            return self._resources
+
         raise AttributeError(name)
 
     def __setattr__(self, name, value):
-        if name in ['_original', '_updates']:
+        if name in ['_original', '_updates', '_resources']:
             self.__dict__[name] = value
             return
 
@@ -111,7 +125,7 @@ class CkanDataset(CkanObject):
         if name in DATASET_FIELDS['core']:
             if not isinstance(value, basestring):
                 raise TypeError("Core fields must be strings")
-            self._updates[name] = value
+            self._updates['core'][name] = value
             return
 
         ## todo: allow direct assignment of groups / extras?
@@ -140,19 +154,11 @@ class CkanDataset(CkanObject):
     def _get_relationships(self):
         return self._get_from_updates('relationships')
 
-    def _get_resources(self):
-        if 'resources' not in self._updates:
-            self._updates['resources'] = CkanDatasetResources()
-            self._updates['resources'].extend(
-                CkanResource.from_dict(r)
-                for r in self._original['resources'])
-        return self._get_from_updates('resources')
-
 
 class CkanDatasetResources(collections.MutableSequence):
     """Hold a collection of resources"""
 
-    __slots__ = ['_resources']
+    _modified = False
 
     def __init__(self):
         self._resources = []
@@ -162,9 +168,11 @@ class CkanDatasetResources(collections.MutableSequence):
 
     def __setitem__(self, key, value):
         self._resources[key] = value
+        self._modified = True
 
-    def __delitem__(self, key, value):
+    def __delitem__(self, key):
         del self._resources[key]
+        self._modified = True
 
     def __len__(self):
         return len(self._resources)
@@ -173,6 +181,13 @@ class CkanDatasetResources(collections.MutableSequence):
         if not isinstance(obj, CkanResource):
             raise TypeError("Attempting to insert invalid object")
         return self._resources.insert(index, obj)
+
+    def is_modified(self):
+        if self._modified:
+            return True
+        if any(r.is_modified() for r in self._resources):
+            return True
+        return False
 
     def _get_by(self, field, value):
         for res in self._resources:
@@ -227,10 +242,12 @@ class CkanResource(CkanObject):
     def __getattr__(self, name):
         if name == 'id':
             return self._original['id']
+
         if name in RESOURCE_FIELDS['core']:
             if name in self._updates:
                 return self._updates[name]
             return self._original.get(name)
+
         raise AttributeError(name)
 
     def __setattr__(self, name, value):
