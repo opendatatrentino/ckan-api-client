@@ -42,6 +42,7 @@ EOF
 
 ## Download Ckan
 ##------------------------------------------------------------
+echo "Downloading and installing Ckan (in ${VIRTUAL_ENV})"
 mkdir -p ${VIRTUAL_ENV}/src
 mkdir -p ${VIRTUAL_ENV}/etc/ckan
 git clone "$REPO_URL" -b "$REPO_BRANCH" --depth=0 "$VIRTUAL_ENV"/src/ckan
