@@ -58,6 +58,7 @@ cp "$VIRTUAL_ENV"/src/ckan/ckan/config/who.ini "${VIRTUAL_ENV}/etc/ckan/"
 ## Make sure we are in the correct path
 cd "${REPO_ROOT}"
 pip install --allow-all-external -r ./requirements.txt
+pip install --allow-all-external -r ./requirements-test.txt
 pip install --allow-all-external -r "$VIRTUAL_ENV"/src/ckan/requirements.txt
 
 cd "$VIRTUAL_ENV"/src/ckan/ && python setup.py install
