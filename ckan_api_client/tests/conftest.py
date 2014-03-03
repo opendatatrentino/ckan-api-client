@@ -3,6 +3,7 @@ import binascii
 import os
 import random
 import shutil
+import socket
 import subprocess
 import time
 import urlparse
@@ -27,6 +28,20 @@ HERE = os.path.abspath(os.path.dirname(__file__))
 
 ## Paster command to run server
 # paster --plugin=ckan serve $VIRTUAL_ENV/etc/ckan.ini
+
+
+def check_tcp_port(server, port, timeout=3):
+    """Check whether a given TCP port is reachable"""
+
+    s = socket.socket()
+    try:
+        s.settimeout(timeout)
+        s.connect((server, port))
+    except socket.error:
+        return False
+    else:
+        s.close()
+        return True
 
 
 def wait_net_service(server, port, timeout):
@@ -63,6 +78,13 @@ def wait_net_service(server, port, timeout):
             return True
 
 
+def discover_available_port(minport=5000, maxport=9000):
+    for portnum in xrange(minport, maxport + 1):
+        if not check_tcp_port(portnum):
+            return portnum
+    raise RuntimeError("No available port in range!")
+
+
 class CkanEnvironment(object):
     def __init__(self, venv_root, pgsql_admin_url, solr_url):
         self.venv_root = venv_root
@@ -82,16 +104,16 @@ class CkanEnvironment(object):
         solr_url = os.environ['CKAN_SOLR']
         return cls(venv_root, pgsql_admin_url, solr_url)
 
-    @classmethod
-    def get_ephemeral_port(cls):
-        """Ugly hack to allocate an ephemeral port"""
+    # @classmethod
+    # def get_ephemeral_port(cls):
+    #     """Ugly hack to allocate an ephemeral port"""
 
-        import socket
-        sock = socket.socket(socket.AF_INET)
-        sock.bind(('127.0.0.1', 0))
-        addr, port = sock.getsockname()
-        sock.close()
-        return port
+    #     import socket
+    #     sock = socket.socket(socket.AF_INET)
+    #     sock.bind(('127.0.0.1', 0))
+    #     addr, port = sock.getsockname()
+    #     sock.close()
+    #     return port
 
     def get_conf_parser(self):
         """
@@ -257,7 +279,7 @@ class CkanEnvironment(object):
 
         ## Port on which server will listen
         #self.server_port = self.get_ephemeral_port()
-        self.server_port = 5000
+        self.server_port = discover_available_port()
 
         parsed_pg_url = urlparse.urlparse(self.postgresql_admin_url)
         assert parsed_pg_url.scheme == 'postgresql'
