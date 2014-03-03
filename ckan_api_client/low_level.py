@@ -14,15 +14,19 @@ from .schema import DATASET_FIELDS, RESOURCE_FIELDS, GROUP_FIELDS
 
 
 class CkanLowlevelClient(object):
+    """Ckan low-level client.
+
+    - Handles authentication and response validation.
+    - Raises HTTPError exceptions on failed HTTP requests.
+    """
+
     def __init__(self, base_url, api_key=None):
         self.base_url = base_url
         self.api_key = api_key
 
     @property
     def anonymous(self):
-        """
-        Return a copy of this client, without api_key.
-        """
+        """Return a copy of this client, without api_key"""
         return CkanLowlevelClient(self.base_url)
 
     def request(self, method, path, **kwargs):
@@ -114,141 +118,6 @@ class CkanLowlevelClient(object):
         """
         path = '/api/2/rest/dataset/{0}'.format(dataset_id)
         response = self.request('PUT', path, data=dataset)
-        data = response.json()
-
-        if not isinstance(data, dict):
-            raise BadApiError("Dataset returned from API is not a dict")
-
-        return data
-
-    def update_dataset(self, dataset_id, updates):
-        """
-        Trickery to perform a safe partial update of a dataset.
-
-        WARNING: This method contains tons of hacks to try and fix
-                 major issues with the API.
-
-        In particular, remember that:
-
-        - Extras are updated incrementally. To delete a key, just set
-          it to None.
-
-        - Groups might accept objects too, but behavior is quite undefined
-          in that case.. so don't do that.
-
-        Fixes that are in place:
-
-        - If the extras field is not specified on update, all extras will
-          be deleted. To prevent this, we default it to {}.
-
-        - If the groups field is not specified on update, all groups will
-          be removed. To prevent this, we default it to [].
-        """
-
-        ##=====[!!]=========== IMPORTANT NOTE ===============[!!]=====
-        ## - "core" fields seems to be kept
-        ## - ..but "extras" need to be passed back again
-        ## - ..same behavior for groups: no way to delete them,
-        ##   apparently.. a part from flushing 'em all by omitting
-        ##   the field...
-        ## - resources?
-        ## - relationships?
-        ##============================================================
-
-        original_dataset = self.get_dataset(dataset_id)
-
-        ## Dictionary holding the actual data to be sent
-        ## for performing the update
-        updates_dict = {'id': dataset_id}
-
-        ##############################################################
-        ## Core fields
-        ##------------------------------------------------------------
-
-        for field in DATASET_FIELDS['core']:
-            if field in updates:
-                updates_dict[field] = updates[field]
-            else:
-                updates_dict[field] = original_dataset[field]
-
-        ##############################################################
-        ## Extras fields
-        ##------------------------------------------------------------
-
-        ##=====[!!]=========== IMPORTANT NOTE ===============[!!]=====
-        ## WARNING! Behavior here is quite "funky":
-        ##
-        ## db: {'a': 'aa', 'b': 'bb', 'c': 'cc'}
-        ## update: (no extras key)
-        ## result: {}
-        ##
-        ## db: {'a': 'aa', 'b': 'bb', 'c': 'cc'}
-        ## update: {'a': 'foo'}
-        ## result: {'a': 'foo', 'b': 'bb', 'c': 'cc'}
-        ##
-        ## db: {'a': 'aa', 'b': 'bb', 'c': 'cc'}
-        ## update: {}
-        ## db: {'a': 'aa', 'b': 'bb', 'c': 'cc'}
-        ##============================================================
-
-        EXTRAS_FIELD = 'extras'  # to avoid confusion
-
-        updates_dict[EXTRAS_FIELD] = {}
-
-        if EXTRAS_FIELD in updates:
-            # Notes: setting a field to 'None' will delete it.
-            updates_dict[EXTRAS_FIELD].update(updates[EXTRAS_FIELD])
-
-        ##############################################################
-        ## These fields need to be passed again or it will just
-        ## be flushed..
-        ##------------------------------------------------------------
-
-        FIELDS_THAT_NEED_TO_BE_PASSED = [
-            'resources', 'relationships'
-        ]
-        for field in FIELDS_THAT_NEED_TO_BE_PASSED:
-            if field in updates:
-                updates_dict[field] = updates[field]
-            else:
-                updates_dict[field] = original_dataset[field]
-
-        ##############################################################
-        ## Update groups
-        ##------------------------------------------------------------
-
-        ##=====[!!]=========== IMPORTANT NOTE ===============[!!]=====
-        ## - If the groups key is omitted, all groups are deleted
-        ## - It seems to be possible to specify groups as objects too,
-        ##   but exact behavior is uncertain, so we only accept
-        ##   strings here (ids), otherwise object will not pass
-        ##   validation.
-        ##============================================================
-
-        updates_dict['groups'] = (
-            updates['group']
-            if 'group' in updates
-            else original_dataset['groups'])
-
-        ##############################################################
-        ## todo: update relationships
-        ##------------------------------------------------------------
-
-        # todo: WTF are relationships?
-
-        ##############################################################
-        ## todo: update tags
-        ##------------------------------------------------------------
-
-        ##############################################################
-        ## todo: update resources
-        ##------------------------------------------------------------
-
-        ##############################################################
-        ## Actually perform the update
-        ##------------------------------------------------------------
-
-        response = self.put_dataset(dataset_id, updates_dict)
         data = response.json()
 
         if not isinstance(data, dict):
