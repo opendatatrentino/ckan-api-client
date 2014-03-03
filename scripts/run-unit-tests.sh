@@ -1,2 +1,2 @@
 #!/bin/sh
-exec py.test -vvv -rsxX ckan_api_client/tests/unit
+exec py.test -vvv -rsxX ckan_api_client/tests/unit "$@"
