@@ -30,13 +30,13 @@ HERE = os.path.abspath(os.path.dirname(__file__))
 # paster --plugin=ckan serve $VIRTUAL_ENV/etc/ckan.ini
 
 
-def check_tcp_port(server, port, timeout=3):
+def check_tcp_port(host, port, timeout=3):
     """Check whether a given TCP port is reachable"""
 
     s = socket.socket()
     try:
         s.settimeout(timeout)
-        s.connect((server, port))
+        s.connect((host, port))
     except socket.error:
         return False
     else:
@@ -44,7 +44,7 @@ def check_tcp_port(server, port, timeout=3):
         return True
 
 
-def wait_net_service(server, port, timeout):
+def wait_net_service(host, port, timeout):
     """
     Wait for network service to appear
 
@@ -67,7 +67,7 @@ def wait_net_service(server, port, timeout):
                 raise Exception("Timed out")
 
             s.settimeout(next_timeout)
-            s.connect((server, port))
+            s.connect((host, port))
 
         except socket.error:
             pass  # Keep suppressing exceptions
