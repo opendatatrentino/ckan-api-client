@@ -7,7 +7,10 @@
 
 set -e  # Fail soon!
 
-cd "$( dirname "$0" )"
+## We assume this script will be launched inside the repository
+REPO_ROOT="$PWD"
+
+# cd "$( dirname "$0" )"
 
 if [ -z "$VIRTUAL_ENV" ]; then
     echo "Virtual env not set"
@@ -50,8 +53,11 @@ git clone "$REPO_URL" -b "$REPO_BRANCH" --depth=0 "$VIRTUAL_ENV"/src/ckan
 sudo cp "$VIRTUAL_ENV"/src/ckan/ckan/config/solr/schema-2.0.xml /etc/solr/conf/schema.xml
 sudo service jetty start
 
-cp "$VIRTUAL_ENV"/src/ckan/ckan/config/who.ini ${VIRTUAL_ENV}/etc/
+cp "$VIRTUAL_ENV"/src/ckan/ckan/config/who.ini "${VIRTUAL_ENV}/etc/"
 
+## Make sure we are in the correct path
+cd "${REPO_ROOT}"
 pip install -r ./requirements.txt
 pip install -r "$VIRTUAL_ENV"/src/ckan/requirements.txt
+
 cd "$VIRTUAL_ENV"/src/ckan/ && python setup.py install
