@@ -25,8 +25,6 @@ class CkanObject(object):
 
 class CkanDataset(CkanObject):
 
-    # todo: we need to implement comparison
-
     _schema = DATASET_FIELDS
 
     def __init__(self):
@@ -47,14 +45,14 @@ class CkanDataset(CkanObject):
         if 'id' in obj:
             new_obj._original['id'] = obj['id']
 
-        for field in DATASET_FIELDS['core']:
+        for field in cls._schema['core']:
             if field in obj:
                 value = obj[field]
                 if not isinstance(value, basestring):
                     raise ValueError("Core fields must be strings!")
                 new_obj._original['core'][field] = value
 
-        for field in DATASET_FIELDS['special']:
+        for field in cls._schema['special']:
             if field == 'resources':
                 continue
             if field in obj:
@@ -76,7 +74,7 @@ class CkanDataset(CkanObject):
 
         object_as_dict['id'] = self.id
 
-        for field in DATASET_FIELDS['core']:
+        for field in self._schema['core']:
             ## These are strings, no need to copy
             object_as_dict[field] = getattr(self, field)
 
@@ -107,7 +105,7 @@ class CkanDataset(CkanObject):
             # This cannot be updated -- no CoW
             return self._original['id']
 
-        if name in DATASET_FIELDS['core']:
+        if name in self._schema['core']:
             # CoW :)
             if name in self._updates['core']:
                 return self._updates['core'][name]
@@ -136,7 +134,7 @@ class CkanDataset(CkanObject):
         if name == 'id':
             raise RuntimeError("Cannot alter value of a field used as a key!")
 
-        if name in DATASET_FIELDS['core']:
+        if name in self._schema['core']:
             if not isinstance(value, basestring):
                 raise TypeError("Core fields must be strings")
             self._updates['core'][name] = value
@@ -145,7 +143,7 @@ class CkanDataset(CkanObject):
         ## todo: allow direct assignment of groups / extras?
         ## but, we need to validate carefully..
 
-        if name in DATASET_FIELDS['special']:
+        if name in self._schema['special']:
             raise RuntimeError(
                 "This field cannot be updated directly at once")
 
@@ -195,16 +193,6 @@ class CkanDataset(CkanObject):
             return False
 
         return True
-
-    # def __eq__(self, other):
-    #     """Full equality check, including id"""
-
-    #     if self.id != other.id:
-    #         return False
-    #     return self.is_equivalent(other)
-
-    # def __ne__(self, other):
-    #     return not self.__eq__(other)
 
 
 class CkanDatasetResources(collections.MutableSequence):
@@ -268,13 +256,21 @@ class CkanDatasetResources(collections.MutableSequence):
         self._resources.sort(*a, **kw)
 
     def __eq__(self, other):
-        pass
+        ## Compare resources in the two objects
+        if len(self) != len(other):
+            return False
+        for i, resource in enumerate(self._resources):
+            if resource != other._resources[i]:
+                return False
+        return True
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
 
 class CkanResource(CkanObject):
+    _schema = RESOURCE_FIELDS
+
     def __init__(self):
         self._original = {
             'id': None,
@@ -287,7 +283,7 @@ class CkanResource(CkanObject):
         new_obj = cls()
         if 'id' in obj:
             new_obj._original['id'] = obj['id']
-        for field in RESOURCE_FIELDS['core']:
+        for field in cls._schema['core']:
             if field in obj:
                 value = obj[field]
                 setattr(new_obj, field, value)
@@ -296,7 +292,7 @@ class CkanResource(CkanObject):
     def to_dict(self):
         object_as_dict = {}
         object_as_dict['id'] = self.id
-        for field in RESOURCE_FIELDS['core']:
+        for field in self._schema['core']:
             object_as_dict[field] = getattr(self, field)
         return object_as_dict
 
@@ -309,7 +305,7 @@ class CkanResource(CkanObject):
         if name == 'id':
             return self._original['id']
 
-        if name in RESOURCE_FIELDS['core']:
+        if name in self._schema['core']:
             if name in self._updates:
                 return self._updates[name]
             return self._original.get(name)
@@ -324,7 +320,7 @@ class CkanResource(CkanObject):
         if name == 'id':
             raise RuntimeError("Cannot alter value of a field used as a key!")
 
-        if name in RESOURCE_FIELDS['core']:
+        if name in self._schema['core']:
             if not isinstance(value, basestring):
                 raise TypeError("Core fields must be strings")
             self._updates[name] = value
@@ -335,11 +331,18 @@ class CkanResource(CkanObject):
     def __delattr__(self, name):
         raise RuntimeError("Cannot delete attribute")
 
-    def __eq__(self, other):
-        pass
+    def is_equivalent(self, other):
+        """
+        Equivalency check: check that all the fields match,
+        but ignore ids.
+        """
 
-    def __ne__(self, other):
-        return not self.__eq__(other)
+        for field in self._schema['core']:
+            ## Compare arguments
+            if getattr(self, field) != getattr(other, field):
+                return False
+
+        return True
 
 
 class CkanOrganization(CkanObject):
