@@ -47,4 +47,7 @@ export CKAN_POSTGRES_ADMIN
 export CKAN_SOLR
 
 ## --- Launch tests
-exec py.test -vvv -rsxX ckan_api_client/tests "$@"
+# exec py.test -vvv -rsxX ckan_api_client/tests "$@"
+exec py.test -vvv -rsxX --pep8 \
+     --cov-report=term-missing --cov=ckan_api_client \
+     ckan_api_client/tests "$@"
