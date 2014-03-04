@@ -9,12 +9,25 @@ from .schema import DATASET_FIELDS, RESOURCE_FIELDS
 
 
 class CkanObject(object):
-    pass
+    def is_equivalent(self):
+        """Used for equivalency check: check all fields a part from id"""
+        return False
+
+    def __eq__(self, other):
+        """Full equality check, including id"""
+        if self.id != other.id:
+            return False
+        return self.is_equivalent(other)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 class CkanDataset(CkanObject):
 
     # todo: we need to implement comparison
+
+    _schema = DATASET_FIELDS
 
     def __init__(self):
         self._original = {
@@ -155,6 +168,44 @@ class CkanDataset(CkanObject):
     def _get_relationships(self):
         return self._get_from_updates('relationships')
 
+    def is_equivalent(self, other):
+        """
+        Equivalency check: check that all the fields match,
+        but ignore ids.
+        """
+
+        for field in self._schema['core']:
+            ## Compare arguments
+            if getattr(self, field) != getattr(other, field):
+                return False
+
+        ## Order is not important in groups,
+        ## nor is duplication..
+        if set(self.groups) != set(other.groups):
+            return False
+
+        if self.extras != other.extras:
+            return False
+
+        if self.resources != other.resources:
+            return False
+
+        ## WTF are relationships?
+        if self.relationships != self.relationships:
+            return False
+
+        return True
+
+    # def __eq__(self, other):
+    #     """Full equality check, including id"""
+
+    #     if self.id != other.id:
+    #         return False
+    #     return self.is_equivalent(other)
+
+    # def __ne__(self, other):
+    #     return not self.__eq__(other)
+
 
 class CkanDatasetResources(collections.MutableSequence):
     """Hold a collection of resources"""
@@ -215,6 +266,12 @@ class CkanDatasetResources(collections.MutableSequence):
 
     def sort(self, *a, **kw):
         self._resources.sort(*a, **kw)
+
+    def __eq__(self, other):
+        pass
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 class CkanResource(CkanObject):
@@ -277,3 +334,17 @@ class CkanResource(CkanObject):
 
     def __delattr__(self, name):
         raise RuntimeError("Cannot delete attribute")
+
+    def __eq__(self, other):
+        pass
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+
+class CkanOrganization(CkanObject):
+    pass
+
+
+class CkanGroup(CkanObject):
+    pass

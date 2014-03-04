@@ -17,9 +17,6 @@ class BadApiWarning(UserWarning):
     pass
 
 
-class SomethingWentWrong(Exception):
-    """
-    Exception to indicate that something went wrong during
-    a data import.. :(
-    """
+class OperationFailure(Exception):
+    """Something went wrong // failed expectations somewhere.."""
     pass
