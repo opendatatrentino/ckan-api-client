@@ -20,7 +20,7 @@ env:
     - REPO_URL=https://github.com/ckan/ckan REPO_BRANCH=ckan-2.2
     - REPO_URL=https://github.com/ckan/ckan REPO_BRANCH=ckan-2.1
 
-# matrix:
-#   allow_failures:
-#     - env: REPO_URL=https://github.com/ckan/ckan REPO_BRANCH=master
-#     - env: REPO_URL=https://github.com/rshk/ckan REPO_BRANCH=master
+matrix:
+  allow_failures:
+    ## Ckan 2.1 is very buggy -- expecting failures there..
+    - env: REPO_URL=https://github.com/ckan/ckan REPO_BRANCH=ckan-2.1
