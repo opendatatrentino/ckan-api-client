@@ -1,0 +1,313 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Objects &mdash; Ckan API client 0.1a documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../',
+        VERSION:'0.1a',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="Ckan API client 0.1a documentation" href="../index.html"/>
+        <link rel="next" title="Exceptions" href="exceptions.html"/>
+        <link rel="prev" title="Syncing" href="../clients/syncing.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="icon icon-home"> Ckan API client</a>
+        <form class="wy-form" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../clients/index.html">Clients</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../clients/low-level.html">Low-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../clients/high-level.html">High-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../clients/syncing.html">Syncing</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../testing/fixtures.html">Fixtures</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">Ckan API client</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="../index.html">Docs</a> &raquo;</li>
+  <li><a href="">Objects</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <div class="section" id="module-ckan_api_client.objects">
+<span id="objects"></span><h1>Objects<a class="headerlink" href="#module-ckan_api_client.objects" title="Permalink to this headline">¶</a></h1>
+<p>Classes to represent / validate Ckan objects.</p>
+<dl class="class">
+<dt id="ckan_api_client.objects.CkanObject">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.</tt><tt class="descname">CkanObject</tt><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base for other objects manipulated by the API</p>
+<dl class="method">
+<dt id="ckan_api_client.objects.CkanObject.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanObject.is_equivalent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanObject.is_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used for object comparison.</p>
+<p>Will compare all the fields in <tt class="docutils literal"><span class="pre">self</span></tt> and <tt class="docutils literal"><span class="pre">other</span></tt>, and
+return <tt class="docutils literal"><span class="pre">True</span></tt> if they all match, <tt class="docutils literal"><span class="pre">False</span></tt> otherwise.</p>
+<p>Note that this method, differently from the comparison operator,
+will ignore the <tt class="docutils literal"><span class="pre">id</span></tt> field (we want to make sure the objects
+are equal, not that they are the same object).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.objects.CkanDataset">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.</tt><tt class="descname">CkanDataset</tt><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a Ckan dataset</p>
+<dl class="classmethod">
+<dt id="ckan_api_client.objects.CkanDataset.from_dict">
+<em class="property">classmethod </em><tt class="descname">from_dict</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanDataset.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanDataset.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate a <a class="reference internal" href="#ckan_api_client.objects.CkanDataset" title="ckan_api_client.objects.CkanDataset"><tt class="xref py py-class docutils literal"><span class="pre">CkanDataset</span></tt></a>, preloading values from
+a dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.CkanDataset.to_dict">
+<tt class="descname">to_dict</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanDataset.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanDataset.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize the object as a dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.CkanDataset.is_modified">
+<tt class="descname">is_modified</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanDataset.is_modified"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanDataset.is_modified" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">True</span></tt> if the object has been modified since
+instantiation, <tt class="docutils literal"><span class="pre">False</span></tt> otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.CkanDataset.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanDataset.is_equivalent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanDataset.is_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>See: <a class="reference internal" href="#ckan_api_client.objects.CkanObject.is_equivalent" title="ckan_api_client.objects.CkanObject.is_equivalent"><tt class="xref py py-meth docutils literal"><span class="pre">CkanObject.is_equivalent()</span></tt></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.objects.CkanDatasetResources">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.</tt><tt class="descname">CkanDatasetResources</tt><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanDatasetResources"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanDatasetResources" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hold a collection of resources.
+This object is not meant to be used directly, instead an instance
+is kept in <tt class="xref py py-attr docutils literal"><span class="pre">CkanDataset.resources</span></tt>.</p>
+<dl class="method">
+<dt id="ckan_api_client.objects.CkanDatasetResources.insert">
+<tt class="descname">insert</tt><big>(</big><em>index</em>, <em>obj</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanDatasetResources.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanDatasetResources.insert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.CkanDatasetResources.is_modified">
+<tt class="descname">is_modified</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanDatasetResources.is_modified"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanDatasetResources.is_modified" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.CkanDatasetResources.get_by_id">
+<tt class="descname">get_by_id</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanDatasetResources.get_by_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanDatasetResources.get_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a resource, by id, or None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.CkanDatasetResources.get_by_name">
+<tt class="descname">get_by_name</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanDatasetResources.get_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanDatasetResources.get_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a resource, by name, or None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.CkanDatasetResources.get_by_url">
+<tt class="descname">get_by_url</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanDatasetResources.get_by_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanDatasetResources.get_by_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a resource, by url, or None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.CkanDatasetResources.filter">
+<tt class="descname">filter</tt><big>(</big><em>cond</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanDatasetResources.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanDatasetResources.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter resources in-place.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cond</strong> &#8211; A callable that accepts a single <a class="reference internal" href="#ckan_api_client.objects.CkanResource" title="ckan_api_client.objects.CkanResource"><tt class="xref py py-class docutils literal"><span class="pre">CkanResource</span></tt></a>
+as its argument, and returns <tt class="docutils literal"><span class="pre">True</span></tt> if the object is to be kept,
+<tt class="docutils literal"><span class="pre">False</span></tt> otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.CkanDatasetResources.sort">
+<tt class="descname">sort</tt><big>(</big><em>*a</em>, <em>**kw</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanDatasetResources.sort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanDatasetResources.sort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sort resources in place.
+This is just a wrapper around <tt class="xref py py-meth docutils literal"><span class="pre">list.sort()</span></tt>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.objects.CkanResource">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.</tt><tt class="descname">CkanResource</tt><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a Ckan resource</p>
+<dl class="classmethod">
+<dt id="ckan_api_client.objects.CkanResource.from_dict">
+<em class="property">classmethod </em><tt class="descname">from_dict</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanResource.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanResource.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate a <a class="reference internal" href="#ckan_api_client.objects.CkanResource" title="ckan_api_client.objects.CkanResource"><tt class="xref py py-class docutils literal"><span class="pre">CkanResource</span></tt></a>, preloading values from
+a dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.CkanResource.to_dict">
+<tt class="descname">to_dict</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanResource.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanResource.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.CkanResource.is_modified">
+<tt class="descname">is_modified</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanResource.is_modified"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanResource.is_modified" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">True</span></tt> if the object has been modified since
+instantiation, <tt class="docutils literal"><span class="pre">False</span></tt> otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.CkanResource.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanResource.is_equivalent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanResource.is_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalency check: check that all the fields match,
+but ignore ids.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.objects.CkanOrganization">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.</tt><tt class="descname">CkanOrganization</tt><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanOrganization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanOrganization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a Ckan organization</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.objects.CkanGroup">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.</tt><tt class="descname">CkanGroup</tt><a class="reference internal" href="../_modules/ckan_api_client/objects.html#CkanGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.CkanGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a Ckan group</p>
+</dd></dl>
+
+</div>
+
+
+          <footer>
+  
+    <div class="rst-footer-buttons">
+      
+        <a href="exceptions.html" class="btn btn-neutral float-right" title="Exceptions"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../clients/syncing.html" class="btn btn-neutral" title="Syncing"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2014, Samuele Santi.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>

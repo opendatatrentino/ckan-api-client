@@ -1,0 +1,303 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Low-level &mdash; Ckan API client 0.1a documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../',
+        VERSION:'0.1a',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="Ckan API client 0.1a documentation" href="../index.html"/>
+        <link rel="up" title="Clients" href="index.html"/>
+        <link rel="next" title="High-level" href="high-level.html"/>
+        <link rel="prev" title="Clients" href="index.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="icon icon-home"> Ckan API client</a>
+        <form class="wy-form" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Clients</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">Low-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="high-level.html">High-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="syncing.html">Syncing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../objects/objects.html">Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../objects/exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../testing/fixtures.html">Fixtures</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">Ckan API client</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="../index.html">Docs</a> &raquo;</li>
+  <li><a href="">Low-level</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <div class="section" id="low-level">
+<h1>Low-level<a class="headerlink" href="#low-level" title="Permalink to this headline">¶</a></h1>
+<p>This is the client providing the lowest level of abstraction.</p>
+<span class="target" id="module-ckan_api_client.low_level"></span><dl class="class">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.low_level.</tt><tt class="descname">CkanLowlevelClient</tt><big>(</big><em>base_url</em>, <em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ckan low-level client.</p>
+<ul class="simple">
+<li>Handles authentication and response validation</li>
+<li>Handles request body serialization and response body deserialization</li>
+<li>Raises HTTPError exceptions on failed HTTP requests</li>
+<li>Performs some checks on return values from the API</li>
+</ul>
+<dl class="attribute">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.anonymous">
+<tt class="descname">anonymous</tt><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.anonymous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.anonymous" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property, returning a copy of this client, without an api_key set</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.request">
+<tt class="descname">request</tt><big>(</big><em>method</em>, <em>path</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around <tt class="xref py py-func docutils literal"><span class="pre">requests.request()</span></tt>.</p>
+<p>Extra functionality provided:</p>
+<ul class="simple">
+<li>Add <tt class="docutils literal"><span class="pre">Authorization</span></tt> header to requests</li>
+<li>If data is an object, serialize it with json and
+add the <tt class="docutils literal"><span class="pre">Content-type:</span> <span class="pre">application/json</span></tt> header.</li>
+<li>If the response didn&#8217;t contain an &#8220;ok&#8221; code,
+raises a <tt class="xref py py-exc docutils literal"><span class="pre">HTTPError</span></tt> exception.</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>method</strong> &#8211; HTTP method to be used</li>
+<li><strong>path</strong> &#8211; Path, relative to the Ckan root.
+For example: <tt class="docutils literal"><span class="pre">/api/3/action/package_list</span></tt></li>
+<li><strong>headers</strong> &#8211; HTTP headers to be added to the request</li>
+<li><strong>data</strong> &#8211; Data to be sent in the request body</li>
+<li><strong>kwargs</strong> &#8211; Extra keyword arguments will be passed
+directly to the <tt class="docutils literal"><span class="pre">requests.request()</span></tt> call.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises <a class="reference internal" href="../objects/exceptions.html#ckan_api_client.exceptions.HTTPError" title="ckan_api_client.exceptions.HTTPError">ckan_api_client.exceptions.HTTPError</a>:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first">in case the HTTP request returned a non-ok status code</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a requests response object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.list_datasets">
+<tt class="descname">list_datasets</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.list_datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.list_datasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of all dataset ids</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.iter_datasets">
+<tt class="descname">iter_datasets</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.iter_datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.iter_datasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator yielding dataset objects, iterating over the whole
+database.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.get_dataset">
+<tt class="descname">get_dataset</tt><big>(</big><em>dataset_id</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.get_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.get_dataset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.post_dataset">
+<tt class="descname">post_dataset</tt><big>(</big><em>dataset</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.post_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.post_dataset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.put_dataset">
+<tt class="descname">put_dataset</tt><big>(</big><em>dataset</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.put_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.put_dataset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.delete_dataset">
+<tt class="descname">delete_dataset</tt><big>(</big><em>dataset_id</em>, <em>ignore_404=True</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.delete_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.delete_dataset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.list_groups">
+<tt class="descname">list_groups</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.list_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.list_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.iter_groups">
+<tt class="descname">iter_groups</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.iter_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.iter_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.get_group">
+<tt class="descname">get_group</tt><big>(</big><em>group_id</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.get_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.get_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.post_group">
+<tt class="descname">post_group</tt><big>(</big><em>group</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.post_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.post_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.put_group">
+<tt class="descname">put_group</tt><big>(</big><em>group</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.put_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.put_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.delete_group">
+<tt class="descname">delete_group</tt><big>(</big><em>group_id</em>, <em>ignore_404=True</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.delete_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.delete_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.list_organizations">
+<tt class="descname">list_organizations</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.list_organizations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.list_organizations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.iter_organizations">
+<tt class="descname">iter_organizations</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.iter_organizations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.iter_organizations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.get_organization">
+<tt class="descname">get_organization</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.get_organization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.get_organization" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.post_organization">
+<tt class="descname">post_organization</tt><big>(</big><em>organization</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.post_organization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.post_organization" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.put_organization">
+<tt class="descname">put_organization</tt><big>(</big><em>organization</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.put_organization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.put_organization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Warning! with api v3 we need to use POST!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.delete_organization">
+<tt class="descname">delete_organization</tt><big>(</big><em>id</em>, <em>ignore_404=True</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.delete_organization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.delete_organization" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.low_level.CkanLowlevelClient.list_licenses">
+<tt class="descname">list_licenses</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.list_licenses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.list_licenses" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          <footer>
+  
+    <div class="rst-footer-buttons">
+      
+        <a href="high-level.html" class="btn btn-neutral float-right" title="High-level"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Clients"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2014, Samuele Santi.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>

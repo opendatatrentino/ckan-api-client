@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>High-level &mdash; Ckan API client 0.1a documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../',
+        VERSION:'0.1a',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="Ckan API client 0.1a documentation" href="../index.html"/>
+        <link rel="up" title="Clients" href="index.html"/>
+        <link rel="next" title="Syncing" href="syncing.html"/>
+        <link rel="prev" title="Low-level" href="low-level.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="icon icon-home"> Ckan API client</a>
+        <form class="wy-form" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Clients</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="low-level.html">Low-level</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">High-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="syncing.html">Syncing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../objects/objects.html">Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../objects/exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../testing/fixtures.html">Fixtures</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">Ckan API client</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="../index.html">Docs</a> &raquo;</li>
+  <li><a href="">High-level</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <div class="section" id="module-ckan_api_client.high_level">
+<span id="high-level"></span><h1>High-level<a class="headerlink" href="#module-ckan_api_client.high_level" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.high_level.</tt><tt class="descname">CkanHighlevelClient</tt><big>(</big><em>base_url</em>, <em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>High-level client, handling CRUD of objects.</p>
+<p>This class only returns / handles CkanObjects, to make sure
+we are handling consistent data (they have validators in place)</p>
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.list_datasets">
+<tt class="descname">list_datasets</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.list_datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.list_datasets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.iter_datasets">
+<tt class="descname">iter_datasets</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.iter_datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.iter_datasets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.get_dataset">
+<tt class="descname">get_dataset</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.get_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.get_dataset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.save_dataset">
+<tt class="descname">save_dataset</tt><big>(</big><em>dataset</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.save_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.save_dataset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.create_dataset">
+<tt class="descname">create_dataset</tt><big>(</big><em>dataset</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.create_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.create_dataset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.update_dataset">
+<tt class="descname">update_dataset</tt><big>(</big><em>dataset</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.update_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.update_dataset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.delete_dataset">
+<tt class="descname">delete_dataset</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.delete_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.delete_dataset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.list_organizations">
+<tt class="descname">list_organizations</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.list_organizations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.list_organizations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.iter_organizations">
+<tt class="descname">iter_organizations</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.iter_organizations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.iter_organizations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.get_organization">
+<tt class="descname">get_organization</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.get_organization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.get_organization" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.save_organization">
+<tt class="descname">save_organization</tt><big>(</big><em>organization</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.save_organization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.save_organization" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.create_organization">
+<tt class="descname">create_organization</tt><big>(</big><em>organization</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.create_organization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.create_organization" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.update_organization">
+<tt class="descname">update_organization</tt><big>(</big><em>organization</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.update_organization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.update_organization" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.delete_organization">
+<tt class="descname">delete_organization</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.delete_organization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.delete_organization" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.list_groups">
+<tt class="descname">list_groups</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.list_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.list_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.iter_groups">
+<tt class="descname">iter_groups</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.iter_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.iter_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.get_group">
+<tt class="descname">get_group</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.get_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.get_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.save_group">
+<tt class="descname">save_group</tt><big>(</big><em>group</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.save_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.save_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.create_group">
+<tt class="descname">create_group</tt><big>(</big><em>group</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.create_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.create_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.update_group">
+<tt class="descname">update_group</tt><big>(</big><em>group</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.update_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.update_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.delete_group">
+<tt class="descname">delete_group</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.delete_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.delete_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          <footer>
+  
+    <div class="rst-footer-buttons">
+      
+        <a href="syncing.html" class="btn btn-neutral float-right" title="Syncing"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="low-level.html" class="btn btn-neutral" title="Low-level"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2014, Samuele Santi.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>

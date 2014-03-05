@@ -1,0 +1,311 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ckan_api_client.high_level &mdash; Ckan API client 0.1a documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../../',
+        VERSION:'0.1a',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="Ckan API client 0.1a documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> Ckan API client</a>
+        <form class="wy-form" action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Clients</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/low-level.html">Low-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/high-level.html">High-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/syncing.html">Syncing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../objects/objects.html">Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../objects/exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing/fixtures.html">Fixtures</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">Ckan API client</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="../../index.html">Docs</a> &raquo;</li>
+  <li><a href="">ckan_api_client.high_level</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <h1>Source code for ckan_api_client.high_level</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">.objects</span> <span class="kn">import</span> <span class="n">CkanDataset</span><span class="p">,</span> <span class="n">CkanOrganization</span><span class="p">,</span> <span class="n">CkanGroup</span>
+<span class="kn">from</span> <span class="nn">.low_level</span> <span class="kn">import</span> <span class="n">CkanLowlevelClient</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">OperationFailure</span>
+
+
+<div class="viewcode-block" id="CkanHighlevelClient"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient">[docs]</a><span class="k">class</span> <span class="nc">CkanHighlevelClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    High-level client, handling CRUD of objects.</span>
+
+<span class="sd">    This class only returns / handles CkanObjects, to make sure</span>
+<span class="sd">    we are handling consistent data (they have validators in place)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_url</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">CkanLowlevelClient</span><span class="p">(</span><span class="n">base_url</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+
+    <span class="c">##------------------------------------------------------------</span>
+    <span class="c">## Datasets management</span>
+    <span class="c">##------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="CkanHighlevelClient.list_datasets"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.list_datasets">[docs]</a>    <span class="k">def</span> <span class="nf">list_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">list_datasets</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.iter_datasets"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.iter_datasets">[docs]</a>    <span class="k">def</span> <span class="nf">iter_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_datasets</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dataset</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.get_dataset"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.get_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">get_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_dataset</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">CkanDataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.save_dataset"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.save_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">save_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">CkanDataset</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Dataset must be a CkanDataset&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.create_dataset"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.create_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">create_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">CkanDataset</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;dataset must be a CkanDataset&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Cannot specify an id when creating an object&quot;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">post_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">created</span> <span class="o">=</span> <span class="n">CkanDataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">created</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">OperationFailure</span><span class="p">(</span><span class="s">&quot;Created dataset doesn&#39;t match&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">created</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.update_dataset"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.update_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">update_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">CkanDataset</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Dataset must be a CkanDataset&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Trying to update a dataset without an id&quot;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">put_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">updated</span> <span class="o">=</span> <span class="n">CkanDataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">updated</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">OperationFailure</span><span class="p">(</span><span class="s">&quot;Updated dataset doesn&#39;t match&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">updated</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.delete_dataset"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.delete_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">delete_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">delete_dataset</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+
+    <span class="c">##------------------------------------------------------------</span>
+    <span class="c">## Organizations management</span>
+    <span class="c">##------------------------------------------------------------</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.list_organizations"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.list_organizations">[docs]</a>    <span class="k">def</span> <span class="nf">list_organizations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">list_organizations</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.iter_organizations"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.iter_organizations">[docs]</a>    <span class="k">def</span> <span class="nf">iter_organizations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_organizations</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_organization</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.get_organization"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.get_organization">[docs]</a>    <span class="k">def</span> <span class="nf">get_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_organization</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">CkanOrganization</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.save_organization"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.save_organization">[docs]</a>    <span class="k">def</span> <span class="nf">save_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">organization</span><span class="p">,</span> <span class="n">CkanOrganization</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Organization must be a CkanOrganization&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">organization</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_organization</span><span class="p">(</span><span class="n">organization</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_organization</span><span class="p">(</span><span class="n">organization</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.create_organization"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.create_organization">[docs]</a>    <span class="k">def</span> <span class="nf">create_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">organization</span><span class="p">,</span> <span class="n">CkanOrganization</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Organization must be a CkanOrganization&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">organization</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Cannot specify an id when creating an object&quot;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">post_organization</span><span class="p">(</span><span class="n">organization</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">created</span> <span class="o">=</span> <span class="n">CkanOrganization</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">created</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">organization</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">OperationFailure</span><span class="p">(</span><span class="s">&quot;Created organization doesn&#39;t match&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">created</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.update_organization"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.update_organization">[docs]</a>    <span class="k">def</span> <span class="nf">update_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">organization</span><span class="p">,</span> <span class="n">CkanOrganization</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Organization must be a CkanOrganization&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">organization</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Trying to update a organization without an id&quot;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">put_organization</span><span class="p">(</span><span class="n">organization</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">updated</span> <span class="o">=</span> <span class="n">CkanDataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">updated</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">organization</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">OperationFailure</span><span class="p">(</span><span class="s">&quot;Updated organization doesn&#39;t match&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">updated</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.delete_organization"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.delete_organization">[docs]</a>    <span class="k">def</span> <span class="nf">delete_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">delete_organization</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+
+    <span class="c">##------------------------------------------------------------</span>
+    <span class="c">## Groups management</span>
+    <span class="c">##------------------------------------------------------------</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.list_groups"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.list_groups">[docs]</a>    <span class="k">def</span> <span class="nf">list_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">list_groups</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.iter_groups"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.iter_groups">[docs]</a>    <span class="k">def</span> <span class="nf">iter_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_groups</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.get_group"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.get_group">[docs]</a>    <span class="k">def</span> <span class="nf">get_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">CkanGroup</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.save_group"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.save_group">[docs]</a>    <span class="k">def</span> <span class="nf">save_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">CkanGroup</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Group must be a CkanGroup&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.create_group"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.create_group">[docs]</a>    <span class="k">def</span> <span class="nf">create_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">CkanGroup</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Group must be a CkanGroup&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Cannot specify an id when creating an object&quot;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">post_group</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">created</span> <span class="o">=</span> <span class="n">CkanGroup</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">created</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">OperationFailure</span><span class="p">(</span><span class="s">&quot;Created group doesn&#39;t match&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">created</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.update_group"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.update_group">[docs]</a>    <span class="k">def</span> <span class="nf">update_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">CkanGroup</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Group must be a CkanGroup&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Trying to update a group without an id&quot;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">put_group</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">updated</span> <span class="o">=</span> <span class="n">CkanGroup</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">updated</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">OperationFailure</span><span class="p">(</span><span class="s">&quot;Updated group doesn&#39;t match&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">updated</span>
+</div>
+<div class="viewcode-block" id="CkanHighlevelClient.delete_group"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.delete_group">[docs]</a>    <span class="k">def</span> <span class="nf">delete_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">delete_group</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span></div></div>
+</pre></div>
+
+          <footer>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2014, Samuele Santi.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>

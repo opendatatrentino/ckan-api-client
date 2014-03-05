@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Testing &mdash; Ckan API client 0.1a documentation</title>
+  <title>Clients &mdash; Ckan API client 0.1a documentation</title>
   
 
   
@@ -44,8 +44,8 @@
 
   
     <link rel="top" title="Ckan API client 0.1a documentation" href="../index.html"/>
-        <link rel="next" title="Fixtures" href="fixtures.html"/>
-        <link rel="prev" title="Exceptions" href="../objects/exceptions.html"/> 
+        <link rel="next" title="Low-level" href="low-level.html"/>
+        <link rel="prev" title="Welcome to Ckan API client’s documentation!" href="../index.html"/> 
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
 
@@ -70,16 +70,16 @@
         
         
             <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../clients/index.html">Clients</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../clients/low-level.html">Low-level</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../clients/high-level.html">High-level</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../clients/syncing.html">Syncing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Clients</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="low-level.html">Low-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="high-level.html">High-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="syncing.html">Syncing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../objects/objects.html">Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../objects/exceptions.html">Exceptions</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Testing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="fixtures.html">Fixtures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../testing/fixtures.html">Fixtures</a></li>
 </ul>
 </li>
 </ul>
@@ -103,24 +103,28 @@
         <div class="rst-content">
           <ul class="wy-breadcrumbs">
   <li><a href="../index.html">Docs</a> &raquo;</li>
-  <li><a href="">Testing</a></li>
+  <li><a href="">Clients</a></li>
   
 </ul>
 <hr/>
 
           
-  <div class="section" id="testing">
-<h1>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h1>
-<p>All the testing is done via <a class="reference external" href="http://pytest.org">py.test</a>.
-See the pages below on how to run and write tests.</p>
+  <div class="section" id="clients">
+<h1>Clients<a class="headerlink" href="#clients" title="Permalink to this headline">¶</a></h1>
+<p>There are currently three clients for the Ckan API, each one providing
+a different level of abstraction, and thus can be user for different needs:</p>
+<ul class="simple">
+<li><a class="reference internal" href="low-level.html#ckan_api_client.low_level.CkanLowlevelClient" title="ckan_api_client.low_level.CkanLowlevelClient"><tt class="xref py py-class docutils literal"><span class="pre">CkanLowlevelClient</span></tt></a>
+&#8211; just a wrapper around the API.</li>
+<li>High-level client: provides more abstraction around the CRUD methods.</li>
+<li>Syncing client: provides facilities for &#8220;syncing&#8221; a collection of objects
+into Ckan.</li>
+</ul>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="fixtures.html">Fixtures</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="fixtures.html#fixture-functions">Fixture functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fixtures.html#utility-objects">Utility objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fixtures.html#utility-functions">Utility functions</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="low-level.html">Low-level</a></li>
+<li class="toctree-l1"><a class="reference internal" href="high-level.html">High-level</a></li>
+<li class="toctree-l1"><a class="reference internal" href="syncing.html">Syncing</a></li>
 </ul>
 </div>
 </div>
@@ -130,10 +134,10 @@ See the pages below on how to run and write tests.</p>
   
     <div class="rst-footer-buttons">
       
-        <a href="fixtures.html" class="btn btn-neutral float-right" title="Fixtures"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="low-level.html" class="btn btn-neutral float-right" title="Low-level"/>Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../objects/exceptions.html" class="btn btn-neutral" title="Exceptions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../index.html" class="btn btn-neutral" title="Welcome to Ckan API client’s documentation!"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   

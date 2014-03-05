@@ -70,6 +70,14 @@
         
         
             <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../clients/index.html">Clients</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../clients/low-level.html">Low-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../clients/high-level.html">High-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../clients/syncing.html">Syncing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../objects/objects.html">Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../objects/exceptions.html">Exceptions</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Testing</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="">Fixtures</a></li>
 </ul>
@@ -358,45 +366,6 @@ by calling paster command.</p>
 
 <p><strong>Other functions (mostly for internal use):</strong></p>
 <dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.create_db">
-<tt class="descname">create_db</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.create_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.create_db" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create PostgreSQL database, for use by Ckan</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.create_db_user">
-<tt class="descname">create_db_user</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.create_db_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.create_db_user" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create PostgreSQL user, for use by Ckan</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.drop_db">
-<tt class="descname">drop_db</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.drop_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.drop_db" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete previously created PostgreSQL database, to cleanup
-after running tests.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.drop_db_user">
-<tt class="descname">drop_db_user</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.drop_db_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.drop_db_user" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete previously created PostgreSQL user, to cleanup
-after running tests.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.flush_solr_index">
-<tt class="descname">flush_solr_index</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.flush_solr_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.flush_solr_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Completely flush the configured Solr index.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">since Ckan supports sharing the same index between
-installations, we don&#8217;t actually delete <em>everything</em>
-from the index, but instead issued a delete on query:
-<tt class="docutils literal"><span class="pre">+site_id:&quot;&lt;ckan-site-id&gt;&quot;</span></tt></p>
-</div>
-</dd></dl>
-
-<dl class="method">
 <dt id="ckan_api_client.tests.conftest.CkanEnvironment.get_conf_parser">
 <tt class="descname">get_conf_parser</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.get_conf_parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.get_conf_parser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a RawConfigParser instance, associated with the main
@@ -436,6 +405,45 @@ have occurred on the file..</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.create_db_user">
+<tt class="descname">create_db_user</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.create_db_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.create_db_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create PostgreSQL user, for use by Ckan</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.create_db">
+<tt class="descname">create_db</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.create_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.create_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create PostgreSQL database, for use by Ckan</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.drop_db_user">
+<tt class="descname">drop_db_user</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.drop_db_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.drop_db_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete previously created PostgreSQL user, to cleanup
+after running tests.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.drop_db">
+<tt class="descname">drop_db</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.drop_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.drop_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete previously created PostgreSQL database, to cleanup
+after running tests.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.flush_solr_index">
+<tt class="descname">flush_solr_index</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.flush_solr_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.flush_solr_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Completely flush the configured Solr index.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">since Ckan supports sharing the same index between
+installations, we don&#8217;t actually delete <em>everything</em>
+from the index, but instead issued a delete on query:
+<tt class="docutils literal"><span class="pre">+site_id:&quot;&lt;ckan-site-id&gt;&quot;</span></tt></p>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="ckan_api_client.tests.conftest.CkanEnvironment.get_sysadmin_api_key">
 <tt class="descname">get_sysadmin_api_key</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.get_sysadmin_api_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.get_sysadmin_api_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a sysadmin user (with random name / password)
@@ -447,7 +455,12 @@ and return its API key.</p>
 <dl class="class">
 <dt id="ckan_api_client.tests.conftest.CkanServerWrapper">
 <em class="property">class </em><tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">CkanServerWrapper</tt><big>(</big><em>args</em>, <em>host</em>, <em>port</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanServerWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanServerWrapper" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><dl class="attribute">
+<dt id="ckan_api_client.tests.conftest.CkanServerWrapper.url">
+<tt class="descname">url</tt><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanServerWrapper.url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanServerWrapper.url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="ckan_api_client.tests.conftest.CkanServerWrapper.start">
 <tt class="descname">start</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanServerWrapper.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanServerWrapper.start" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -455,11 +468,6 @@ and return its API key.</p>
 <dl class="method">
 <dt id="ckan_api_client.tests.conftest.CkanServerWrapper.stop">
 <tt class="descname">stop</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanServerWrapper.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanServerWrapper.stop" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ckan_api_client.tests.conftest.CkanServerWrapper.url">
-<tt class="descname">url</tt><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanServerWrapper.url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanServerWrapper.url" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

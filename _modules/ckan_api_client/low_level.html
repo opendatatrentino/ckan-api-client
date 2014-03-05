@@ -1,0 +1,422 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ckan_api_client.low_level &mdash; Ckan API client 0.1a documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../../',
+        VERSION:'0.1a',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="Ckan API client 0.1a documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> Ckan API client</a>
+        <form class="wy-form" action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Clients</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/low-level.html">Low-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/high-level.html">High-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/syncing.html">Syncing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../objects/objects.html">Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../objects/exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing/fixtures.html">Fixtures</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">Ckan API client</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="../../index.html">Docs</a> &raquo;</li>
+  <li><a href="">ckan_api_client.low_level</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <h1>Source code for ckan_api_client.low_level</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">urlparse</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">HTTPError</span><span class="p">,</span> <span class="n">BadApiError</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">SuppressExceptionIf</span>
+
+
+<div class="viewcode-block" id="CkanLowlevelClient"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient">[docs]</a><span class="k">class</span> <span class="nc">CkanLowlevelClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ckan low-level client.</span>
+
+<span class="sd">    - Handles authentication and response validation</span>
+<span class="sd">    - Handles request body serialization and response body deserialization</span>
+<span class="sd">    - Raises HTTPError exceptions on failed HTTP requests</span>
+<span class="sd">    - Performs some checks on return values from the API</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_url</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param basestring base_url:</span>
+<span class="sd">            Base url for the Ckan installation</span>
+<span class="sd">        :param basestring api_key:</span>
+<span class="sd">            API key to be used for authentication.</span>
+<span class="sd">            If omitted, no authentication information will be sent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="n">base_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CkanLowlevelClient.anonymous"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.anonymous">[docs]</a>    <span class="k">def</span> <span class="nf">anonymous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property, returning a copy of this client, without an api_key set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CkanLowlevelClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.request"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.request">[docs]</a>    <span class="k">def</span> <span class="nf">request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrapper around :py:func:`requests.request`.</span>
+
+<span class="sd">        Extra functionality provided:</span>
+
+<span class="sd">        - Add ``Authorization`` header to requests</span>
+<span class="sd">        - If data is an object, serialize it with json and</span>
+<span class="sd">          add the ``Content-type: application/json`` header.</span>
+<span class="sd">        - If the response didn&#39;t contain an &quot;ok&quot; code,</span>
+<span class="sd">          raises a :py:exc:`HTTPError` exception.</span>
+
+<span class="sd">        :param method: HTTP method to be used</span>
+<span class="sd">        :param path: Path, relative to the Ckan root.</span>
+<span class="sd">            For example: ``/api/3/action/package_list``</span>
+<span class="sd">        :param headers: HTTP headers to be added to the request</span>
+<span class="sd">        :param data: Data to be sent in the request body</span>
+<span class="sd">        :param kwargs: Extra keyword arguments will be passed</span>
+<span class="sd">            directly to the ``requests.request()`` call.</span>
+
+<span class="sd">        :raises ckan_api_client.exceptions.HTTPError:</span>
+<span class="sd">            in case the HTTP request returned a non-ok status code</span>
+
+<span class="sd">        :return: a requests response object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;headers&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;headers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">headers</span>
+
+        <span class="c">## Update headers for authorization</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">headers</span><span class="p">[</span><span class="s">&#39;Authorization&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span>
+
+        <span class="c">## Serialize data to json, if not already</span>
+        <span class="k">if</span> <span class="s">&#39;data&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">],</span> <span class="nb">basestring</span><span class="p">):</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">])</span>
+                <span class="n">headers</span><span class="p">[</span><span class="s">&#39;content-type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;application/json&#39;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="c">##------------------------------------------------------------</span>
+            <span class="c">## todo: attach message, if any available..</span>
+            <span class="c">##------------------------------------------------------------</span>
+            <span class="c">## todo: we should find a way to figure out how to attach</span>
+            <span class="c">##       original text message to the exception</span>
+            <span class="c">##       as it might be: json string, part of json object,</span>
+            <span class="c">##       part of html document</span>
+            <span class="c">##------------------------------------------------------------</span>
+            <span class="k">raise</span> <span class="n">HTTPError</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
+                            <span class="s">&quot;Error while performing request&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">response</span>
+
+    <span class="c">##============================================================</span>
+    <span class="c">## Validation helpers</span>
+    <span class="c">##============================================================</span>
+</div>
+    <span class="k">def</span> <span class="nf">_validate_response_idlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;object&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">BadApiError</span><span class="p">(</span>
+                <span class="s">&quot;Bad {0} id list returned from the api (not a list)&quot;</span>
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">response</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">BadApiError</span><span class="p">(</span>
+                <span class="s">&quot;Bad {0} id list returned from the api (an element &quot;</span>
+                <span class="s">&quot;is not a string)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_validate_response_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;object&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">BadApiError</span><span class="p">(</span><span class="s">&quot;Bad {0} returned from the api (not a dict)&quot;</span>
+                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_validate_response_list_of_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;object&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">BadApiError</span><span class="p">(</span><span class="s">&quot;Bad {0} list returned from the api (not a list)&quot;</span>
+                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">response</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">BadApiError</span><span class="p">(</span>
+                <span class="s">&quot;Bad {0} list returned from the api (an element &quot;</span>
+                <span class="s">&quot;is not a dict)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="c">##============================================================</span>
+    <span class="c">## Datasets</span>
+    <span class="c">##============================================================</span>
+
+<div class="viewcode-block" id="CkanLowlevelClient.list_datasets"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.list_datasets">[docs]</a>    <span class="k">def</span> <span class="nf">list_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of all dataset ids&quot;&quot;&quot;</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/dataset&#39;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_response_idlist</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.iter_datasets"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.iter_datasets">[docs]</a>    <span class="k">def</span> <span class="nf">iter_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generator yielding dataset objects, iterating over the whole</span>
+<span class="sd">        database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">ds_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_datasets</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dataset</span><span class="p">(</span><span class="n">ds_id</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.get_dataset"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.get_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">get_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_id</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/dataset/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_response_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.post_dataset"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.post_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">post_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/dataset&#39;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;POST&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_response_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.put_dataset"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.put_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">put_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/dataset/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;PUT&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_response_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.delete_dataset"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.delete_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">delete_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_id</span><span class="p">,</span> <span class="n">ignore_404</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="n">ign404</span> <span class="o">=</span> <span class="n">SuppressExceptionIf</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">ignore_404</span> <span class="ow">and</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">))</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/dataset/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">ign404</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;DELETE&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="n">dataset_id</span><span class="p">})</span>
+
+    <span class="c">##============================================================</span>
+    <span class="c">## Groups</span>
+    <span class="c">##============================================================</span>
+
+    <span class="c">##=====[!!]=========== IMPORTANT NOTE ===============[!!]=====</span>
+    <span class="c">## BEWARE! API v2 only considers actual groups, organizations</span>
+    <span class="c">## are not handled / returned by this one!</span>
+    <span class="c">##============================================================</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.list_groups"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.list_groups">[docs]</a>    <span class="k">def</span> <span class="nf">list_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/group&#39;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_response_idlist</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.iter_groups"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.iter_groups">[docs]</a>    <span class="k">def</span> <span class="nf">iter_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">all_groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_groups</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">group_id</span> <span class="ow">in</span> <span class="n">all_groups</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">group_id</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.get_group"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.get_group">[docs]</a>    <span class="k">def</span> <span class="nf">get_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_id</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/group/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">group_id</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_response_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.post_group"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.post_group">[docs]</a>    <span class="k">def</span> <span class="nf">post_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/group&#39;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;POST&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">group</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_response_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.put_group"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.put_group">[docs]</a>    <span class="k">def</span> <span class="nf">put_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/group/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;PUT&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">group</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_response_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.delete_group"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.delete_group">[docs]</a>    <span class="k">def</span> <span class="nf">delete_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_id</span><span class="p">,</span> <span class="n">ignore_404</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="n">ign404</span> <span class="o">=</span> <span class="n">SuppressExceptionIf</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">ignore_404</span> <span class="ow">and</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">))</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/group/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">group_id</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">ign404</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;DELETE&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/3/action/group_purge&#39;</span>
+        <span class="k">with</span> <span class="n">ign404</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;POST&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="n">group_id</span><span class="p">})</span>
+
+    <span class="c">##============================================================</span>
+    <span class="c">## Organizations</span>
+    <span class="c">##============================================================</span>
+
+    <span class="c">## --- [!!] NOTE ---------------------------------------------</span>
+    <span class="c">## We need to fallback to api v3 here, as v2 doesn&#39;t support</span>
+    <span class="c">## doing things with organizations..</span>
+    <span class="c">##------------------------------------------------------------</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.list_organizations"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.list_organizations">[docs]</a>    <span class="k">def</span> <span class="nf">list_organizations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/3/action/organization_list&#39;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s">&#39;result&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_response_idlist</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.iter_organizations"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.iter_organizations">[docs]</a>    <span class="k">def</span> <span class="nf">iter_organizations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">org_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_organizations</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_organization</span><span class="p">(</span><span class="n">org_id</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.get_organization"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.get_organization">[docs]</a>    <span class="k">def</span> <span class="nf">get_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/3/action/organization_show?id={0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s">&#39;result&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_response_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.post_organization"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.post_organization">[docs]</a>    <span class="k">def</span> <span class="nf">post_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/3/action/organization_create&#39;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;POST&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">organization</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s">&#39;result&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_response_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.put_organization"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.put_organization">[docs]</a>    <span class="k">def</span> <span class="nf">put_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Warning! with api v3 we need to use POST!&quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/3/action/organization_update&#39;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;POST&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">organization</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s">&#39;result&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_response_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.delete_organization"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.delete_organization">[docs]</a>    <span class="k">def</span> <span class="nf">delete_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">ignore_404</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="n">ign404</span> <span class="o">=</span> <span class="n">SuppressExceptionIf</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">ignore_404</span> <span class="ow">and</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">))</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/3/action/organization_delete&#39;</span>
+        <span class="k">with</span> <span class="n">ign404</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;PUT&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="nb">id</span><span class="p">})</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/3/action/organization_purge&#39;</span>
+        <span class="k">with</span> <span class="n">ign404</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;POST&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="nb">id</span><span class="p">})</span>
+
+    <span class="c">##============================================================</span>
+    <span class="c">## Licenses</span>
+    <span class="c">##============================================================</span>
+</div>
+<div class="viewcode-block" id="CkanLowlevelClient.list_licenses"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.list_licenses">[docs]</a>    <span class="k">def</span> <span class="nf">list_licenses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/licenses&#39;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_response_list_of_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div></div>
+</pre></div>
+
+          <footer>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2014, Samuele Santi.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>
