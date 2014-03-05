@@ -9,7 +9,9 @@ Welcome to Ckan API client's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
+
+    testing/index
 
 
 
