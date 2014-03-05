@@ -68,7 +68,8 @@ release = '0.1a'
 # directories to ignore when looking for source files.
 exclude_patterns = []
 
-# The reST default role (used for this markup: `text`) to use for all documents.
+# The reST default role (used for this markup: `text`) to use for
+# all documents.
 #default_role = None
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
@@ -89,7 +90,13 @@ pygments_style = 'sphinx'
 #modindex_common_prefix = []
 
 
-# -- Options for HTML output --------------------------------------------------
+## -- Autodoc configuration ---------------------------------------------------
+
+# Preserve order in the source code
+autodoc_member_order = 'bysource'
+
+
+## -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.

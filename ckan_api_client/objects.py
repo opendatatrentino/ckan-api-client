@@ -1,5 +1,5 @@
 """
-Classes to represent / validate Ckan objects
+Classes to represent / validate Ckan objects.
 """
 
 import collections
@@ -9,8 +9,19 @@ from .schema import DATASET_FIELDS, RESOURCE_FIELDS
 
 
 class CkanObject(object):
-    def is_equivalent(self):
-        """Used for equivalency check: check all fields a part from id"""
+    """Base for other objects manipulated by the API"""
+
+    def is_equivalent(self, other):
+        """
+        Used for object comparison.
+
+        Will compare all the fields in ``self`` and ``other``, and
+        return ``True`` if they all match, ``False`` otherwise.
+
+        Note that this method, differently from the comparison operator,
+        will ignore the ``id`` field (we want to make sure the objects
+        are equal, not that they are the same object).
+        """
         return False
 
     def __eq__(self, other):
@@ -24,6 +35,7 @@ class CkanObject(object):
 
 
 class CkanDataset(CkanObject):
+    """Represents a Ckan dataset"""
 
     _schema = DATASET_FIELDS
 
@@ -40,6 +52,11 @@ class CkanDataset(CkanObject):
 
     @classmethod
     def from_dict(cls, obj):
+        """
+        Instantiate a :py:class:`CkanDataset`, preloading values from
+        a dictionary.
+        """
+
         new_obj = cls()
 
         if 'id' in obj:
@@ -68,7 +85,7 @@ class CkanDataset(CkanObject):
         return new_obj
 
     def to_dict(self):
-        """Serialize the object as a dictionary"""
+        """Serialize the object as a dictionary."""
 
         object_as_dict = {}
 
@@ -90,6 +107,11 @@ class CkanDataset(CkanObject):
         return object_as_dict
 
     def is_modified(self):
+        """
+        :returns: ``True`` if the object has been modified since
+            instantiation, ``False`` otherwise.
+        """
+
         if self._updates['core'] != {}:
             return True  # something has been updated
         for field in ('groups', 'extras', 'resources'):
@@ -168,8 +190,7 @@ class CkanDataset(CkanObject):
 
     def is_equivalent(self, other):
         """
-        Equivalency check: check that all the fields match,
-        but ignore ids.
+        See: :py:meth:`CkanObject.is_equivalent`
         """
 
         for field in self._schema['core']:
@@ -196,7 +217,11 @@ class CkanDataset(CkanObject):
 
 
 class CkanDatasetResources(collections.MutableSequence):
-    """Hold a collection of resources"""
+    """
+    Hold a collection of resources.
+    This object is not meant to be used directly, instead an instance
+    is kept in :py:attr:`CkanDataset.resources`.
+    """
 
     _modified = False
 
@@ -248,11 +273,21 @@ class CkanDatasetResources(collections.MutableSequence):
         return self._get_by('url', value)
 
     def filter(self, cond):
-        # self._resources[:] = [r for r in self._resources if cond(r)]
-        ## This allows filter(None, ...) too..
+        """
+        Filter resources in-place.
+
+        :param cond: A callable that accepts a single :py:class:`CkanResource`
+            as its argument, and returns ``True`` if the object is to be kept,
+            ``False`` otherwise.
+        """
+        ## This allows filter(None, ...) too, list comprehension does not
         self._resources[:] = filter(cond, self._resources)
 
     def sort(self, *a, **kw):
+        """
+        Sort resources in place.
+        This is just a wrapper around :py:meth:`list.sort`.
+        """
         self._resources.sort(*a, **kw)
 
     def __eq__(self, other):
@@ -269,6 +304,8 @@ class CkanDatasetResources(collections.MutableSequence):
 
 
 class CkanResource(CkanObject):
+    """Represents a Ckan resource"""
+
     _schema = RESOURCE_FIELDS
 
     def __init__(self):
@@ -280,6 +317,11 @@ class CkanResource(CkanObject):
 
     @classmethod
     def from_dict(cls, obj):
+        """
+        Instantiate a :py:class:`CkanResource`, preloading values from
+        a dictionary.
+        """
+
         new_obj = cls()
         if 'id' in obj:
             new_obj._original['id'] = obj['id']
@@ -297,6 +339,11 @@ class CkanResource(CkanObject):
         return object_as_dict
 
     def is_modified(self):
+        """
+        :returns: ``True`` if the object has been modified since
+            instantiation, ``False`` otherwise.
+        """
+
         if self._original['core'] != {}:
             return True
         return False
@@ -346,8 +393,10 @@ class CkanResource(CkanObject):
 
 
 class CkanOrganization(CkanObject):
+    """Represents a Ckan organization"""
     pass
 
 
 class CkanGroup(CkanObject):
+    """Represents a Ckan group"""
     pass

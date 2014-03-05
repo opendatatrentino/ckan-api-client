@@ -18,15 +18,49 @@ class CkanLowlevelClient(object):
     """
 
     def __init__(self, base_url, api_key=None):
+        """
+        :param basestring base_url:
+            Base url for the Ckan installation
+        :param basestring api_key:
+            API key to be used for authentication.
+            If omitted, no authentication information will be sent.
+        """
         self.base_url = base_url
         self.api_key = api_key
 
     @property
     def anonymous(self):
-        """Return a copy of this client, without api_key"""
+        """
+        Property, returning a copy of this client, without an api_key set
+        """
         return CkanLowlevelClient(self.base_url)
 
     def request(self, method, path, **kwargs):
+        """
+        Wrapper around :py:func:`requests.request`.
+
+        Extra functionality provided:
+
+        - Add ``Authorization`` header to requests
+        - If data is an object, serialize it with json and
+          add the ``Content-type: application/json`` header.
+        - If the response didn't contain an "ok" code,
+          raises a :py:exc:`HTTPError` exception.
+
+        :param method: HTTP method to be used
+        :param path: Path, relative to the Ckan root.
+            For example: ``/api/3/action/package_list``
+        :param headers: HTTP headers to be added to the request
+        :param data: Data to be sent in the request body
+        :param kwargs: Extra keyword arguments will be passed
+            directly to the ``requests.request()`` call.
+
+        :raises ckan_api_client.exceptions.HTTPError:
+            in case the HTTP request returned a non-ok status code
+
+        :return: a requests response object
+        """
+
         headers = kwargs.get('headers') or {}
         kwargs['headers'] = headers
 
@@ -60,7 +94,7 @@ class CkanLowlevelClient(object):
         return response
 
     ##============================================================
-    ## Validators
+    ## Validation helpers
     ##============================================================
 
     def _validate_response_idlist(self, response, name='object'):
@@ -94,6 +128,8 @@ class CkanLowlevelClient(object):
     ##============================================================
 
     def list_datasets(self):
+        """Return a list of all dataset ids"""
+
         path = '/api/2/rest/dataset'
         response = self.request('GET', path)
         data = response.json()
@@ -101,6 +137,10 @@ class CkanLowlevelClient(object):
         return data
 
     def iter_datasets(self):
+        """
+        Generator yielding dataset objects, iterating over the whole
+        database.
+        """
         for ds_id in self.list_datasets():
             yield self.get_dataset(ds_id)
 
