@@ -353,8 +353,8 @@ class CkanEnvironment(object):
         and return its API key.
         """
 
-        from ckan_api_client.tests.utils import generate_password
-        from ckan_api_client.tests.utils import generate_random_alphanum
+        from ckan_api_client.tests.utils.strings \
+            import (generate_password, generate_random_alphanum)
 
         user_name = 'api_test_{0}'.format(generate_random_alphanum(10).lower())
         user_data = self.paster_user_add(user_name, **{
@@ -544,12 +544,6 @@ def ckan_url(request, ckan_env):
     server.start()
 
     return get_ckan_url
-
-
-# @pytest.fixture
-# def api_key():
-#     """Return Ckan API key"""
-#     return os.environ.get('API_KEY', 'my-api-key')
 
 
 @pytest.fixture
