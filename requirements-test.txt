@@ -1,5 +1,10 @@
+## Tests
 pytest
 pytest-pep8
 pytest-cov
 psycopg2
 solrpy
+
+## Documentation
+sphinx
+sphinx_rtd_theme
