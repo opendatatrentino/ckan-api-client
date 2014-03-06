@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ckan_api_client.tests.utils.generate &mdash; Ckan API client 0.1a documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../../../../',
+        VERSION:'0.1a',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="Ckan API client 0.1a documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../../index.html" class="icon icon-home"> Ckan API client</a>
+        <form class="wy-form" action="../../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../clients/index.html">Clients</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/low-level.html">Low-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/high-level.html">High-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/syncing.html">Syncing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../objects/objects.html">Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../objects/exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../testing/fixtures.html">Fixtures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../testing/utility.html">Testing utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">Ckan API client</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+  <li><a href="">ckan_api_client.tests.utils.generate</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <h1>Source code for ckan_api_client.tests.utils.generate</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+
+<span class="c">## Generate some dummy data, for testing purposes</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">.strings</span> <span class="kn">import</span> <span class="n">gen_random_id</span><span class="p">,</span> <span class="n">gen_picture</span>
+
+
+<div class="viewcode-block" id="generate_organization"><a class="viewcode-back" href="../../../../testing/utility.html#ckan_api_client.tests.utils.generate.generate_organization">[docs]</a><span class="k">def</span> <span class="nf">generate_organization</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a random organization object, with:</span>
+
+<span class="sd">    - ``name``, random, example: ``&quot;org-abc123&quot;``</span>
+<span class="sd">    - ``title``, random, example: ``&quot;Organization abc123&quot;``</span>
+<span class="sd">    - ``description``, random</span>
+<span class="sd">    - ``image``, url pointing to a random-generated pic</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">random_id</span> <span class="o">=</span> <span class="n">gen_random_id</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;org-{0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>  <span class="c"># Used as key</span>
+        <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Organization {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
+        <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;Description of organization {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
+        <span class="s">&quot;image_url&quot;</span><span class="p">:</span> <span class="n">gen_picture</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
+        <span class="c"># &quot;extras&quot;: [],</span>
+        <span class="c"># &quot;tags&quot;: [],</span>
+    <span class="p">}</span>
+
+</div>
+<div class="viewcode-block" id="generate_group"><a class="viewcode-back" href="../../../../testing/utility.html#ckan_api_client.tests.utils.generate.generate_group">[docs]</a><span class="k">def</span> <span class="nf">generate_group</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a random group object, with:</span>
+
+<span class="sd">    - ``name``, random, example: ``&quot;grp-abc123&quot;``</span>
+<span class="sd">    - ``title``, random, example: ``&quot;Group abc123&quot;``</span>
+<span class="sd">    - ``description``, random</span>
+<span class="sd">    - ``image``, url pointing to a random-generated pic</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">random_id</span> <span class="o">=</span> <span class="n">gen_random_id</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;grp-{0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>  <span class="c"># Used as key</span>
+        <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Group {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
+        <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;Description of group {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
+        <span class="s">&quot;image_url&quot;</span><span class="p">:</span> <span class="n">gen_picture</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
+        <span class="c"># &quot;extras&quot;: [],</span>
+        <span class="c"># &quot;tags&quot;: [],</span>
+    <span class="p">}</span>
+
+</div>
+<div class="viewcode-block" id="generate_dataset"><a class="viewcode-back" href="../../../../testing/utility.html#ckan_api_client.tests.utils.generate.generate_dataset">[docs]</a><span class="k">def</span> <span class="nf">generate_dataset</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a dataset, populated with random data.</span>
+
+<span class="sd">    **Fields:**</span>
+
+<span class="sd">    - ``name`` -- random string, in the form ``dataset-{random}``</span>
+<span class="sd">    - ``title`` -- random string, in the form ``Dataset {random}``</span>
+<span class="sd">    - ``url`` -- random url of dataset on an &quot;external source&quot;</span>
+<span class="sd">    - ``type`` -- fixed string: ``&quot;dataset&quot;``</span>
+<span class="sd">    - ``maintainer_email`` -- random-generated email address</span>
+<span class="sd">    - ``maintainer`` -- random-generated name</span>
+<span class="sd">    - ``author_email`` -- random-generated email address</span>
+<span class="sd">    - ``author`` -- random-generated name</span>
+<span class="sd">    - ``license_id`` -- random license id. One of ``cc-by``, ``cc-zero``,</span>
+<span class="sd">      ``cc-by-sa`` or ``notspecified``.</span>
+<span class="sd">    - ``private`` -- Fixed to ``False``</span>
+<span class="sd">    - ``notes`` -- random string, containing some markdown</span>
+<span class="sd">    - ``tags`` -- random list of tags (strings)</span>
+<span class="sd">    - ``extras`` -- dictionary containing random key / value pairs</span>
+<span class="sd">    - ``resources`` -- list of random resources</span>
+<span class="sd">    - ``groups`` -- empty list</span>
+<span class="sd">    - ``owner_org`` -- set to None</span>
+<span class="sd">    - ``relationships`` -- empty list</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        The ``owner_org`` and ``groups`` fields will be blank,</span>
+<span class="sd">        as they must match with existing groups / organizations</span>
+<span class="sd">        and we don&#39;t have access to database from here (nor</span>
+<span class="sd">        is it in the scope of this function!)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">random_id</span> <span class="o">=</span> <span class="n">gen_random_id</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">license_id</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">((</span>
+        <span class="s">&#39;cc-by&#39;</span><span class="p">,</span> <span class="s">&#39;cc-zero&#39;</span><span class="p">,</span> <span class="s">&#39;cc-by-sa&#39;</span><span class="p">,</span> <span class="s">&#39;notspecified&#39;</span><span class="p">))</span>
+    <span class="n">resources</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)):</span>
+        <span class="n">resources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">generate_resource</span><span class="p">())</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="c"># ------------------------------------------------------------</span>
+        <span class="c"># WARNING! This is the **internal** id of the external</span>
+        <span class="c"># service, which will need to be moved to</span>
+        <span class="c"># dataset[&#39;extras&#39;][&#39;_harvest_source_id&#39;]</span>
+        <span class="c"># ------------------------------------------------------------</span>
+        <span class="c"># &quot;id&quot;: random_id,</span>
+
+        <span class="c">## Name should be taken as a &quot;suggestion&quot;: in case of naming conflict</span>
+        <span class="c">## with an existing dataset, it just be changed (todo: how?)</span>
+        <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;dataset-{0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
+
+        <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Dataset {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
+        <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;http://www.example.com/dataset/{0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
+        <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;dataset&quot;</span><span class="p">,</span>
+
+        <span class="s">&quot;maintainer_email&quot;</span><span class="p">:</span> <span class="s">&quot;maintainer-{0}@example.com&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
+        <span class="s">&quot;maintainer&quot;</span><span class="p">:</span> <span class="s">&quot;Maintainer {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
+
+        <span class="s">&quot;author_email&quot;</span><span class="p">:</span> <span class="s">&quot;author-{0}@example.com&quot;</span><span class="p">,</span>
+        <span class="s">&quot;author&quot;</span><span class="p">:</span> <span class="s">&quot;Author {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
+
+        <span class="s">&quot;license_id&quot;</span><span class="p">:</span> <span class="n">license_id</span><span class="p">,</span>
+
+        <span class="s">&quot;private&quot;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+        <span class="s">&quot;notes&quot;</span><span class="p">:</span> <span class="s">&quot;Notes for **dataset** {0}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
+
+        <span class="c"># &quot;state&quot;: &quot;active&quot;,  # automatic</span>
+
+        <span class="c">## Let&#39;s generate some tags</span>
+        <span class="s">&quot;tags&quot;</span><span class="p">:</span> <span class="n">generate_tags</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)),</span>
+
+        <span class="c">## Let&#39;s put some random stuff in here..</span>
+        <span class="s">&quot;extras&quot;</span><span class="p">:</span> <span class="n">generate_extras</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">)),</span>
+
+        <span class="c">## Some dummy resources</span>
+        <span class="s">&quot;resources&quot;</span><span class="p">:</span> <span class="n">resources</span><span class="p">,</span>
+
+        <span class="c">## Need to be randomized later, to match existing groups</span>
+        <span class="s">&quot;groups&quot;</span><span class="p">:</span> <span class="p">[],</span>
+
+        <span class="c">## Need to be randomized later, to match existing orgs</span>
+        <span class="s">&quot;owner_org&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+
+        <span class="c">## WTF is this thing?</span>
+        <span class="s">&quot;relationships&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="p">}</span>
+
+</div>
+<div class="viewcode-block" id="generate_resource"><a class="viewcode-back" href="../../../../testing/utility.html#ckan_api_client.tests.utils.generate.generate_resource">[docs]</a><span class="k">def</span> <span class="nf">generate_resource</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a random resource, to be put in a dataset.</span>
+
+<span class="sd">    **Fields:**</span>
+
+<span class="sd">    - ``url`` -- resource URL on an &quot;external source&quot;</span>
+<span class="sd">    - ``resource_type`` -- one of ``api`` or ``file``</span>
+<span class="sd">    - ``name`` -- random-generated name</span>
+<span class="sd">    - ``format`` -- a random format (eg: ``csv``, ``json``)</span>
+<span class="sd">    - ``description`` -- random generated string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">random_id</span> <span class="o">=</span> <span class="n">gen_random_id</span><span class="p">()</span>
+    <span class="n">fmt</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s">&#39;csv&#39;</span><span class="p">,</span> <span class="s">&#39;json&#39;</span><span class="p">])</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s">&#39;http://example.com/resource/{0}.{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
+        <span class="s">&quot;resource_type&quot;</span><span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s">&#39;api&#39;</span><span class="p">,</span> <span class="s">&#39;file&#39;</span><span class="p">]),</span>
+        <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;resource-{0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
+        <span class="s">&quot;format&quot;</span><span class="p">:</span> <span class="n">fmt</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+        <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;Resource {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
+    <span class="p">}</span>
+
+</div>
+<div class="viewcode-block" id="generate_tags"><a class="viewcode-back" href="../../../../testing/utility.html#ckan_api_client.tests.utils.generate.generate_tags">[docs]</a><span class="k">def</span> <span class="nf">generate_tags</span><span class="p">(</span><span class="n">amount</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate ``amount`` random tags.</span>
+<span class="sd">    Each tag is in the form ``tag-&lt;random-int&gt;``.</span>
+
+<span class="sd">    :return: a list of tag names</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="s">&#39;tag-{0:03d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span>
+    <span class="p">]</span>
+
+</div>
+<div class="viewcode-block" id="generate_extras"><a class="viewcode-back" href="../../../../testing/utility.html#ckan_api_client.tests.utils.generate.generate_extras">[docs]</a><span class="k">def</span> <span class="nf">generate_extras</span><span class="p">(</span><span class="n">amount</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a dict with ``amount`` random key/value pairs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pairs</span> <span class="o">=</span> <span class="p">[(</span>
+        <span class="s">&#39;key-{0:03d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)),</span>
+        <span class="s">&#39;value {0:03d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)),</span>
+        <span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">amount</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="generate_data"><a class="viewcode-back" href="../../../../testing/utility.html#ckan_api_client.tests.utils.generate.generate_data">[docs]</a><span class="k">def</span> <span class="nf">generate_data</span><span class="p">(</span><span class="n">dataset_count</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">orgs_count</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">groups_count</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a bunch of random data.</span>
+<span class="sd">    Will also associate datasets with random organizations / groups.</span>
+
+<span class="sd">    :return: a dict with the ``dataset``, ``organization`` and</span>
+<span class="sd">        ``group`` keys; each of them a dict of ``{key: object}``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;dataset&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s">&#39;organization&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s">&#39;group&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">orgs_count</span><span class="p">):</span>
+        <span class="n">org</span> <span class="o">=</span> <span class="n">generate_organization</span><span class="p">()</span>
+        <span class="n">data</span><span class="p">[</span><span class="s">&#39;organization&#39;</span><span class="p">][</span><span class="n">org</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">org</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">groups_count</span><span class="p">):</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">generate_group</span><span class="p">()</span>
+        <span class="n">data</span><span class="p">[</span><span class="s">&#39;group&#39;</span><span class="p">][</span><span class="n">group</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">group</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">dataset_count</span><span class="p">):</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">generate_dataset</span><span class="p">()</span>
+        <span class="n">dataset</span><span class="p">[</span><span class="s">&#39;groups&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;group&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+        <span class="p">]</span>
+        <span class="n">dataset</span><span class="p">[</span><span class="s">&#39;owner_org&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;organization&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">data</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="n">dataset</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">dataset</span>
+
+    <span class="k">return</span> <span class="n">data</span>
+
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="kn">import</span> <span class="nn">sys</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">destdir</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">destdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="n">destdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">destdir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">destdir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">destdir</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">destdir</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Not a directory: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">destdir</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">destdir</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Directory not empty: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">destdir</span><span class="p">))</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Generating data&quot;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">generate_data</span><span class="p">()</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">destdir</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span> <span class="s">&#39;group&#39;</span><span class="p">,</span> <span class="s">&#39;organization&#39;</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Writing {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;    * {0} {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">destdir</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">key</span><span class="p">),</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+</pre></div>
+
+          <footer>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2014, Samuele Santi.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>

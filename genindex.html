@@ -79,6 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="objects/exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing/index.html">Testing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="testing/fixtures.html">Fixtures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing/utility.html">Testing utilities</a></li>
 </ul>
 </li>
 </ul>
@@ -177,6 +178,34 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.http.check_api_v3_error">check_api_v3_error() (in module ckan_api_client.tests.utils.http)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.http.check_api_v3_response">check_api_v3_response() (in module ckan_api_client.tests.utils.http)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.validation.check_dataset">check_dataset() (in module ckan_api_client.tests.utils.validation)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.validation.check_group">check_group() (in module ckan_api_client.tests.utils.validation)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.validation.check_organization">check_organization() (in module ckan_api_client.tests.utils.validation)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.http.check_response_error">check_response_error() (in module ckan_api_client.tests.utils.http)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.http.check_response_ok">check_response_ok() (in module ckan_api_client.tests.utils.http)</a>
+  </dt>
+
+      
   <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.check_tcp_port">check_tcp_port() (in module ckan_api_client.tests.conftest)</a>
   </dt>
 
@@ -205,6 +234,22 @@
   </dt>
 
       
+  <dt><a href="testing/utility.html#module-ckan_api_client.tests.utils.generate">ckan_api_client.tests.utils.generate (module)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#module-ckan_api_client.tests.utils.http">ckan_api_client.tests.utils.http (module)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#module-ckan_api_client.tests.utils.strings">ckan_api_client.tests.utils.strings (module)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#module-ckan_api_client.tests.utils.validation">ckan_api_client.tests.utils.validation (module)</a>
+  </dt>
+
+      
   <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.ckan_env">ckan_env() (in module ckan_api_client.tests.conftest)</a>
   </dt>
 
@@ -212,6 +257,8 @@
   <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.ckan_url">ckan_url() (in module ckan_api_client.tests.conftest)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="objects/objects.html#ckan_api_client.objects.CkanDataset">CkanDataset (class in ckan_api_client.objects)</a>
   </dt>
@@ -232,8 +279,6 @@
   <dt><a href="clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient">CkanHighlevelClient (class in ckan_api_client.high_level)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient">CkanLowlevelClient (class in ckan_api_client.low_level)</a>
   </dt>
@@ -381,6 +426,64 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.strings.gen_dataset_name">gen_dataset_name() (in module ckan_api_client.tests.utils.strings)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.strings.gen_gravatar">gen_gravatar() (in module ckan_api_client.tests.utils.strings)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.strings.gen_picture">gen_picture() (in module ckan_api_client.tests.utils.strings)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.strings.gen_random_id">gen_random_id() (in module ckan_api_client.tests.utils.strings)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.strings.gen_robohash">gen_robohash() (in module ckan_api_client.tests.utils.strings)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.generate.generate_data">generate_data() (in module ckan_api_client.tests.utils.generate)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.generate.generate_dataset">generate_dataset() (in module ckan_api_client.tests.utils.generate)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.generate.generate_extras">generate_extras() (in module ckan_api_client.tests.utils.generate)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.generate.generate_group">generate_group() (in module ckan_api_client.tests.utils.generate)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.generate.generate_organization">generate_organization() (in module ckan_api_client.tests.utils.generate)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.strings.generate_password">generate_password() (in module ckan_api_client.tests.utils.strings)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.strings.generate_random_alphanum">generate_random_alphanum() (in module ckan_api_client.tests.utils.strings)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.generate.generate_resource">generate_resource() (in module ckan_api_client.tests.utils.generate)</a>
+  </dt>
+
+      
+  <dt><a href="testing/utility.html#ckan_api_client.tests.utils.generate.generate_tags">generate_tags() (in module ckan_api_client.tests.utils.generate)</a>
+  </dt>
+
+      
   <dt><a href="objects/objects.html#ckan_api_client.objects.CkanDatasetResources.get_by_id">get_by_id() (ckan_api_client.objects.CkanDatasetResources method)</a>
   </dt>
 
@@ -406,8 +509,6 @@
   </dt>
 
       </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.get_group">get_group() (ckan_api_client.high_level.CkanHighlevelClient method)</a>
   </dt>

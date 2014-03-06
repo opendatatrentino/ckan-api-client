@@ -79,6 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../objects/exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../testing/fixtures.html">Fixtures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../testing/utility.html">Testing utilities</a></li>
 </ul>
 </li>
 </ul>
@@ -464,8 +465,8 @@
 <span class="sd">        and return its API key.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="kn">from</span> <span class="nn">ckan_api_client.tests.utils</span> <span class="kn">import</span> <span class="n">generate_password</span>
-        <span class="kn">from</span> <span class="nn">ckan_api_client.tests.utils</span> <span class="kn">import</span> <span class="n">generate_random_alphanum</span>
+        <span class="kn">from</span> <span class="nn">ckan_api_client.tests.utils.strings</span> \
+            <span class="kn">import</span> <span class="p">(</span><span class="n">generate_password</span><span class="p">,</span> <span class="n">generate_random_alphanum</span><span class="p">)</span>
 
         <span class="n">user_name</span> <span class="o">=</span> <span class="s">&#39;api_test_{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">generate_random_alphanum</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
         <span class="n">user_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paster_user_add</span><span class="p">(</span><span class="n">user_name</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span>
@@ -656,12 +657,6 @@
 
     <span class="k">return</span> <span class="n">get_ckan_url</span>
 
-
-<span class="c"># @pytest.fixture</span>
-<span class="c"># def api_key():</span>
-<span class="c">#     &quot;&quot;&quot;Return Ckan API key&quot;&quot;&quot;</span>
-<span class="c">#     return os.environ.get(&#39;API_KEY&#39;, &#39;my-api-key&#39;)</span>
-
 </div>
 <span class="nd">@pytest.fixture</span>
 <div class="viewcode-block" id="data_dir"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.data_dir">[docs]</a><span class="k">def</span> <span class="nf">data_dir</span><span class="p">():</span>
@@ -672,7 +667,41 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">py</span>
     <span class="n">here</span> <span class="o">=</span> <span class="n">py</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">local</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">dirpath</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">here</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">here</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">)</span>
+
+
+<span class="c">##------------------------------------------------------------</span>
+<span class="c">## Clients</span>
+</div>
+<span class="k">def</span> <span class="nf">_get_ckan_client</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">,</span> <span class="n">client_class</span><span class="p">):</span>
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">ckan_env</span><span class="o">.</span><span class="n">get_sysadmin_api_key</span><span class="p">()</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">ckan_env</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">client_class</span><span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">finalize</span><span class="p">():</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">addfinalizer</span><span class="p">(</span><span class="n">finalize</span><span class="p">)</span>
+
+    <span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">client</span>
+
+
+<span class="nd">@pytest.fixture</span>
+<span class="k">def</span> <span class="nf">ckan_client_ll</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">ckan_api_client.low_level</span> <span class="kn">import</span> <span class="n">CkanLowlevelClient</span>
+    <span class="k">return</span> <span class="n">_get_ckan_client</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">,</span> <span class="n">CkanLowlevelClient</span><span class="p">)</span>
+
+
+<span class="nd">@pytest.fixture</span>
+<span class="k">def</span> <span class="nf">ckan_client_hl</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">ckan_api_client.high_level</span> <span class="kn">import</span> <span class="n">CkanHighlevelClient</span>
+    <span class="k">return</span> <span class="n">_get_ckan_client</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">,</span> <span class="n">CkanHighlevelClient</span><span class="p">)</span>
+
+
+<span class="c"># @pytest.fixture</span>
+<span class="c"># def ckan_client_sync(request, ckan_env):</span>
+<span class="c">#     from ckan_api_client.low_level import CkanLowlevelClient</span>
+<span class="c">#     return _get_ckan_client(request, ckan_env, CkanLowlevelClient)</span>
 </pre></div>
 
           <footer>

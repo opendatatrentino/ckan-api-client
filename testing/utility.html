@@ -1,0 +1,402 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Testing utilities &mdash; Ckan API client 0.1a documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../',
+        VERSION:'0.1a',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="Ckan API client 0.1a documentation" href="../index.html"/>
+        <link rel="up" title="Testing" href="index.html"/>
+        <link rel="prev" title="Fixtures" href="fixtures.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="icon icon-home"> Ckan API client</a>
+        <form class="wy-form" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../clients/index.html">Clients</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../clients/low-level.html">Low-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../clients/high-level.html">High-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../clients/syncing.html">Syncing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../objects/objects.html">Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../objects/exceptions.html">Exceptions</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Testing</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="fixtures.html">Fixtures</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Testing utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">Ckan API client</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="../index.html">Docs</a> &raquo;</li>
+  <li><a href="">Testing utilities</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <div class="section" id="testing-utilities">
+<h1>Testing utilities<a class="headerlink" href="#testing-utilities" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-ckan_api_client.tests.utils.generate">
+<span id="data-generation"></span><h2>Data generation<a class="headerlink" href="#module-ckan_api_client.tests.utils.generate" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.generate.generate_organization">
+<tt class="descclassname">ckan_api_client.tests.utils.generate.</tt><tt class="descname">generate_organization</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/generate.html#generate_organization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.generate.generate_organization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a random organization object, with:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">name</span></tt>, random, example: <tt class="docutils literal"><span class="pre">&quot;org-abc123&quot;</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">title</span></tt>, random, example: <tt class="docutils literal"><span class="pre">&quot;Organization</span> <span class="pre">abc123&quot;</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">description</span></tt>, random</li>
+<li><tt class="docutils literal"><span class="pre">image</span></tt>, url pointing to a random-generated pic</li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.generate.generate_group">
+<tt class="descclassname">ckan_api_client.tests.utils.generate.</tt><tt class="descname">generate_group</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/generate.html#generate_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.generate.generate_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a random group object, with:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">name</span></tt>, random, example: <tt class="docutils literal"><span class="pre">&quot;grp-abc123&quot;</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">title</span></tt>, random, example: <tt class="docutils literal"><span class="pre">&quot;Group</span> <span class="pre">abc123&quot;</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">description</span></tt>, random</li>
+<li><tt class="docutils literal"><span class="pre">image</span></tt>, url pointing to a random-generated pic</li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.generate.generate_dataset">
+<tt class="descclassname">ckan_api_client.tests.utils.generate.</tt><tt class="descname">generate_dataset</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/generate.html#generate_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.generate.generate_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a dataset, populated with random data.</p>
+<p><strong>Fields:</strong></p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">name</span></tt> &#8211; random string, in the form <tt class="docutils literal"><span class="pre">dataset-{random}</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">title</span></tt> &#8211; random string, in the form <tt class="docutils literal"><span class="pre">Dataset</span> <span class="pre">{random}</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">url</span></tt> &#8211; random url of dataset on an &#8220;external source&#8221;</li>
+<li><tt class="docutils literal"><span class="pre">type</span></tt> &#8211; fixed string: <tt class="docutils literal"><span class="pre">&quot;dataset&quot;</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">maintainer_email</span></tt> &#8211; random-generated email address</li>
+<li><tt class="docutils literal"><span class="pre">maintainer</span></tt> &#8211; random-generated name</li>
+<li><tt class="docutils literal"><span class="pre">author_email</span></tt> &#8211; random-generated email address</li>
+<li><tt class="docutils literal"><span class="pre">author</span></tt> &#8211; random-generated name</li>
+<li><tt class="docutils literal"><span class="pre">license_id</span></tt> &#8211; random license id. One of <tt class="docutils literal"><span class="pre">cc-by</span></tt>, <tt class="docutils literal"><span class="pre">cc-zero</span></tt>,
+<tt class="docutils literal"><span class="pre">cc-by-sa</span></tt> or <tt class="docutils literal"><span class="pre">notspecified</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">private</span></tt> &#8211; Fixed to <tt class="docutils literal"><span class="pre">False</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">notes</span></tt> &#8211; random string, containing some markdown</li>
+<li><tt class="docutils literal"><span class="pre">tags</span></tt> &#8211; random list of tags (strings)</li>
+<li><tt class="docutils literal"><span class="pre">extras</span></tt> &#8211; dictionary containing random key / value pairs</li>
+<li><tt class="docutils literal"><span class="pre">resources</span></tt> &#8211; list of random resources</li>
+<li><tt class="docutils literal"><span class="pre">groups</span></tt> &#8211; empty list</li>
+<li><tt class="docutils literal"><span class="pre">owner_org</span></tt> &#8211; set to None</li>
+<li><tt class="docutils literal"><span class="pre">relationships</span></tt> &#8211; empty list</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <tt class="docutils literal"><span class="pre">owner_org</span></tt> and <tt class="docutils literal"><span class="pre">groups</span></tt> fields will be blank,
+as they must match with existing groups / organizations
+and we don&#8217;t have access to database from here (nor
+is it in the scope of this function!)</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.generate.generate_resource">
+<tt class="descclassname">ckan_api_client.tests.utils.generate.</tt><tt class="descname">generate_resource</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/generate.html#generate_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.generate.generate_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a random resource, to be put in a dataset.</p>
+<p><strong>Fields:</strong></p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">url</span></tt> &#8211; resource URL on an &#8220;external source&#8221;</li>
+<li><tt class="docutils literal"><span class="pre">resource_type</span></tt> &#8211; one of <tt class="docutils literal"><span class="pre">api</span></tt> or <tt class="docutils literal"><span class="pre">file</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">name</span></tt> &#8211; random-generated name</li>
+<li><tt class="docutils literal"><span class="pre">format</span></tt> &#8211; a random format (eg: <tt class="docutils literal"><span class="pre">csv</span></tt>, <tt class="docutils literal"><span class="pre">json</span></tt>)</li>
+<li><tt class="docutils literal"><span class="pre">description</span></tt> &#8211; random generated string</li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.generate.generate_tags">
+<tt class="descclassname">ckan_api_client.tests.utils.generate.</tt><tt class="descname">generate_tags</tt><big>(</big><em>amount</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/generate.html#generate_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.generate.generate_tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate <tt class="docutils literal"><span class="pre">amount</span></tt> random tags.
+Each tag is in the form <tt class="docutils literal"><span class="pre">tag-&lt;random-int&gt;</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of tag names</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.generate.generate_extras">
+<tt class="descclassname">ckan_api_client.tests.utils.generate.</tt><tt class="descname">generate_extras</tt><big>(</big><em>amount</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/generate.html#generate_extras"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.generate.generate_extras" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a dict with <tt class="docutils literal"><span class="pre">amount</span></tt> random key/value pairs.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.generate.generate_data">
+<tt class="descclassname">ckan_api_client.tests.utils.generate.</tt><tt class="descname">generate_data</tt><big>(</big><em>dataset_count=50</em>, <em>orgs_count=10</em>, <em>groups_count=15</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/generate.html#generate_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.generate.generate_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a bunch of random data.
+Will also associate datasets with random organizations / groups.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a dict with the <tt class="docutils literal"><span class="pre">dataset</span></tt>, <tt class="docutils literal"><span class="pre">organization</span></tt> and
+<tt class="docutils literal"><span class="pre">group</span></tt> keys; each of them a dict of <tt class="docutils literal"><span class="pre">{key:</span> <span class="pre">object}</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ckan_api_client.tests.utils.http">
+<span id="http-utilities"></span><h2>HTTP Utilities<a class="headerlink" href="#module-ckan_api_client.tests.utils.http" title="Permalink to this headline">¶</a></h2>
+<p>Utilities for handling / checking HTTP responses</p>
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.http.check_response_ok">
+<tt class="descclassname">ckan_api_client.tests.utils.http.</tt><tt class="descname">check_response_ok</tt><big>(</big><em>response</em>, <em>status_code=200</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/http.html#check_response_ok"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.http.check_response_ok" title="Permalink to this definition">¶</a></dt>
+<dd><div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">deprecated function. Use <a class="reference internal" href="#ckan_api_client.tests.utils.http.check_api_v3_response" title="ckan_api_client.tests.utils.http.check_api_v3_response"><tt class="xref py py-func docutils literal"><span class="pre">check_api_v3_response()</span></tt></a>.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.http.check_response_error">
+<tt class="descclassname">ckan_api_client.tests.utils.http.</tt><tt class="descname">check_response_error</tt><big>(</big><em>response</em>, <em>status_code</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/http.html#check_response_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.http.check_response_error" title="Permalink to this definition">¶</a></dt>
+<dd><div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">deprecated function. Use <a class="reference internal" href="#ckan_api_client.tests.utils.http.check_api_v3_error" title="ckan_api_client.tests.utils.http.check_api_v3_error"><tt class="xref py py-func docutils literal"><span class="pre">check_api_v3_error()</span></tt></a>.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.http.check_api_v3_response">
+<tt class="descclassname">ckan_api_client.tests.utils.http.</tt><tt class="descname">check_api_v3_response</tt><big>(</big><em>response</em>, <em>status_code=200</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/http.html#check_api_v3_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.http.check_api_v3_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure that <tt class="docutils literal"><span class="pre">response</span></tt> is a valid successful response
+from API v3.</p>
+<ul class="simple">
+<li>check http status code to be in the 200-299 range</li>
+<li>check http status code to match <tt class="docutils literal"><span class="pre">status_code</span></tt></li>
+<li>check content-type to be application/json</li>
+<li>check charset to be utf-8</li>
+<li>check content body to be valid json</li>
+<li>make sure response object contains the <tt class="docutils literal"><span class="pre">success</span></tt>,
+<tt class="docutils literal"><span class="pre">result</span></tt> and <tt class="docutils literal"><span class="pre">help</span></tt> keys.</li>
+<li>check that <tt class="docutils literal"><span class="pre">success</span></tt> is True</li>
+<li>check that <tt class="docutils literal"><span class="pre">error</span></tt> key is not in the response</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>response</strong> &#8211; a <tt class="docutils literal"><span class="pre">requests</span></tt> response</li>
+<li><strong>status_code</strong> &#8211; http status code to be checked
+(default: 200)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.http.check_api_v3_error">
+<tt class="descclassname">ckan_api_client.tests.utils.http.</tt><tt class="descname">check_api_v3_error</tt><big>(</big><em>response</em>, <em>status_code</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/http.html#check_api_v3_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.http.check_api_v3_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure that <tt class="docutils literal"><span class="pre">response</span></tt> is a valid error response from
+API v3.</p>
+<ul class="simple">
+<li>check http status code to match <tt class="docutils literal"><span class="pre">status_code</span></tt></li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>response</strong> &#8211; a <tt class="docutils literal"><span class="pre">requests</span></tt> response</li>
+<li><strong>status_code</strong> &#8211; http status code to be checked</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ckan_api_client.tests.utils.strings">
+<span id="string-related"></span><h2>String-related<a class="headerlink" href="#module-ckan_api_client.tests.utils.strings" title="Permalink to this headline">¶</a></h2>
+<p>String generation functions.</p>
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.strings.generate_password">
+<tt class="descclassname">ckan_api_client.tests.utils.strings.</tt><tt class="descname">generate_password</tt><big>(</big><em>length=20</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/strings.html#generate_password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.strings.generate_password" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate random password of the given <tt class="docutils literal"><span class="pre">length</span></tt>.</p>
+<p>Beware that the string will be generate as random data from urandom,
+and returned as headecimal string of twice the <tt class="docutils literal"><span class="pre">length</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.strings.generate_random_alphanum">
+<tt class="descclassname">ckan_api_client.tests.utils.strings.</tt><tt class="descname">generate_random_alphanum</tt><big>(</big><em>length=10</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/strings.html#generate_random_alphanum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.strings.generate_random_alphanum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a random string, made of ascii letters + digits</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.strings.gen_random_id">
+<tt class="descclassname">ckan_api_client.tests.utils.strings.</tt><tt class="descname">gen_random_id</tt><big>(</big><em>length=10</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/strings.html#gen_random_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.strings.gen_random_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a random id, made of lowercase ascii letters + digits</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.strings.gen_dataset_name">
+<tt class="descclassname">ckan_api_client.tests.utils.strings.</tt><tt class="descname">gen_dataset_name</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/strings.html#gen_dataset_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.strings.gen_dataset_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a random dataset name</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.strings.gen_picture">
+<tt class="descclassname">ckan_api_client.tests.utils.strings.</tt><tt class="descname">gen_picture</tt><big>(</big><em>s</em>, <em>size=200</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/strings.html#gen_picture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.strings.gen_picture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate URL to picture from some text hash</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.strings.gen_gravatar">
+<tt class="descclassname">ckan_api_client.tests.utils.strings.</tt><tt class="descname">gen_gravatar</tt><big>(</big><em>s</em>, <em>size=200</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/strings.html#gen_gravatar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.strings.gen_gravatar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return URL for gravatar of md5 of string <tt class="docutils literal"><span class="pre">s</span></tt></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.strings.gen_robohash">
+<tt class="descclassname">ckan_api_client.tests.utils.strings.</tt><tt class="descname">gen_robohash</tt><big>(</big><em>s</em>, <em>size=200</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/strings.html#gen_robohash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.strings.gen_robohash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return URL for robohash pic for sha1 hash of string <tt class="docutils literal"><span class="pre">s</span></tt></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ckan_api_client.tests.utils.validation">
+<span id="validation"></span><h2>Validation<a class="headerlink" href="#module-ckan_api_client.tests.utils.validation" title="Permalink to this headline">¶</a></h2>
+<p>Utility functions to validate expectations</p>
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.validation.check_dataset">
+<tt class="descclassname">ckan_api_client.tests.utils.validation.</tt><tt class="descname">check_dataset</tt><big>(</big><em>dataset</em>, <em>expected</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/validation.html#check_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.validation.check_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure <tt class="docutils literal"><span class="pre">dataset</span></tt> matches the <tt class="docutils literal"><span class="pre">expected</span></tt> one</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.validation.check_group">
+<tt class="descclassname">ckan_api_client.tests.utils.validation.</tt><tt class="descname">check_group</tt><big>(</big><em>group</em>, <em>expected</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/validation.html#check_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.validation.check_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure <tt class="docutils literal"><span class="pre">group</span></tt> matches the <tt class="docutils literal"><span class="pre">expected</span></tt> one</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.tests.utils.validation.check_organization">
+<tt class="descclassname">ckan_api_client.tests.utils.validation.</tt><tt class="descname">check_organization</tt><big>(</big><em>organization</em>, <em>expected</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/utils/validation.html#check_organization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.utils.validation.check_organization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure <tt class="docutils literal"><span class="pre">organization</span></tt> matches the <tt class="docutils literal"><span class="pre">expected</span></tt> one</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          <footer>
+  
+    <div class="rst-footer-buttons">
+      
+      
+        <a href="fixtures.html" class="btn btn-neutral" title="Fixtures"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2014, Samuele Santi.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>

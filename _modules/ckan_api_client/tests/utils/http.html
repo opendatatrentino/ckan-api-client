@@ -1,0 +1,224 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ckan_api_client.tests.utils.http &mdash; Ckan API client 0.1a documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../../../../',
+        VERSION:'0.1a',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="Ckan API client 0.1a documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../../index.html" class="icon icon-home"> Ckan API client</a>
+        <form class="wy-form" action="../../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../clients/index.html">Clients</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/low-level.html">Low-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/high-level.html">High-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/syncing.html">Syncing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../objects/objects.html">Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../objects/exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../testing/fixtures.html">Fixtures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../testing/utility.html">Testing utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">Ckan API client</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+  <li><a href="">ckan_api_client.tests.utils.http</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <h1>Source code for ckan_api_client.tests.utils.http</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Utilities for handling / checking HTTP responses&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">cgi</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+
+<div class="viewcode-block" id="check_response_ok"><a class="viewcode-back" href="../../../../testing/utility.html#ckan_api_client.tests.utils.http.check_response_ok">[docs]</a><span class="k">def</span> <span class="nf">check_response_ok</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. warning:: deprecated function. Use :py:func:`check_api_v3_response`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s">&quot;check_response_ok() is deprecated -- use check_api_v3_response()&quot;</span><span class="p">,</span>
+        <span class="ne">DeprecationWarning</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">check_api_v3_response</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="n">status_code</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="check_response_error"><a class="viewcode-back" href="../../../../testing/utility.html#ckan_api_client.tests.utils.http.check_response_error">[docs]</a><span class="k">def</span> <span class="nf">check_response_error</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">status_code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. warning:: deprecated function. Use :py:func:`check_api_v3_error`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s">&quot;check_response_ok() is deprecated -- use check_api_v3_error()&quot;</span><span class="p">,</span>
+        <span class="ne">DeprecationWarning</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">check_api_v3_error</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="n">status_code</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="check_api_v3_response"><a class="viewcode-back" href="../../../../testing/utility.html#ckan_api_client.tests.utils.http.check_api_v3_response">[docs]</a><span class="k">def</span> <span class="nf">check_api_v3_response</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make sure that ``response`` is a valid successful response</span>
+<span class="sd">    from API v3.</span>
+
+<span class="sd">    - check http status code to be in the 200-299 range</span>
+<span class="sd">    - check http status code to match ``status_code``</span>
+<span class="sd">    - check content-type to be application/json</span>
+<span class="sd">    - check charset to be utf-8</span>
+<span class="sd">    - check content body to be valid json</span>
+<span class="sd">    - make sure response object contains the ``success``,</span>
+<span class="sd">      ``result`` and ``help`` keys.</span>
+<span class="sd">    - check that ``success`` is True</span>
+<span class="sd">    - check that ``error`` key is not in the response</span>
+
+<span class="sd">    :param response: a ``requests`` response</span>
+<span class="sd">    :param status_code: http status code to be checked</span>
+<span class="sd">        (default: 200)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status_code</span>
+
+    <span class="c"># The API should always return json!</span>
+    <span class="n">content_type</span> <span class="o">=</span> <span class="n">cgi</span><span class="o">.</span><span class="n">parse_header</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s">&#39;content-type&#39;</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">content_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;application/json&#39;</span>
+    <span class="k">assert</span> <span class="n">content_type</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;charset&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;utf-8&#39;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="c"># This thing was successful!</span>
+    <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;success&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">True</span>
+    <span class="k">assert</span> <span class="s">&#39;result&#39;</span> <span class="ow">in</span> <span class="n">data</span>
+    <span class="k">assert</span> <span class="s">&#39;error&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span>
+    <span class="k">assert</span> <span class="s">&#39;help&#39;</span> <span class="ow">in</span> <span class="n">data</span>  <span class="c"># :(</span>
+
+    <span class="k">return</span> <span class="n">data</span>
+
+</div>
+<div class="viewcode-block" id="check_api_v3_error"><a class="viewcode-back" href="../../../../testing/utility.html#ckan_api_client.tests.utils.http.check_api_v3_error">[docs]</a><span class="k">def</span> <span class="nf">check_api_v3_error</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">status_code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make sure that ``response`` is a valid error response from</span>
+<span class="sd">    API v3.</span>
+
+<span class="sd">    - check http status code to match ``status_code``</span>
+
+<span class="sd">    :param response: a ``requests`` response</span>
+<span class="sd">    :param status_code: http status code to be checked</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status_code</span>
+
+    <span class="c"># Should return json anyways..</span>
+    <span class="n">content_type</span> <span class="o">=</span> <span class="n">cgi</span><span class="o">.</span><span class="n">parse_header</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s">&#39;content-type&#39;</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">content_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;application/json&#39;</span>
+    <span class="k">assert</span> <span class="n">content_type</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;charset&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;utf-8&#39;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="c"># This is an error!</span>
+    <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;success&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">False</span>
+    <span class="k">assert</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">data</span>
+    <span class="k">assert</span> <span class="s">&#39;result&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+</pre></div>
+
+          <footer>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2014, Samuele Santi.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>
