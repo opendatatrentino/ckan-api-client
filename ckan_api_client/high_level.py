@@ -19,17 +19,33 @@ class CkanHighlevelClient(object):
     ##------------------------------------------------------------
 
     def list_datasets(self):
+        """:return: a list of dataset ids"""
         return self._client.list_datasets()
 
     def iter_datasets(self):
+        """Generator, iterating over all the datasets in ckan"""
         for id in self.list_datasets():
             yield self.get_dataset(id)
 
     def get_dataset(self, id):
+        """
+        Get a specific dataset, by id
+
+        :rtype: :py:class:`.objects.CkanDataset`
+        """
+
         data = self._client.get_dataset(id)
         return CkanDataset.from_dict(data)
 
     def save_dataset(self, dataset):
+        """
+        If the dataset already has an id, call :py:meth:`update_dataset`,
+        otherwise, call :py:meth:`create_dataset`.
+
+        :return: as returned by the called function.
+        :rtype: :py:class:`.objects.CkanDataset`
+        """
+
         if not isinstance(dataset, CkanDataset):
             raise TypeError("Dataset must be a CkanDataset")
 
@@ -38,6 +54,12 @@ class CkanHighlevelClient(object):
         return self.create_dataset(dataset)
 
     def create_dataset(self, dataset):
+        """
+        Create a dataset
+
+        :rtype: :py:class:`.objects.CkanDataset`
+        """
+
         if not isinstance(dataset, CkanDataset):
             raise TypeError("dataset must be a CkanDataset")
         if dataset.id is not None:
@@ -52,6 +74,12 @@ class CkanHighlevelClient(object):
         return created
 
     def update_dataset(self, dataset):
+        """
+        Update a dataset
+
+        :rtype: :py:class:`.objects.CkanDataset`
+        """
+
         if not isinstance(dataset, CkanDataset):
             raise TypeError("Dataset must be a CkanDataset")
         if dataset.id is None:
@@ -66,7 +94,8 @@ class CkanHighlevelClient(object):
         return updated
 
     def delete_dataset(self, id):
-        return self._client.delete_dataset(id)
+        """Delete a dataset, by id"""
+        self._client.delete_dataset(id)
 
     ##------------------------------------------------------------
     ## Organizations management

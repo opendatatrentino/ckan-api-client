@@ -3,7 +3,6 @@ Tests to pin-point exact behavior of datasets CRUD, in particular
 updates.
 """
 
-import uuid
 import datetime
 import copy
 
@@ -12,11 +11,11 @@ import pytest
 from ckan_api_client.exceptions import HTTPError
 from ckan_api_client.tests.utils.strings import gen_random_id
 
-from .utils import ckan_client  # noqa (fixture)
-from .utils import prepare_dataset, check_dataset
+from ckan_api_client.tests.utils.validation import check_dataset
+from ckan_api_client.tests.utils.generate import generate_dataset
 
 
-def test_simple_dataset_crud(ckan_client):
+def test_dataset_simple_crud(ckan_client_ll):
     ## Let's try creating a dataset
 
     now = datetime.datetime.now()
@@ -25,10 +24,7 @@ def test_simple_dataset_crud(ckan_client):
     _dataset = {
         'name': 'dataset-{0}'.format(gen_random_id()),
         'title': 'Dataset {0}'.format(now_str),
-
-        # we can use this as key for harvester?
         'url': 'http://example.com/dataset1',
-
         'author': 'Author 1',
         'author_email': 'author1@example.com',
         'maintainer': 'Maintainer 1',
@@ -38,7 +34,7 @@ def test_simple_dataset_crud(ckan_client):
         'private': False,
     }
 
-    dataset = ckan_client.post_dataset(_dataset)
+    dataset = ckan_client_ll.post_dataset(_dataset)
     dataset_id = dataset['id']
 
     ## Let's check dataset data first
@@ -46,7 +42,7 @@ def test_simple_dataset_crud(ckan_client):
         assert dataset[key] == val
 
     ## Check that retrieved dataset is identical
-    dataset = ckan_client.get_dataset(dataset_id)
+    dataset = ckan_client_ll.get_dataset(dataset_id)
     for key, val in _dataset.iteritems():
         assert dataset[key] == val
 
@@ -61,8 +57,8 @@ def test_simple_dataset_crud(ckan_client):
     new_dataset['id'] = dataset_id
 
     ## Get the updated dataset
-    updated_dataset = ckan_client.put_dataset(new_dataset)
-    updated_dataset_2 = ckan_client.get_dataset(dataset_id)
+    updated_dataset = ckan_client_ll.put_dataset(new_dataset)
+    updated_dataset_2 = ckan_client_ll.get_dataset(dataset_id)
 
     ## They should be equal!
     assert updated_dataset == updated_dataset_2
@@ -79,23 +75,32 @@ def test_simple_dataset_crud(ckan_client):
     assert updated_dataset == expected_dataset
 
     ## Delete the dataset
-    ckan_client.delete_dataset(dataset_id)
+    ckan_client_ll.delete_dataset(dataset_id)
 
 
-@pytest.mark.xfail(run=False, reason="Requires rewrite of prepare_dataset()")
-def test_delete_dataset(ckan_client):
-    our_dataset = prepare_dataset(ckan_client)
-    created_dataset = ckan_client.post_dataset(our_dataset)
-    dataset_id = created_dataset['id']
+@pytest.mark.xfail(run=False, reason="is using functions from hi-lev client")
+def test_dataset_delete(ckan_client_ll):
+    from ckan_api_client.objects import CkanDataset
 
-    dataset_ids = ckan_client.list_datasets()
+    dataset_dict = generate_dataset()
+    dataset = CkanDataset.from_dict(dataset_dict)
+    assert dataset_dict == dataset.to_dict()
+
+    created_dict = ckan_client_ll.post_dataset(dataset.to_dict())
+    created = CkanDataset.from_dict(created_dict)
+    assert dataset.is_equivalent(created)
+
+    dataset_id = created.id
+
+    ## Make sure it is in the list
+    dataset_ids = ckan_client_ll.list_datasets()
     assert dataset_id in dataset_ids
 
     ## Now delete
-    ckan_client.delete_dataset(dataset_id)
+    ckan_client_ll.delete_dataset(dataset_id)
 
     ## Anonymous users cannot see the dataset
-    anon_client = ckan_client.anonymous
+    anon_client = ckan_client_ll.anonymous
     dataset_ids = anon_client.list_datasets()
     assert dataset_id not in dataset_ids
     with pytest.raises(HTTPError) as excinfo:
@@ -103,36 +108,38 @@ def test_delete_dataset(ckan_client):
     assert excinfo.value.status_code in (403, 404)  # :(
 
     ## Administrators can still access deleted dataset
-    deleted_dataset = ckan_client.get_dataset(dataset_id)
+    deleted_dataset = ckan_client_ll.get_dataset(dataset_id)
     assert deleted_dataset['state'] == 'deleted'
 
     ## But it's still gone from the list
-    dataset_ids = ckan_client.list_datasets()
+    dataset_ids = ckan_client_ll.list_datasets()
     assert dataset_id not in dataset_ids
 
     # ## Yay! Let's delete everything!
-    # dataset_ids = ckan_client.list_datasets()
+    # dataset_ids = ckan_client_ll.list_datasets()
     # deleted = set()
     # for dataset_id in dataset_ids[:10]:
-    #     ckan_client.delete_dataset(dataset_id)
+    #     ckan_client_ll.delete_dataset(dataset_id)
     #     deleted.add(dataset_id)
 
     # ## Check that they're really gone!
-    # dataset_ids = ckan_client.list_datasets()
+    # dataset_ids = ckan_client_ll.list_datasets()
     # assert deleted.intersection(dataset_ids) == set()
 
 
-@pytest.mark.xfail(run=False, reason="Requires rewrite of prepare_dataset()")
-def test_updating_extras(request, ckan_client):
+@pytest.mark.xfail(run=False, reason='Uses functions from the hi-lev client')
+def test_updating_extras(request, ckan_client_ll):
     ## First, create the dataset
-    our_dataset = prepare_dataset(ckan_client)
-    created_dataset = ckan_client.post_dataset(our_dataset)
+    # our_dataset = prepare_dataset(ckan_client_ll)
+
+    our_dataset = generate_dataset()
+    created_dataset = ckan_client_ll.post_dataset(our_dataset)
     dataset_id = created_dataset['id']
-    request.addfinalizer(lambda: ckan_client.delete_dataset(dataset_id))
+    request.addfinalizer(lambda: ckan_client_ll.delete_dataset(dataset_id))
 
     def update_and_check(updates, expected):
-        updated_dataset = ckan_client.update_dataset(dataset_id, updates)
-        retrieved_dataset = ckan_client.get_dataset(dataset_id)
+        updated_dataset = ckan_client_ll.update_dataset(dataset_id, updates)
+        retrieved_dataset = ckan_client_ll.get_dataset(dataset_id)
         assert updated_dataset == retrieved_dataset
         check_dataset(updated_dataset, expected)
 
@@ -195,19 +202,19 @@ def test_updating_extras(request, ckan_client):
     update_and_check({'extras': extras_update}, expected_updated_dataset)
 
 
-def test_extras_bad_behavior(request, ckan_client):
+def test_extras_bad_behavior(request, ckan_client_ll):
     dataset = {
         'name': 'dataset-{0}'.format(gen_random_id()),
         'title': "Test dataset",
         'extras': {'a': 'aa', 'b': 'bb', 'c': 'cc'},
     }
-    created = ckan_client.post_dataset(dataset)
+    created = ckan_client_ll.post_dataset(dataset)
     dataset_id = created['id']
-    request.addfinalizer(lambda: ckan_client.delete_dataset(dataset_id))
+    request.addfinalizer(lambda: ckan_client_ll.delete_dataset(dataset_id))
     assert created['extras'] == {'a': 'aa', 'b': 'bb', 'c': 'cc'}
 
     ## Update #1: omitting extras will.. flush it!
-    updated = ckan_client.put_dataset({
+    updated = ckan_client_ll.put_dataset({
         'id': dataset_id,
         'name': dataset['name'],
         'title': dataset['title'],
@@ -216,7 +223,7 @@ def test_extras_bad_behavior(request, ckan_client):
     assert updated['extras'] == {}
 
     ## Update #2: re-add some extras
-    updated = ckan_client.put_dataset({
+    updated = ckan_client_ll.put_dataset({
         'id': dataset_id,
         'name': dataset['name'],
         'title': dataset['title'],
@@ -225,7 +232,7 @@ def test_extras_bad_behavior(request, ckan_client):
     assert updated['extras'] == {'a': 'aa', 'b': 'bb', 'c': 'cc'}
 
     ## Update #3: partial extras will just update
-    updated = ckan_client.put_dataset({
+    updated = ckan_client_ll.put_dataset({
         'id': dataset_id,
         'name': dataset['name'],
         'title': dataset['title'],
@@ -234,7 +241,7 @@ def test_extras_bad_behavior(request, ckan_client):
     assert updated['extras'] == {'a': 'UPDATED', 'b': 'bb', 'c': 'cc'}
 
     ## Update #4: empty extras has no effect
-    updated = ckan_client.put_dataset({
+    updated = ckan_client_ll.put_dataset({
         'id': dataset_id,
         'name': dataset['name'],
         'title': dataset['title'],
@@ -243,7 +250,7 @@ def test_extras_bad_behavior(request, ckan_client):
     assert updated['extras'] == {'a': 'UPDATED', 'b': 'bb', 'c': 'cc'}
 
     ## Update #5: this is fucked up, man..
-    updated = ckan_client.put_dataset({
+    updated = ckan_client_ll.put_dataset({
         'id': dataset_id,
         'name': dataset['name'],
         'title': dataset['title'],
@@ -251,8 +258,10 @@ def test_extras_bad_behavior(request, ckan_client):
     assert updated['extras'] == {}
 
 
-@pytest.mark.skipif(True, reason="is using functions from hi-lev client")
-def test_updating_groups(request, ckan_client):
+@pytest.mark.xfail(run=False, reason="is using functions from hi-lev client")
+def test_updating_groups(request, ckan_client_ll):
+    client = ckan_client_ll  # shorten name
+
     dataset = {
         'name': 'dataset-{0}'.format(gen_random_id()),
         'title': "Test dataset",
@@ -262,26 +271,26 @@ def test_updating_groups(request, ckan_client):
     dummy_groups = []
     for x in xrange(10):
         code = gen_random_id()
-        group = ckan_client.post_group({
+        group = client.post_group({
             'name': 'group-{0}'.format(code),
             'title': 'Group {0}'.format(code),
         })
         dummy_groups.append(group)
-        request.addfinalizer(lambda: ckan_client.delete_group(group['id']))
+        request.addfinalizer(lambda: client.delete_group(group['id']))
 
     dataset['groups'] = [x['id'] for x in dummy_groups[:5]]
 
-    created = ckan_client.post_dataset(dataset)
+    created = client.post_dataset(dataset)
     dataset_id = created['id']
-    request.addfinalizer(lambda: ckan_client.delete_dataset(dataset_id))
+    request.addfinalizer(lambda: client.delete_dataset(dataset_id))
     assert sorted(created['groups']) == sorted(dataset['groups'])
 
     # Let's try updating the dataset w/o groups
-    updated = ckan_client.update_dataset(dataset_id, {'title': "My dataset"})
+    updated = client.update_dataset(dataset_id, {'title': "My dataset"})
     assert sorted(updated['groups']) == sorted(dataset['groups'])
 
     # Let's try updating the dataset with empty groups
-    updated = ckan_client.update_dataset(dataset_id, {'groups': []})
+    updated = client.update_dataset(dataset_id, {'groups': []})
     assert sorted(updated['groups']) \
         == sorted(dataset['groups'])  # WTF? -- should be empty
 
@@ -290,18 +299,18 @@ def test_updating_groups(request, ckan_client):
 
     # # Let's play around a bit..
     # new_groups = [x['id'] for x in dummy_groups[:3]]
-    # updated = ckan_client.update_dataset(dataset_id, {'groups': new_groups})
+    # updated = client.update_dataset(dataset_id, {'groups': new_groups})
     # assert sorted(updated['groups']) \
     #     == sorted(dataset['groups'] + new_groups)  # WTF?
 
     # # Let's play around a bit..
     # new_groups = [x['id'] for x in dummy_groups[7:9]]
-    # updated = ckan_client.update_dataset(dataset_id, {'groups': new_groups})
+    # updated = client.update_dataset(dataset_id, {'groups': new_groups})
     # assert sorted(updated['groups']) \
     #     == sorted(new_groups)  # WTF?
 
 
-def test_groups_bad_behavior(request, ckan_client):
+def test_groups_bad_behavior(request, ckan_client_ll):
     """
     Test to pinpoint "bad behavior" when updating groups associated
     with a dataset.
@@ -309,6 +318,8 @@ def test_groups_bad_behavior(request, ckan_client):
     See the GROUP_TEST_CASES (initial state, update, result) below
     for more information on the behavior to expect..
     """
+
+    client = ckan_client_ll
 
     OMITTED = object()
     GROUP_TEST_CASES = [
@@ -335,12 +346,12 @@ def test_groups_bad_behavior(request, ckan_client):
     grp = []
     for x in xrange(5):
         code = gen_random_id()
-        group = ckan_client.post_group({
+        group = client.post_group({
             'name': 'group-{0}'.format(code),
             'title': 'Group {0}'.format(code),
         })
         grp.append(group['id'])
-        request.addfinalizer(lambda: ckan_client.delete_group(group['id']))
+        request.addfinalizer(lambda: client.delete_group(group['id']))
 
     def _new_dataset(groups):
         code = gen_random_id()
@@ -349,12 +360,12 @@ def test_groups_bad_behavior(request, ckan_client):
             'title': 'Dataset {0}'.format(code),
             'groups': [grp[1], grp[2]],
         }
-        created = ckan_client.post_dataset(dataset)
+        created = client.post_dataset(dataset)
         assert created['name'] == dataset['name']
         assert created['title'] == dataset['title']
         assert sorted(created['groups']) == sorted([grp[1], grp[2]])
         dataset_id = created['id']
-        request.addfinalizer(lambda: ckan_client.delete_dataset(dataset_id))
+        request.addfinalizer(lambda: client.delete_dataset(dataset_id))
         return created
 
     def _to_ids(x):
@@ -370,8 +381,8 @@ def test_groups_bad_behavior(request, ckan_client):
         ## Intentionally using low-level put_dataset() here
         _data = {'id': dataset['id'], 'groups': update} \
             if update is not OMITTED else {'id': dataset['id']}
-        upd = ckan_client.put_dataset(_data)
-        upd2 = ckan_client.get_dataset(dataset['id'])
+        upd = client.put_dataset(_data)
+        upd2 = client.get_dataset(dataset['id'])
 
         assert sorted(upd['groups']) == sorted(result)
         assert sorted(upd2['groups']) == sorted(result)

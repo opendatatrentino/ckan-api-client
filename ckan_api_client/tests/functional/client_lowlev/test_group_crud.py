@@ -3,26 +3,28 @@ import copy
 import pytest
 
 from ckan_api_client.exceptions import HTTPError
-from .utils import ckan_client  # noqa (fixture)
-from .utils import check_group, gen_random_id, get_dummy_group
+from ckan_api_client.tests.utils.strings import gen_random_id
+from ckan_api_client.tests.utils.validation import check_group
 
 
-def test_group_crud(ckan_client):
+@pytest.mark.xfail(run=False, reason='Work in progress')
+def test_group_crud(ckan_client_ll):
+    client = ckan_client_ll
     code = gen_random_id()
     group = {
         'name': 'group-{0}'.format(code),
         'title': 'Group {0}'.format(code),
     }
-    created = ckan_client.post_group(group)
+    created = client.post_group(group)
     check_group(created, group)
     group_id = created['id']
 
     # Retrieve & check
-    retrieved = ckan_client.get_group(group_id)
+    retrieved = client.get_group(group_id)
     assert retrieved == created
 
     # Update & check
-    updated = ckan_client.put_group({'id': group_id, 'title': 'My Group'})
+    updated = client.put_group({'id': group_id, 'title': 'My Group'})
     assert updated['name'] == group['name']
     assert updated['title'] == 'My Group'
 
@@ -32,7 +34,7 @@ def test_group_crud(ckan_client):
     check_group(updated, expected)
 
     # Retrieve & double-check
-    retrieved = ckan_client.get_group(group_id)
+    retrieved = client.get_group(group_id)
     assert retrieved == updated
 
     # Delete
@@ -41,10 +43,10 @@ def test_group_crud(ckan_client):
     #       The only hint it has been deleted is its "state"
     #       is set to "deleted".
     #------------------------------------------------------------
-    ckan_client.delete_group(group_id)
+    client.delete_group(group_id)
 
     with pytest.raises(HTTPError) as excinfo:
-        ckan_client.get_group(group_id)
+        client.get_group(group_id)
     assert excinfo.value.status_code in (404, 403)  # workaround
 
     # retrieved = ckan_client.get_group(group_id)
@@ -58,6 +60,7 @@ def test_group_crud(ckan_client):
     # assert retrieved['state'] == 'deleted'
 
 
+@pytest.mark.xfail(run=False, reason='Is using deprecated functions')
 def test_simple_group_crud(ckan_client):
     ## Let's try creating a dataset
 
