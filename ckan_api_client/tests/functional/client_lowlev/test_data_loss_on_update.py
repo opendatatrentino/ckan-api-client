@@ -53,7 +53,7 @@ from .utils import prepare_dataset, check_dataset
 #     return _DATASET_UPDATE_TESTS_DICT[request.param]
 
 
-@pytest.mark.skipif(True, reason="Requires rewrite of prepare_dataset()")
+@pytest.mark.xfail(run=False, reason="Requires rewrite of prepare_dataset()")
 def test_data_loss_on_update(request, ckan_client):
     """
     Strategy:

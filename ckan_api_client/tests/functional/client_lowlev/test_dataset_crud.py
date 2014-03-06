@@ -82,7 +82,7 @@ def test_simple_dataset_crud(ckan_client):
     ckan_client.delete_dataset(dataset_id)
 
 
-@pytest.mark.skipif(True, reason="Requires rewrite of prepare_dataset()")
+@pytest.mark.xfail(run=False, reason="Requires rewrite of prepare_dataset()")
 def test_delete_dataset(ckan_client):
     our_dataset = prepare_dataset(ckan_client)
     created_dataset = ckan_client.post_dataset(our_dataset)
@@ -122,7 +122,7 @@ def test_delete_dataset(ckan_client):
     # assert deleted.intersection(dataset_ids) == set()
 
 
-@pytest.mark.skipif(True, reason="Requires rewrite of prepare_dataset()")
+@pytest.mark.xfail(run=False, reason="Requires rewrite of prepare_dataset()")
 def test_updating_extras(request, ckan_client):
     ## First, create the dataset
     our_dataset = prepare_dataset(ckan_client)
