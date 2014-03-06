@@ -10,15 +10,15 @@ from ckan_api_client.objects import CkanOrganization
 @pytest.mark.xfail(run=False, reason='Work in progress')
 def test_ckan_organization():
     raw_data = {
-        'approval_status',
-        'description',
-        'image_display_url',
-        'image_url',
-        'is_organization',
-        'name',
-        'state',
-        'title',
-        'type',
+        # 'approval_status',
+        # 'description',
+        # 'image_display_url',
+        # 'image_url',
+        # 'is_organization',
+        # 'name',
+        # 'state',
+        # 'title',
+        # 'type',
     }
     _raw_data = copy.deepcopy(raw_data)
     assert raw_data == _raw_data
