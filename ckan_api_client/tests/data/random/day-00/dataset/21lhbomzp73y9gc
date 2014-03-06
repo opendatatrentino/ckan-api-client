@@ -1,1 +1,75 @@
-{"relationships": [], "owner_org": "org-3z8jcsemk7", "maintainer": "Maintainer 21lhbomzp73y9gc", "name": "dataset-21lhbomzp73y9gc", "title": "Dataset 21lhbomzp73y9gc", "url": "http://www.example.com/dataset/21lhbomzp73y9gc", "notes": "Notes for **dataset** 21lhbomzp73y9gc.", "author": "Author 21lhbomzp73y9gc", "private": false, "maintainer_email": "maintainer-21lhbomzp73y9gc@example.com", "author_email": "author-{0}@example.com", "extras": {"key-050": "value 033", "key-042": "value 040", "key-027": "value 018", "key-026": "value 040", "key-024": "value 028", "key-030": "value 019", "key-000": "value 045", "key-033": "value 042", "key-009": "value 010", "key-017": "value 042"}, "resources": [{"url": "http://example.com/resource/4l6lfcsbse.csv", "description": "Resource 4l6lfcsbse", "name": "resource-4l6lfcsbse", "resource_type": "file", "format": "CSV"}, {"url": "http://example.com/resource/q486sypzu5.csv", "description": "Resource q486sypzu5", "name": "resource-q486sypzu5", "resource_type": "file", "format": "CSV"}, {"url": "http://example.com/resource/oh3b0swp7z.json", "description": "Resource oh3b0swp7z", "name": "resource-oh3b0swp7z", "resource_type": "file", "format": "JSON"}, {"url": "http://example.com/resource/dkzzn3gwyu.json", "description": "Resource dkzzn3gwyu", "name": "resource-dkzzn3gwyu", "resource_type": "file", "format": "JSON"}], "groups": ["grp-femfhys5kc", "grp-av2d73n6b5", "grp-tpdh854wxq", "grp-femfhys5kc"], "license_id": "cc-by-sa", "type": "dataset", "id": "21lhbomzp73y9gc", "tags": ["tag-023", "tag-015", "tag-008", "tag-037", "tag-000", "tag-038", "tag-039", "tag-038", "tag-014"]}
+{
+  "author": "Author 21lhbomzp73y9gc",
+  "author_email": "author-{0}@example.com",
+  "extras": {
+    "key-000": "value 045",
+    "key-009": "value 010",
+    "key-017": "value 042",
+    "key-024": "value 028",
+    "key-026": "value 040",
+    "key-027": "value 018",
+    "key-030": "value 019",
+    "key-033": "value 042",
+    "key-042": "value 040",
+    "key-050": "value 033"
+  },
+  "groups": [
+    "grp-femfhys5kc",
+    "grp-av2d73n6b5",
+    "grp-tpdh854wxq",
+    "grp-femfhys5kc"
+  ],
+  "id": "21lhbomzp73y9gc",
+  "license_id": "cc-by-sa",
+  "maintainer": "Maintainer 21lhbomzp73y9gc",
+  "maintainer_email": "maintainer-21lhbomzp73y9gc@example.com",
+  "name": "dataset-21lhbomzp73y9gc",
+  "notes": "Notes for **dataset** 21lhbomzp73y9gc.",
+  "owner_org": "org-3z8jcsemk7",
+  "private": false,
+  "relationships": [],
+  "resources": [
+    {
+      "description": "Resource 4l6lfcsbse",
+      "format": "CSV",
+      "name": "resource-4l6lfcsbse",
+      "resource_type": "file",
+      "url": "http://example.com/resource/4l6lfcsbse.csv"
+    },
+    {
+      "description": "Resource q486sypzu5",
+      "format": "CSV",
+      "name": "resource-q486sypzu5",
+      "resource_type": "file",
+      "url": "http://example.com/resource/q486sypzu5.csv"
+    },
+    {
+      "description": "Resource oh3b0swp7z",
+      "format": "JSON",
+      "name": "resource-oh3b0swp7z",
+      "resource_type": "file",
+      "url": "http://example.com/resource/oh3b0swp7z.json"
+    },
+    {
+      "description": "Resource dkzzn3gwyu",
+      "format": "JSON",
+      "name": "resource-dkzzn3gwyu",
+      "resource_type": "file",
+      "url": "http://example.com/resource/dkzzn3gwyu.json"
+    }
+  ],
+  "tags": [
+    "tag-023",
+    "tag-015",
+    "tag-008",
+    "tag-037",
+    "tag-000",
+    "tag-038",
+    "tag-039",
+    "tag-038",
+    "tag-014"
+  ],
+  "title": "Dataset 21lhbomzp73y9gc",
+  "type": "dataset",
+  "url": "http://www.example.com/dataset/21lhbomzp73y9gc"
+}

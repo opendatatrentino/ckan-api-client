@@ -1,1 +1,52 @@
-{"relationships": [], "owner_org": "org-oyvef2agzu", "maintainer": "Maintainer c8gt68ttw7pq826", "name": "dataset-c8gt68ttw7pq826", "title": "Dataset c8gt68ttw7pq826", "url": "http://www.example.com/dataset/c8gt68ttw7pq826", "notes": "Notes for **dataset** c8gt68ttw7pq826.", "author": "Author c8gt68ttw7pq826", "private": false, "maintainer_email": "maintainer-c8gt68ttw7pq826@example.com", "author_email": "author-{0}@example.com", "extras": {"key-046": "value 041", "key-041": "value 028", "key-043": "value 009", "key-048": "value 000", "key-001": "value 049", "key-025": "value 021", "key-024": "value 023", "key-022": "value 011", "key-032": "value 001", "key-033": "value 020", "key-016": "value 015", "key-008": "value 028", "key-015": "value 010", "key-038": "value 045"}, "resources": [{"url": "http://example.com/resource/udujpzhgy1.csv", "description": "Resource udujpzhgy1", "name": "resource-udujpzhgy1", "resource_type": "api", "format": "CSV"}, {"url": "http://example.com/resource/ryfimohjvf.csv", "description": "Resource ryfimohjvf", "name": "resource-ryfimohjvf", "resource_type": "file", "format": "CSV"}], "groups": ["grp-0uocbjsk6k"], "license_id": "notspecified", "type": "dataset", "id": "c8gt68ttw7pq826", "tags": []}
+{
+  "author": "Author c8gt68ttw7pq826",
+  "author_email": "author-{0}@example.com",
+  "extras": {
+    "key-001": "value 049",
+    "key-008": "value 028",
+    "key-015": "value 010",
+    "key-016": "value 015",
+    "key-022": "value 011",
+    "key-024": "value 023",
+    "key-025": "value 021",
+    "key-032": "value 001",
+    "key-033": "value 020",
+    "key-038": "value 045",
+    "key-041": "value 028",
+    "key-043": "value 009",
+    "key-046": "value 041",
+    "key-048": "value 000"
+  },
+  "groups": [
+    "grp-0uocbjsk6k"
+  ],
+  "id": "c8gt68ttw7pq826",
+  "license_id": "notspecified",
+  "maintainer": "Maintainer c8gt68ttw7pq826",
+  "maintainer_email": "maintainer-c8gt68ttw7pq826@example.com",
+  "name": "dataset-c8gt68ttw7pq826",
+  "notes": "Notes for **dataset** c8gt68ttw7pq826.",
+  "owner_org": "org-oyvef2agzu",
+  "private": false,
+  "relationships": [],
+  "resources": [
+    {
+      "description": "Resource udujpzhgy1",
+      "format": "CSV",
+      "name": "resource-udujpzhgy1",
+      "resource_type": "api",
+      "url": "http://example.com/resource/udujpzhgy1.csv"
+    },
+    {
+      "description": "Resource ryfimohjvf",
+      "format": "CSV",
+      "name": "resource-ryfimohjvf",
+      "resource_type": "file",
+      "url": "http://example.com/resource/ryfimohjvf.csv"
+    }
+  ],
+  "tags": [],
+  "title": "Dataset c8gt68ttw7pq826",
+  "type": "dataset",
+  "url": "http://www.example.com/dataset/c8gt68ttw7pq826"
+}

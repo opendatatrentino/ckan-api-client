@@ -1,1 +1,60 @@
-{"relationships": [], "owner_org": "org-7idi8lz7x6", "maintainer": "Maintainer v8t16za3cv51uyu", "name": "dataset-v8t16za3cv51uyu", "title": "Dataset v8t16za3cv51uyu", "url": "http://www.example.com/dataset/v8t16za3cv51uyu", "notes": "Notes for **dataset** v8t16za3cv51uyu.", "author": "Author v8t16za3cv51uyu", "private": false, "maintainer_email": "maintainer-v8t16za3cv51uyu@example.com", "author_email": "author-{0}@example.com", "extras": {"key-001": "value 006"}, "resources": [{"url": "http://example.com/resource/zeoqyhb6o1.json", "description": "Resource zeoqyhb6o1", "name": "resource-zeoqyhb6o1", "resource_type": "api", "format": "JSON"}, {"url": "http://example.com/resource/r4iyzhmlff.json", "description": "Resource r4iyzhmlff", "name": "resource-r4iyzhmlff", "resource_type": "api", "format": "JSON"}, {"url": "http://example.com/resource/kihs4zbous.csv", "description": "Resource kihs4zbous", "name": "resource-kihs4zbous", "resource_type": "api", "format": "CSV"}, {"url": "http://example.com/resource/a12fzy9fi9.csv", "description": "Resource a12fzy9fi9", "name": "resource-a12fzy9fi9", "resource_type": "file", "format": "CSV"}], "groups": ["grp-hv9ug1286m"], "license_id": "cc-zero", "type": "dataset", "id": "v8t16za3cv51uyu", "tags": ["tag-006", "tag-017", "tag-041", "tag-006", "tag-001", "tag-005"]}
+{
+  "author": "Author v8t16za3cv51uyu",
+  "author_email": "author-{0}@example.com",
+  "extras": {
+    "key-001": "value 006"
+  },
+  "groups": [
+    "grp-hv9ug1286m"
+  ],
+  "id": "v8t16za3cv51uyu",
+  "license_id": "cc-zero",
+  "maintainer": "Maintainer v8t16za3cv51uyu",
+  "maintainer_email": "maintainer-v8t16za3cv51uyu@example.com",
+  "name": "dataset-v8t16za3cv51uyu",
+  "notes": "Notes for **dataset** v8t16za3cv51uyu.",
+  "owner_org": "org-7idi8lz7x6",
+  "private": false,
+  "relationships": [],
+  "resources": [
+    {
+      "description": "Resource zeoqyhb6o1",
+      "format": "JSON",
+      "name": "resource-zeoqyhb6o1",
+      "resource_type": "api",
+      "url": "http://example.com/resource/zeoqyhb6o1.json"
+    },
+    {
+      "description": "Resource r4iyzhmlff",
+      "format": "JSON",
+      "name": "resource-r4iyzhmlff",
+      "resource_type": "api",
+      "url": "http://example.com/resource/r4iyzhmlff.json"
+    },
+    {
+      "description": "Resource kihs4zbous",
+      "format": "CSV",
+      "name": "resource-kihs4zbous",
+      "resource_type": "api",
+      "url": "http://example.com/resource/kihs4zbous.csv"
+    },
+    {
+      "description": "Resource a12fzy9fi9",
+      "format": "CSV",
+      "name": "resource-a12fzy9fi9",
+      "resource_type": "file",
+      "url": "http://example.com/resource/a12fzy9fi9.csv"
+    }
+  ],
+  "tags": [
+    "tag-006",
+    "tag-017",
+    "tag-041",
+    "tag-006",
+    "tag-001",
+    "tag-005"
+  ],
+  "title": "Dataset v8t16za3cv51uyu",
+  "type": "dataset",
+  "url": "http://www.example.com/dataset/v8t16za3cv51uyu"
+}

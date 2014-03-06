@@ -1,1 +1,47 @@
-{"relationships": [], "owner_org": "org-o07hzh9nc9", "maintainer": "Maintainer xg39h3zco9yvg6p", "name": "dataset-xg39h3zco9yvg6p", "title": "Dataset xg39h3zco9yvg6p", "url": "http://www.example.com/dataset/xg39h3zco9yvg6p", "notes": "Notes for **dataset** xg39h3zco9yvg6p.", "author": "Author xg39h3zco9yvg6p", "private": false, "maintainer_email": "maintainer-xg39h3zco9yvg6p@example.com", "author_email": "author-{0}@example.com", "extras": {"key-047": "value 036", "key-021": "value 017"}, "resources": [{"url": "http://example.com/resource/prdy6hqzx1.json", "description": "Resource prdy6hqzx1", "name": "resource-prdy6hqzx1", "resource_type": "file", "format": "JSON"}], "groups": ["grp-8hrs003xp8", "grp-ygicq01mtp", "grp-0uocbjsk6k", "grp-bg9vppwyd5", "grp-bg9vppwyd5"], "license_id": "cc-zero", "type": "dataset", "id": "xg39h3zco9yvg6p", "tags": ["tag-032", "tag-037", "tag-045", "tag-015", "tag-033", "tag-030", "tag-029", "tag-002", "tag-008"]}
+{
+  "author": "Author xg39h3zco9yvg6p",
+  "author_email": "author-{0}@example.com",
+  "extras": {
+    "key-021": "value 017",
+    "key-047": "value 036"
+  },
+  "groups": [
+    "grp-8hrs003xp8",
+    "grp-ygicq01mtp",
+    "grp-0uocbjsk6k",
+    "grp-bg9vppwyd5",
+    "grp-bg9vppwyd5"
+  ],
+  "id": "xg39h3zco9yvg6p",
+  "license_id": "cc-zero",
+  "maintainer": "Maintainer xg39h3zco9yvg6p",
+  "maintainer_email": "maintainer-xg39h3zco9yvg6p@example.com",
+  "name": "dataset-xg39h3zco9yvg6p",
+  "notes": "Notes for **dataset** xg39h3zco9yvg6p.",
+  "owner_org": "org-o07hzh9nc9",
+  "private": false,
+  "relationships": [],
+  "resources": [
+    {
+      "description": "Resource prdy6hqzx1",
+      "format": "JSON",
+      "name": "resource-prdy6hqzx1",
+      "resource_type": "file",
+      "url": "http://example.com/resource/prdy6hqzx1.json"
+    }
+  ],
+  "tags": [
+    "tag-032",
+    "tag-037",
+    "tag-045",
+    "tag-015",
+    "tag-033",
+    "tag-030",
+    "tag-029",
+    "tag-002",
+    "tag-008"
+  ],
+  "title": "Dataset xg39h3zco9yvg6p",
+  "type": "dataset",
+  "url": "http://www.example.com/dataset/xg39h3zco9yvg6p"
+}

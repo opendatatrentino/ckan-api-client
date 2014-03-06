@@ -1,1 +1,62 @@
-{"relationships": [], "owner_org": "org-whxyb1tppo", "maintainer": "Maintainer dp7bddal99q42vo", "name": "dataset-dp7bddal99q42vo", "title": "Dataset dp7bddal99q42vo", "url": "http://www.example.com/dataset/dp7bddal99q42vo", "notes": "Notes for **dataset** dp7bddal99q42vo.", "author": "Author dp7bddal99q42vo", "private": false, "maintainer_email": "maintainer-dp7bddal99q42vo@example.com", "author_email": "author-{0}@example.com", "extras": {"key-045": "value 038", "key-046": "value 031", "key-032": "value 049", "key-043": "value 011", "key-048": "value 014", "key-027": "value 026", "key-003": "value 034", "key-029": "value 013", "key-021": "value 027", "key-020": "value 040", "key-016": "value 036", "key-013": "value 047", "key-018": "value 049"}, "resources": [{"url": "http://example.com/resource/gojqosyv8i.json", "description": "Resource gojqosyv8i", "name": "resource-gojqosyv8i", "resource_type": "api", "format": "JSON"}, {"url": "http://example.com/resource/2jscm6slku.json", "description": "Resource 2jscm6slku", "name": "resource-2jscm6slku", "resource_type": "api", "format": "JSON"}, {"url": "http://example.com/resource/2531kezyjd.csv", "description": "Resource 2531kezyjd", "name": "resource-2531kezyjd", "resource_type": "api", "format": "CSV"}], "groups": ["grp-zvoeduhmj9", "grp-4l4x7ekjy2", "grp-w6macmqbsz"], "license_id": "cc-by-sa", "type": "dataset", "id": "dp7bddal99q42vo", "tags": ["tag-015"]}
+{
+  "author": "Author dp7bddal99q42vo",
+  "author_email": "author-{0}@example.com",
+  "extras": {
+    "key-003": "value 034",
+    "key-013": "value 047",
+    "key-016": "value 036",
+    "key-018": "value 049",
+    "key-020": "value 040",
+    "key-021": "value 027",
+    "key-027": "value 026",
+    "key-029": "value 013",
+    "key-032": "value 049",
+    "key-043": "value 011",
+    "key-045": "value 038",
+    "key-046": "value 031",
+    "key-048": "value 014"
+  },
+  "groups": [
+    "grp-zvoeduhmj9",
+    "grp-4l4x7ekjy2",
+    "grp-w6macmqbsz"
+  ],
+  "id": "dp7bddal99q42vo",
+  "license_id": "cc-by-sa",
+  "maintainer": "Maintainer dp7bddal99q42vo",
+  "maintainer_email": "maintainer-dp7bddal99q42vo@example.com",
+  "name": "dataset-dp7bddal99q42vo",
+  "notes": "Notes for **dataset** dp7bddal99q42vo.",
+  "owner_org": "org-whxyb1tppo",
+  "private": false,
+  "relationships": [],
+  "resources": [
+    {
+      "description": "Resource gojqosyv8i",
+      "format": "JSON",
+      "name": "resource-gojqosyv8i",
+      "resource_type": "api",
+      "url": "http://example.com/resource/gojqosyv8i.json"
+    },
+    {
+      "description": "Resource 2jscm6slku",
+      "format": "JSON",
+      "name": "resource-2jscm6slku",
+      "resource_type": "api",
+      "url": "http://example.com/resource/2jscm6slku.json"
+    },
+    {
+      "description": "Resource 2531kezyjd",
+      "format": "CSV",
+      "name": "resource-2531kezyjd",
+      "resource_type": "api",
+      "url": "http://example.com/resource/2531kezyjd.csv"
+    }
+  ],
+  "tags": [
+    "tag-015"
+  ],
+  "title": "Dataset dp7bddal99q42vo",
+  "type": "dataset",
+  "url": "http://www.example.com/dataset/dp7bddal99q42vo"
+}
