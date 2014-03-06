@@ -556,3 +556,37 @@ def data_dir():
     import py
     here = py.path.local(__file__).dirpath()
     return here.join('data')
+
+
+##------------------------------------------------------------
+## Clients
+
+def _get_ckan_client(request, ckan_env, client_class):
+    api_key = ckan_env.get_sysadmin_api_key()
+    server = ckan_env.serve()
+    client = client_class(server.url, api_key)
+
+    def finalize():
+        server.stop()
+    request.addfinalizer(finalize)
+
+    server.start()
+    return client
+
+
+@pytest.fixture
+def ckan_client_ll(request, ckan_env):
+    from ckan_api_client.low_level import CkanLowlevelClient
+    return _get_ckan_client(request, ckan_env, CkanLowlevelClient)
+
+
+@pytest.fixture
+def ckan_client_hl(request, ckan_env):
+    from ckan_api_client.high_level import CkanHighlevelClient
+    return _get_ckan_client(request, ckan_env, CkanHighlevelClient)
+
+
+# @pytest.fixture
+# def ckan_client_sync(request, ckan_env):
+#     from ckan_api_client.low_level import CkanLowlevelClient
+#     return _get_ckan_client(request, ckan_env, CkanLowlevelClient)
