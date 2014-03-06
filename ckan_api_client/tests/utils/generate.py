@@ -5,10 +5,19 @@
 import json
 import random
 
-from . import gen_random_id, gen_picture
+from .strings import gen_random_id, gen_picture
 
 
 def generate_organization():
+    """
+    Generate a random organization object, with:
+
+    - ``name``, random, example: ``"org-abc123"``
+    - ``title``, random, example: ``"Organization abc123"``
+    - ``description``, random
+    - ``image``, url pointing to a random-generated pic
+    """
+
     random_id = gen_random_id(10)
     return {
         "name": "org-{0}".format(random_id),  # Used as key
@@ -21,6 +30,15 @@ def generate_organization():
 
 
 def generate_group():
+    """
+    Generate a random group object, with:
+
+    - ``name``, random, example: ``"grp-abc123"``
+    - ``title``, random, example: ``"Group abc123"``
+    - ``description``, random
+    - ``image``, url pointing to a random-generated pic
+    """
+
     random_id = gen_random_id(10)
     return {
         "name": "grp-{0}".format(random_id),  # Used as key
@@ -33,6 +51,37 @@ def generate_group():
 
 
 def generate_dataset():
+    """
+    Generate a dataset, populated with random data.
+
+    **Fields:**
+
+    - ``name`` -- random string, in the form ``dataset-{random}``
+    - ``title`` -- random string, in the form ``Dataset {random}``
+    - ``url`` -- random url of dataset on an "external source"
+    - ``type`` -- fixed string: ``"dataset"``
+    - ``maintainer_email`` -- random-generated email address
+    - ``maintainer`` -- random-generated name
+    - ``author_email`` -- random-generated email address
+    - ``author`` -- random-generated name
+    - ``license_id`` -- random license id. One of ``cc-by``, ``cc-zero``,
+      ``cc-by-sa`` or ``notspecified``.
+    - ``private`` -- Fixed to ``False``
+    - ``notes`` -- random string, containing some markdown
+    - ``tags`` -- random list of tags (strings)
+    - ``extras`` -- dictionary containing random key / value pairs
+    - ``resources`` -- list of random resources
+    - ``groups`` -- empty list
+    - ``owner_org`` -- set to None
+    - ``relationships`` -- empty list
+
+    .. note::
+        The ``owner_org`` and ``groups`` fields will be blank,
+        as they must match with existing groups / organizations
+        and we don't have access to database from here (nor
+        is it in the scope of this function!)
+    """
+
     random_id = gen_random_id(15)
     license_id = random.choice((
         'cc-by', 'cc-zero', 'cc-by-sa', 'notspecified'))
@@ -45,7 +94,7 @@ def generate_dataset():
         # service, which will need to be moved to
         # dataset['extras']['_harvest_source_id']
         # ------------------------------------------------------------
-        "id": random_id,
+        # "id": random_id,
 
         ## Name should be taken as a "suggestion": in case of naming conflict
         ## with an existing dataset, it just be changed (todo: how?)
@@ -89,6 +138,18 @@ def generate_dataset():
 
 
 def generate_resource():
+    """
+    Generate a random resource, to be put in a dataset.
+
+    **Fields:**
+
+    - ``url`` -- resource URL on an "external source"
+    - ``resource_type`` -- one of ``api`` or ``file``
+    - ``name`` -- random-generated name
+    - ``format`` -- a random format (eg: ``csv``, ``json``)
+    - ``description`` -- random generated string
+    """
+
     random_id = gen_random_id()
     fmt = random.choice(['csv', 'json'])
     url = 'http://example.com/resource/{0}.{1}'.format(random_id, fmt)
@@ -102,6 +163,13 @@ def generate_resource():
 
 
 def generate_tags(amount):
+    """
+    Generate ``amount`` random tags.
+    Each tag is in the form ``tag-<random-int>``.
+
+    :return: a list of tag names
+    """
+
     return [
         'tag-{0:03d}'.format(random.randint(0, 50))
         for _ in xrange(amount)
@@ -109,6 +177,9 @@ def generate_tags(amount):
 
 
 def generate_extras(amount):
+    """
+    Generate a dict with ``amount`` random key/value pairs.
+    """
     pairs = [(
         'key-{0:03d}'.format(random.randint(0, 50)),
         'value {0:03d}'.format(random.randint(0, 50)),
@@ -117,6 +188,14 @@ def generate_extras(amount):
 
 
 def generate_data(dataset_count=50, orgs_count=10, groups_count=15):
+    """
+    Generate a bunch of random data.
+    Will also associate datasets with random organizations / groups.
+
+    :return: a dict with the ``dataset``, ``organization`` and
+        ``group`` keys; each of them a dict of ``{key: object}``.
+    """
+
     data = {'dataset': {}, 'organization': {}, 'group': {}}
 
     for _ in xrange(orgs_count):
