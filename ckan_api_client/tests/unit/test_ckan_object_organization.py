@@ -1,4 +1,4 @@
-"""Tests for CkanOrganization objects"""
+"""Unit tests for CkanOrganization object"""
 
 import copy
 
@@ -20,15 +20,23 @@ def test_ckan_organization():
         # 'title',
         # 'type',
     }
+
+    ## Create an organization object.
     _raw_data = copy.deepcopy(raw_data)
     assert raw_data == _raw_data
     dataset = CkanDataset.from_dict(_raw_data)
+
+    ## Make sure initial data hasn't been touched
     assert raw_data == _raw_data
+
+    ## Make sure converting to dict returns the original dict.
     assert dataset.to_dict() == raw_data
 
+    ## Try changing a key, make sure we got expected results
     dataset.author = 'My author'
     assert dataset.is_modified()
     assert dataset.to_dict()['author'] == 'My author'
+    assert raw_data == _raw_data  # This is kept away
 
     ## Create a new dataset
     dataset = CkanDataset.from_dict(raw_data)

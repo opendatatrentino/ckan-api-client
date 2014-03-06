@@ -1,4 +1,4 @@
-from collections import namedtuple
+from collections import namedtuple, Mapping, Sequence
 
 
 IDPair = namedtuple('IDPair', ['source_id', 'ckan_id'])
@@ -62,3 +62,55 @@ class IDMap(object):
 
         del self._source_to_ckan[pair.source_id]
         del self._ckan_to_source[pair.ckan_id]
+
+
+##------------------------------------------------------------
+## Frozen objects, mainly used while running tests,
+## to make sure certain objects are left untouched.
+##------------------------------------------------------------
+
+class FrozenDict(Mapping):
+    def __init__(self, data):
+        self.__wrapped = data
+
+    def __getitem__(self, name):
+        return freeze(self.__wrapped[name])
+
+    def __iter__(self):
+        return iter(self.__wrapped)
+
+    def __len__(self):
+        return len(self.__wrapped)
+
+
+class FrozenSequence(Sequence):
+    def __init__(self, data):
+        self.__wrapped = data
+
+    def __getitem__(self, name):
+        return freeze(self.__wrapped[name])
+
+    def __len__(self):
+        return len(self.__wrapped)
+
+
+class FrozenList(FrozenSequence):
+    pass
+
+
+class FrozenTuple(FrozenSequence):
+    pass
+
+
+def freeze(obj):
+    if obj is None:
+        return None
+    if isinstance(obj, (basestring, int, float, bool)):
+        return obj
+    if isinstance(obj, dict):
+        return FrozenDict(obj)
+    if isinstance(obj, list):
+        return FrozenList(obj)
+    if isinstance(obj, tuple):
+        return FrozenTuple(obj)
+    raise TypeError("I don't know how to freeze this!")
