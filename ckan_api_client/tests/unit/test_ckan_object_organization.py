@@ -4,7 +4,7 @@ import copy
 
 import pytest
 
-from ckan_api_client.objects import CkanOrganization
+# from ckan_api_client.objects import CkanOrganization
 
 
 @pytest.mark.xfail(run=False, reason='Work in progress')
