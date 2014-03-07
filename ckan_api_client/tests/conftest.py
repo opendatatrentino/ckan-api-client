@@ -50,8 +50,8 @@ def wait_net_service(host, port, timeout):
 
     Based on: http://code.activestate.com/recipes/576655/
 
-    @param timeout: in seconds
-    @return: True of False, if timeout is None may return only True or
+    :param timeout: in seconds
+    :return: True of False, if timeout is None may return only True or
              throw unhandled network exception
     """
     import socket

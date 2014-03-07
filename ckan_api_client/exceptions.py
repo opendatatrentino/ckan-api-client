@@ -1,4 +1,19 @@
+"""Exceptions used all over the place"""
+
+
 class HTTPError(Exception):
+    """
+    Exception representing an HTTP response error.
+
+    .. attribute:: status_code
+
+        HTTP status code
+
+    .. attribute:: message
+
+        Informative error message, if available
+    """
+
     def __init__(self, status_code, message):
         self.status_code = status_code
         self.message = message
