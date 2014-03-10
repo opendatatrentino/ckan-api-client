@@ -61,32 +61,32 @@ def test_object_inspection():
     assert isinstance(fields_dict['fld2'], StringField)
 
 
-def test_object_serialization():
-    class MyObject(BaseObject):
-        fld1 = StringField()
-        fld2 = StringField(default=lambda: "Hi!")
-        fld3 = StringField()
-    obj = MyObject({'foo': 'ignored', 'fld1': 'hello'})
-    assert obj.to_dict() == {'fld1': 'hello', 'fld2': 'Hi!', 'fld3': None}
+# def test_object_serialization():
+#     class MyObject(BaseObject):
+#         fld1 = StringField()
+#         fld2 = StringField(default=lambda: "Hi!")
+#         fld3 = StringField()
+#     obj = MyObject({'foo': 'ignored', 'fld1': 'hello'})
+#     assert obj.to_dict() == {'fld1': 'hello', 'fld2': 'Hi!', 'fld3': None}
 
 
-def test_complex_fields():
-    class MyObject(BaseObject):
-        fld1 = StringField()
-        fld2 = ListField()
-        fld3 = DictField()
-    obj = MyObject({
-        'fld1': 'hello',
-        'fld2': ['1', '2', '3'],
-        'fld3': {'a': 'A', 'b': 'B'},
-    })
+# def test_complex_fields():
+#     class MyObject(BaseObject):
+#         fld1 = StringField()
+#         fld2 = ListField()
+#         fld3 = DictField()
+#     obj = MyObject({
+#         'fld1': 'hello',
+#         'fld2': ['1', '2', '3'],
+#         'fld3': {'a': 'A', 'b': 'B'},
+#     })
 
-    assert obj.fld1 == 'hello'
-    assert obj.fld2 == ['1', '2', '3']
-    assert obj.fld3 == {'a': 'A', 'b': 'B'}
+#     assert obj.fld1 == 'hello'
+#     assert obj.fld2 == ['1', '2', '3']
+#     assert obj.fld3 == {'a': 'A', 'b': 'B'}
 
-    assert obj.serialize() == {
-        'fld1': 'hello',
-        'fld2': ['1', '2', '3'],
-        'fld3': {'a': 'A', 'b': 'B'},
-    }
+#     assert obj.serialize() == {
+#         'fld1': 'hello',
+#         'fld2': ['1', '2', '3'],
+#         'fld3': {'a': 'A', 'b': 'B'},
+#     }
