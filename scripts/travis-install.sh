@@ -32,7 +32,8 @@ sudo -u postgres -H psql -c "ALTER USER postgres PASSWORD 'pass'"
 
 ## Install Solr
 ##------------------------------------------------------------
-sudo apt-get install solr-jetty
+sudo apt-get update -q
+sudo apt-get install -q -y solr-jetty
 sudo service jetty stop
 
 sudo tee /etc/default/jetty <<EOF
