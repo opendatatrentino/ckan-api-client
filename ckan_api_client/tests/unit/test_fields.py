@@ -242,4 +242,80 @@ def test_list_field():
     class MyObject(BaseObject):
         field1 = ListField()
         field2 = ListField(default=lambda: [1, 2, 3])
-    pass
+
+    obj1 = MyObject()
+    obj2 = MyObject()
+    obj3 = MyObject({'field1': ['spam', 'eggs', 'bacon']})
+
+    ##--------------------------------------------------
+    ## Check all objects
+
+    assert obj1.field1 == []
+    assert obj1.field2 == [1, 2, 3]
+    assert obj1.is_modified() is False
+
+    assert obj2.field1 == []
+    assert obj2.field2 == [1, 2, 3]
+    assert obj2.is_modified() is False
+
+    assert obj3.field1 == ['spam', 'eggs', 'bacon']
+    assert obj3.field2 == [1, 2, 3]
+    assert obj3.is_modified() is False
+
+    ##--------------------------------------------------
+    ## Modify and check again
+
+    obj1.field1.append(100)
+    obj1.field2.append(200)
+
+    assert obj1.field1 == [100]
+    assert obj1.field2 == [1, 2, 3, 200]
+    assert obj1.is_modified() is True
+
+    assert obj2.field1 == []
+    assert obj2.field2 == [1, 2, 3]
+    assert obj2.is_modified() is False
+
+    assert obj3.field1 == ['spam', 'eggs', 'bacon']
+    assert obj3.field2 == [1, 2, 3]
+    assert obj3.is_modified() is False
+
+    ##--------------------------------------------------
+    ## Make sure changing field2 doesn't affect others
+
+    obj1.field2[:] = []
+
+    assert obj1.field2 == []
+    assert obj2.field2 == [1, 2, 3]
+    assert obj3.field2 == [1, 2, 3]
+
+    obj2.field2 = [6, 6, 6]
+
+    assert obj1.field2 == []
+    assert obj2.field2 == [6, 6, 6]
+    assert obj3.field2 == [1, 2, 3]
+
+    ##--------------------------------------------------
+    ## Check modified verification
+
+    assert obj1.is_modified() is True
+    del obj1.field1, obj1.field2
+    assert obj1.is_modified() is False
+
+
+def test_list_field_serialization():
+    class MyObject(BaseObject):
+        field1 = ListField()
+        field2 = ListField(default=lambda: [1, 2, 3])
+
+    obj1 = MyObject()
+    obj2 = MyObject({'field1': ['spam', 'eggs', 'bacon']})
+
+    assert obj1.serialize() == {
+        'field1': [],
+        'field2': [1, 2, 3],
+    }
+    assert obj2.serialize() == {
+        'field1': ['spam', 'eggs', 'bacon'],
+        'field2': [1, 2, 3],
+    }

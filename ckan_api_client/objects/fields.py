@@ -28,18 +28,34 @@ class MutableFieldMixin(object):
         in order to make sure we are still able to detect changes.
         """
 
-        if name in instance._updates:
-            return instance._updates[name]
+        if name not in instance._updates:
+            if name in instance._values:
+                value = instance._values[name]
+            else:
+                value = self.get_default()
 
-        if name not in instance._values:
-            instance._values[name] = self.get_default()
-        instance._updates[name] = copy.deepcopy(instance._values[name])
+            ## to be extra safe, make copy here, even on
+            ## default values, which might get shared..
+            instance._updates[name] = copy.deepcopy(value)
 
         return instance._updates[name]
 
     def serialize(self, instance, name):
         ## Copy to prevent unwanted mutation
         return copy.deepcopy(self.get(instance, name))
+
+    def is_modified(self, instance, name):
+        if name not in instance._updates:
+            return False
+
+        ## Otherwise, compare values to check whether
+        ## field has been modified.
+
+        if name in instance._values:
+            default = instance._values[name]
+        else:
+            default = self.get_default()
+        return default != instance._updates[name]
 
 
 class ListField(MutableFieldMixin, BaseField):
