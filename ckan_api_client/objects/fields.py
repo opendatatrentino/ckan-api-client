@@ -8,10 +8,14 @@ __all__ = ['StringField', 'ListField', 'DictField',
 
 
 class StringField(BaseField):
+    default = ''
+
     def validate(self, instance, name, value):
         super(StringField, self).validate(instance, name, value)
         if not isinstance(value, basestring):
-            raise ValueError("{0} must be a string".format(name))
+            raise TypeError("String field {0} value must be a string. "
+                            "Got {1!r} instead.".format(name, type(value)))
+        return value
 
     def serialize(self, instance, name):
         return self.get(instance, name)
@@ -42,27 +46,30 @@ class ListField(MutableFieldMixin, BaseField):
     default = staticmethod(lambda: [])
 
     def validate(self, instance, name, value):
-        super(ListField, self).validate(instance, name, value)
+        value = super(ListField, self).validate(instance, name, value)
         if not isinstance(value, list):
             raise ValueError("{0} must be a list".format(name))
+        return value
 
 
 class DictField(MutableFieldMixin, BaseField):
     default = staticmethod(lambda: {})
 
     def validate(self, instance, name, value):
-        super(DictField, self).validate(instance, name, value)
+        value = super(DictField, self).validate(instance, name, value)
         if not isinstance(value, dict):
             raise ValueError("{0} must be a dict".format(name))
+        return value
 
 
 class GroupsField(ListField):
     def validate(self, instance, name, value):
-        super(GroupsField, self).validate(instance, name, value)
+        value = super(GroupsField, self).validate(instance, name, value)
         if not all(isinstance(x, basestring) for x in value):
             raise ValueError("{0} must be a list of strings".format(name))
+        return value
 
 
 class ExtrasField(DictField):
     def validate(self, instance, name, value):
-        super(Exception, self).validate(instance, name, value)
+        return super(ExtrasField, self).validate(instance, name, value)

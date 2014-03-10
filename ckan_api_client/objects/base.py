@@ -2,7 +2,6 @@
 Classes to represent / validate Ckan objects.
 """
 
-import copy
 import warnings
 
 
@@ -13,6 +12,11 @@ class BaseField(object):
     """
     Pseudo-descriptor, accepting field names along with instance,
     to allow better retrieving data for the instance itself.
+
+    .. warning::
+        Beware that fields shouldn't carry state of their own, a part
+        from the one used for generic field configuration, as they
+        are shared between instances.
     """
 
     default = None
@@ -34,11 +38,22 @@ class BaseField(object):
             self.is_key = is_key
 
     def get(self, instance, name):
+        """
+        Get the value for the field from the main instace,
+        by looking at the first found in:
+
+        - the updated value
+        - the initial value
+        - the default value
+        """
+
         if name in instance._updates:
             return instance._updates[name]
-        if name not in instance._values:
-            instance._values[name] = self.get_default()
-        return instance._values[name]
+
+        if name in instance._values:
+            return instance._values[name]
+
+        return self.get_default()
 
     def get_default(self):
         if callable(self.default):
@@ -46,37 +61,45 @@ class BaseField(object):
         return self.default
 
     def validate(self, instance, name, value):
-        pass
+        """
+        The validate method should be the (updated)
+        value to be used as the field value, or raise
+        an exception in case it is not acceptable at all.
+        """
+        return value
+
+    def set_initial(self, instance, name, value):
+        """Set the initial value for a field"""
+        value = self.validate(instance, name, value)
+        instance._values[name] = value
 
     def set(self, instance, name, value):
-        """
-        Setting a field will:
-
-        - add its value to "updates" on the main instance
-        - mark the field as modified
-        """
-        self.validate(instance, name, value)
+        """Set the modified value for a field"""
+        value = self.validate(instance, name, value)
         instance._updates[name] = value
-        self.modified = True
 
     def delete(self, instance, name):
+        """
+        Delete the modified value for a field (logically
+        restores the original one)
+        """
         ## We don't want an exception here, as we just restore
         ## field to its initial value..
         instance._updates.pop(name, None)
 
     def serialize(self, instance, name):
+        """
+        Returns the "serialized" (json-encodable) version of
+        the object.
+        """
         raise NotImplementedError
 
     def is_modified(self, instance, name):
-        ## If the field is missing from either values or
-        ## updates, it means it hasn't been touched..
-        if name not in instance._values:
-            return False
-        if name not in instance._updates:
-            return False
-
-        ## If they differ, the field has been modified
-        return instance._values[name] != instance._updates[name]
+        """
+        Check whether this field has been modified on the
+        main instance.
+        """
+        return name in instance._updates
 
 
 class BaseObject(object):
@@ -89,13 +112,19 @@ class BaseObject(object):
     _updates = None
 
     def __init__(self, values=None):
-        if values is not None:
-            if not isinstance(values, dict):
-                values = dict(values.iteritems())
-        else:
+        if values is None:
             values = {}
-        self._values = values
+        if not isinstance(values, dict):
+            raise TypeError("Initial values must be a dict (or None). "
+                            "Got {0!r} instead".format(type(values)))
+
+        ## Prepare variables to hold initial / updated values
+        self._values = {}
         self._updates = {}
+
+        ## Set initial field values, by calling set_initial()
+        ## on the fields themselves.
+        self.set_initial(values)
 
     @classmethod
     def from_dict(cls, data):
@@ -103,30 +132,54 @@ class BaseObject(object):
                       DeprecationWarning)
         return cls(data)
 
+    def set_initial(self, values):
+        """Set initial values for all fields"""
+        for name, field in self.iter_fields():
+            if name in values:
+                field.set_initial(self, name, values[name])
+
     def to_dict(self):
         warnings.warn("to_dict() is deprecated -- use serialize()",
                       DeprecationWarning)
         return self.serialize()
 
     def __getattribute__(self, key):
-        v = object.__getattribute__(self, key)
-        if isinstance(v, BaseField):
-            return v.get(self, key)
-        return v
+        """
+        Custom attribute handling.
+        If the attribute is a field, return the value returned
+        from its .get() method. Otherwise, return it directly.
+        """
+        attr = object.__getattribute__(self, key)
+        if isinstance(attr, BaseField):
+            return attr.get(self, key)
+        return attr
 
     def __setattr__(self, key, value):
+        """
+        Custom attribute handling.
+        If the attribute is a field, pass the value to its
+        .set() method. Otherwise, set it directly on the object.
+        """
         v = object.__getattribute__(self, key)
         if isinstance(v, BaseField):
             return v.set(self, key, value)
         return object.__setattr__(self, key, value)
 
     def __delattr__(self, key):
+        """
+        Custom attribute handling.
+        If the attribute is a field, call its .del() method.
+        Otherwise, perform the action directly on the object.
+        """
         v = object.__getattribute__(self, key)
         if isinstance(v, BaseField):
             return v.delete(self, key)
         return object.__delattr__(self, key)
 
     def serialize(self):
+        """
+        Create a serializable representation of the object.
+        """
         serialized = {}
         for name, field in self.iter_fields():
             serialized[name] = field.serialize(self, name)
@@ -143,10 +196,21 @@ class BaseObject(object):
                 yield name, attr
 
     def is_equivalent(self, other, ignore_key=True):
-        """Equivalency check between objects"""
+        """
+        Equivalency check between objects.
+        Will make sure that values in all the non-key
+        fields match.
+
+        :param other:
+            other object to compare
+        :param ignore_key:
+            if set to True (the default), it will ignore
+            "key" fields during comparison
+        """
 
         if type(self) != type(other):
-            ## We got something completely different!
+            ## We want to make sure the objects are of the
+            ## exact same type, not of some sub-type.
             return False
 
         for name, field in self.iter_fields():
@@ -156,6 +220,7 @@ class BaseObject(object):
             other_value = getattr(other, name)
             if value != other_value:
                 return False
+
         return True
 
     def __eq__(self, other):
@@ -165,7 +230,11 @@ class BaseObject(object):
         return not self.__eq__(other)
 
     def is_modified(self):
-        ## Check if any field has been modified
+        """
+        The object is modified if any of its fields reports
+        itself as modified.
+        """
+
         for name, field in self.iter_fields():
             if field.is_modified(self, name):
                 return True

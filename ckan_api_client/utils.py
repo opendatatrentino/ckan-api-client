@@ -1,4 +1,4 @@
-from collections import namedtuple, Mapping, Sequence
+from collections import namedtuple, Mapping, Sequence, MutableSequence
 
 
 class IDPair(namedtuple('IDPair', ['source_id', 'ckan_id'])):
@@ -172,3 +172,28 @@ def freeze(obj):
     if isinstance(obj, tuple):
         return FrozenTuple(obj)
     raise TypeError("I don't know how to freeze this!")
+
+
+class WrappedList(MutableSequence):
+    def __init__(self, iterable=None):
+        self._list = []
+        if iterable is not None:
+            self._list.extend(iterable)
+
+    def __getitem__(self, name):
+        return self._list[name]
+
+    def __setitem__(self, name, value):
+        self._list[name] = value
+
+    def __delitem__(self, name):
+        del self._list[name]
+
+    def __len__(self):
+        return len(self._list)
+
+    def insert(self, pos, item):
+        self._list.insert(pos, item)
+
+    def __contains__(self, item):
+        return item in self._list
