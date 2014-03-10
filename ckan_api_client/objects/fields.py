@@ -19,10 +19,18 @@ class StringField(BaseField):
 
 class MutableFieldMixin(object):
     def get(self, instance, name):
-        if name not in instance._updates:
-            if name not in instance._values:
-                instance._values[name] = self.get_default()
-            instance._updates[name] = copy.deepcopy(instance._values[name])
+        """
+        When getting a mutable object, we need to make a copy,
+        in order to make sure we are still able to detect changes.
+        """
+
+        if name in instance._updates:
+            return instance._updates[name]
+
+        if name not in instance._values:
+            instance._values[name] = self.get_default()
+        instance._updates[name] = copy.deepcopy(instance._values[name])
+
         return instance._updates[name]
 
     def serialize(self, instance, name):

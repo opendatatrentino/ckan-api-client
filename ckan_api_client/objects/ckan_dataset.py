@@ -12,10 +12,6 @@ class ResourcesField(ListField):
     are CkanResources.
     """
 
-    def get(self, instance, name):
-        ## todo: replace value with appropriate object
-        return super(ResourcesField, self).get(instance, name)
-
 
 class CkanDataset(BaseObject):
     id = StringField()
@@ -31,9 +27,9 @@ class CkanDataset(BaseObject):
     maintainer_email = StringField()
     notes = StringField()
     owner_org = StringField()
-    private = StringField(default=lambda: False)
-    state = StringField(default=lambda: 'active')
-    type = StringField(default=lambda: 'dataset')
+    private = StringField(default=False)
+    state = StringField(default='active')
+    type = StringField(default='dataset')
     url = StringField()
 
     ## Special fields

@@ -2,6 +2,7 @@
 Classes to represent / validate Ckan objects.
 """
 
+import copy
 import warnings
 
 
@@ -15,10 +16,22 @@ class BaseField(object):
     """
 
     default = None
+    is_key = False
 
-    def __init__(self, default=NOTSET):
+    def __init__(self, default=NOTSET, is_key=NOTSET):
+        """
+        :param default:
+            Default value (if not callable) or function
+            returning default value (if callable).
+        :param is_key:
+            Boolean indicating whether this is a key field
+            or not. Key fields are ignored when comparing
+            using :py:meth:`is_equivalent`
+        """
         if default is not NOTSET:
             self.default = default
+        if is_key is not NOTSET:
+            self.is_key = is_key
 
     def get(self, instance, name):
         if name in instance._updates:
@@ -36,8 +49,15 @@ class BaseField(object):
         pass
 
     def set(self, instance, name, value):
+        """
+        Setting a field will:
+
+        - add its value to "updates" on the main instance
+        - mark the field as modified
+        """
         self.validate(instance, name, value)
         instance._updates[name] = value
+        self.modified = True
 
     def delete(self, instance, name):
         ## We don't want an exception here, as we just restore
@@ -46,6 +66,17 @@ class BaseField(object):
 
     def serialize(self, instance, name):
         raise NotImplementedError
+
+    def is_modified(self, instance, name):
+        ## If the field is missing from either values or
+        ## updates, it means it hasn't been touched..
+        if name not in instance._values:
+            return False
+        if name not in instance._updates:
+            return False
+
+        ## If they differ, the field has been modified
+        return instance._values[name] != instance._updates[name]
 
 
 class BaseObject(object):
@@ -110,3 +141,32 @@ class BaseObject(object):
             attr = object.__getattribute__(self, name)
             if isinstance(attr, BaseField):
                 yield name, attr
+
+    def is_equivalent(self, other, ignore_key=True):
+        """Equivalency check between objects"""
+
+        if type(self) != type(other):
+            ## We got something completely different!
+            return False
+
+        for name, field in self.iter_fields():
+            if ignore_key and field.is_key:
+                continue
+            value = getattr(self, name)
+            other_value = getattr(other, name)
+            if value != other_value:
+                return False
+        return True
+
+    def __eq__(self, other):
+        return self.is_equivalent(other, ignore_key=False)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def is_modified(self):
+        ## Check if any field has been modified
+        for name, field in self.iter_fields():
+            if field.is_modified(self, name):
+                return True
+        return False
