@@ -27,6 +27,28 @@ class ResourcesField(ListField):
             r.serialize() for r in value
         ]
 
+    def is_equivalent(self, instance, name, other, ignore_key=True):
+        ## We are now comparing two ResourcesList instances,
+        ## but we need to ignore all the key fields when comparing
+        ## resources
+
+        our_value = getattr(instance, name)
+        other_value = getattr(other, name)
+        assert isinstance(our_value, ResourcesList)
+        assert isinstance(other_value, ResourcesList)
+
+        ## Different length -- clearly two different things
+        if len(our_value) != len(other_value):
+            return False
+
+        ## Compare resources one-by-one, by calling their "is_equivalent"
+        ## methods.
+        for resource1, resource2 in zip(our_value, other_value):
+            if not resource1.is_equivalent(resource2, ignore_key=ignore_key):
+                return False
+
+        return True
+
 
 class ResourcesList(WrappedList):
     def __init__(self, initial=None):
