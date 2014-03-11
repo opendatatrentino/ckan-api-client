@@ -10,3 +10,5 @@
 /.venv*
 /tmp
 /.coverage
+
+flycheck_*.py
