@@ -75,8 +75,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../../clients/syncing.html">Syncing</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../objects/objects.html">Objects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../objects/exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/exceptions.html">ckan_api_client.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/objects.html">ckan_api_client.objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utils.html">ckan_api_client.utils</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../testing/fixtures.html">Fixtures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../testing/utility.html">Testing utilities</a></li>
@@ -131,17 +135,33 @@
     <span class="c">##------------------------------------------------------------</span>
 
 <div class="viewcode-block" id="CkanHighlevelClient.list_datasets"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.list_datasets">[docs]</a>    <span class="k">def</span> <span class="nf">list_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;:return: a list of dataset ids&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">list_datasets</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.iter_datasets"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.iter_datasets">[docs]</a>    <span class="k">def</span> <span class="nf">iter_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generator, iterating over all the datasets in ckan&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_datasets</span><span class="p">():</span>
             <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dataset</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.get_dataset"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.get_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">get_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a specific dataset, by id</span>
+
+<span class="sd">        :rtype: :py:class:`.objects.CkanDataset`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_dataset</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">CkanDataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">CkanDataset</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.save_dataset"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.save_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">save_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If the dataset already has an id, call :py:meth:`update_dataset`,</span>
+<span class="sd">        otherwise, call :py:meth:`create_dataset`.</span>
+
+<span class="sd">        :return: as returned by the called function.</span>
+<span class="sd">        :rtype: :py:class:`.objects.CkanDataset`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">CkanDataset</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Dataset must be a CkanDataset&quot;</span><span class="p">)</span>
 
@@ -150,13 +170,19 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.create_dataset"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.create_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">create_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a dataset</span>
+
+<span class="sd">        :rtype: :py:class:`.objects.CkanDataset`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">CkanDataset</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;dataset must be a CkanDataset&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Cannot specify an id when creating an object&quot;</span><span class="p">)</span>
 
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">post_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
-        <span class="n">created</span> <span class="o">=</span> <span class="n">CkanDataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">post_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
+        <span class="n">created</span> <span class="o">=</span> <span class="n">CkanDataset</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">created</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">OperationFailure</span><span class="p">(</span><span class="s">&quot;Created dataset doesn&#39;t match&quot;</span><span class="p">)</span>
@@ -164,13 +190,19 @@
         <span class="k">return</span> <span class="n">created</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.update_dataset"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.update_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">update_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update a dataset</span>
+
+<span class="sd">        :rtype: :py:class:`.objects.CkanDataset`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">CkanDataset</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Dataset must be a CkanDataset&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Trying to update a dataset without an id&quot;</span><span class="p">)</span>
 
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">put_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
-        <span class="n">updated</span> <span class="o">=</span> <span class="n">CkanDataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">put_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
+        <span class="n">updated</span> <span class="o">=</span> <span class="n">CkanDataset</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">updated</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">OperationFailure</span><span class="p">(</span><span class="s">&quot;Updated dataset doesn&#39;t match&quot;</span><span class="p">)</span>
@@ -178,7 +210,8 @@
         <span class="k">return</span> <span class="n">updated</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.delete_dataset"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.delete_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">delete_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">delete_dataset</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot;Delete a dataset, by id&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">delete_dataset</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
 
     <span class="c">##------------------------------------------------------------</span>
     <span class="c">## Organizations management</span>
@@ -193,7 +226,7 @@
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.get_organization"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.get_organization">[docs]</a>    <span class="k">def</span> <span class="nf">get_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_organization</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">CkanOrganization</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">CkanOrganization</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.save_organization"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.save_organization">[docs]</a>    <span class="k">def</span> <span class="nf">save_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">organization</span><span class="p">,</span> <span class="n">CkanOrganization</span><span class="p">):</span>
@@ -209,8 +242,8 @@
         <span class="k">if</span> <span class="n">organization</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Cannot specify an id when creating an object&quot;</span><span class="p">)</span>
 
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">post_organization</span><span class="p">(</span><span class="n">organization</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
-        <span class="n">created</span> <span class="o">=</span> <span class="n">CkanOrganization</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">post_organization</span><span class="p">(</span><span class="n">organization</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
+        <span class="n">created</span> <span class="o">=</span> <span class="n">CkanOrganization</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">created</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">organization</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">OperationFailure</span><span class="p">(</span><span class="s">&quot;Created organization doesn&#39;t match&quot;</span><span class="p">)</span>
@@ -223,8 +256,8 @@
         <span class="k">if</span> <span class="n">organization</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Trying to update a organization without an id&quot;</span><span class="p">)</span>
 
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">put_organization</span><span class="p">(</span><span class="n">organization</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
-        <span class="n">updated</span> <span class="o">=</span> <span class="n">CkanDataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">put_organization</span><span class="p">(</span><span class="n">organization</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
+        <span class="n">updated</span> <span class="o">=</span> <span class="n">CkanDataset</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">updated</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">organization</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">OperationFailure</span><span class="p">(</span><span class="s">&quot;Updated organization doesn&#39;t match&quot;</span><span class="p">)</span>
@@ -247,7 +280,7 @@
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.get_group"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.get_group">[docs]</a>    <span class="k">def</span> <span class="nf">get_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">CkanGroup</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">CkanGroup</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.save_group"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.save_group">[docs]</a>    <span class="k">def</span> <span class="nf">save_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">CkanGroup</span><span class="p">):</span>
@@ -263,8 +296,8 @@
         <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Cannot specify an id when creating an object&quot;</span><span class="p">)</span>
 
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">post_group</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
-        <span class="n">created</span> <span class="o">=</span> <span class="n">CkanGroup</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">post_group</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
+        <span class="n">created</span> <span class="o">=</span> <span class="n">CkanGroup</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">created</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">OperationFailure</span><span class="p">(</span><span class="s">&quot;Created group doesn&#39;t match&quot;</span><span class="p">)</span>
@@ -277,8 +310,8 @@
         <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Trying to update a group without an id&quot;</span><span class="p">)</span>
 
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">put_group</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
-        <span class="n">updated</span> <span class="o">=</span> <span class="n">CkanGroup</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">put_group</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
+        <span class="n">updated</span> <span class="o">=</span> <span class="n">CkanGroup</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">updated</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">OperationFailure</span><span class="p">(</span><span class="s">&quot;Updated group doesn&#39;t match&quot;</span><span class="p">)</span>

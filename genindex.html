@@ -75,8 +75,12 @@
 <li class="toctree-l2"><a class="reference internal" href="clients/syncing.html">Syncing</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="objects/objects.html">Objects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="objects/exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/exceptions.html">ckan_api_client.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/objects.html">ckan_api_client.objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/utils.html">ckan_api_client.utils</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="testing/index.html">Testing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="testing/fixtures.html">Fixtures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="testing/utility.html">Testing utilities</a></li>
@@ -123,6 +127,7 @@
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
@@ -152,6 +157,12 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="modules/utils.html#ckan_api_client.utils.IDMap.add">add() (ckan_api_client.utils.IDMap method)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
   <dt><a href="clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.anonymous">anonymous (ckan_api_client.low_level.CkanLowlevelClient attribute)</a>
   </dt>
 
@@ -162,13 +173,13 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="objects/exceptions.html#ckan_api_client.exceptions.BadApiError">BadApiError</a>
+  <dt><a href="modules/exceptions.html#ckan_api_client.exceptions.BadApiError">BadApiError</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="objects/exceptions.html#ckan_api_client.exceptions.BadApiWarning">BadApiWarning</a>
+  <dt><a href="modules/exceptions.html#ckan_api_client.exceptions.BadApiWarning">BadApiWarning</a>
   </dt>
 
   </dl></td>
@@ -210,7 +221,7 @@
   </dt>
 
       
-  <dt><a href="objects/exceptions.html#module-ckan_api_client.exceptions">ckan_api_client.exceptions (module)</a>
+  <dt><a href="modules/exceptions.html#module-ckan_api_client.exceptions">ckan_api_client.exceptions (module)</a>
   </dt>
 
       
@@ -222,7 +233,7 @@
   </dt>
 
       
-  <dt><a href="objects/objects.html#module-ckan_api_client.objects">ckan_api_client.objects (module)</a>
+  <dt><a href="modules/objects.html#module-ckan_api_client.objects">ckan_api_client.objects (module)</a>
   </dt>
 
       
@@ -245,8 +256,14 @@
   <dt><a href="testing/utility.html#module-ckan_api_client.tests.utils.strings">ckan_api_client.tests.utils.strings (module)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="testing/utility.html#module-ckan_api_client.tests.utils.validation">ckan_api_client.tests.utils.validation (module)</a>
+  </dt>
+
+      
+  <dt><a href="modules/utils.html#module-ckan_api_client.utils">ckan_api_client.utils (module)</a>
   </dt>
 
       
@@ -257,22 +274,8 @@
   <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.ckan_url">ckan_url() (in module ckan_api_client.tests.conftest)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanDataset">CkanDataset (class in ckan_api_client.objects)</a>
-  </dt>
-
-      
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanDatasetResources">CkanDatasetResources (class in ckan_api_client.objects)</a>
-  </dt>
-
       
   <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment">CkanEnvironment (class in ckan_api_client.tests.conftest)</a>
-  </dt>
-
-      
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanGroup">CkanGroup (class in ckan_api_client.objects)</a>
   </dt>
 
       
@@ -281,18 +284,6 @@
 
       
   <dt><a href="clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient">CkanLowlevelClient (class in ckan_api_client.low_level)</a>
-  </dt>
-
-      
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanObject">CkanObject (class in ckan_api_client.objects)</a>
-  </dt>
-
-      
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanOrganization">CkanOrganization (class in ckan_api_client.objects)</a>
-  </dt>
-
-      
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanResource">CkanResource (class in ckan_api_client.objects)</a>
   </dt>
 
       
@@ -396,27 +387,33 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanDatasetResources.filter">filter() (ckan_api_client.objects.CkanDatasetResources method)</a>
+  <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.flush_solr_index">flush_solr_index() (ckan_api_client.tests.conftest.CkanEnvironment method)</a>
   </dt>
 
       
-  <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.flush_solr_index">flush_solr_index() (ckan_api_client.tests.conftest.CkanEnvironment method)</a>
+  <dt><a href="modules/utils.html#ckan_api_client.utils.freeze">freeze() (in module ckan_api_client.utils)</a>
+  </dt>
+
+      
+  <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.from_environment">from_environment() (ckan_api_client.tests.conftest.CkanEnvironment class method)</a>
+  </dt>
+
+      
+  <dt><a href="modules/utils.html#ckan_api_client.utils.FrozenDict">FrozenDict (class in ckan_api_client.utils)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanDataset.from_dict">from_dict() (ckan_api_client.objects.CkanDataset class method)</a>
+  <dt><a href="modules/utils.html#ckan_api_client.utils.FrozenList">FrozenList (class in ckan_api_client.utils)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanResource.from_dict">(ckan_api_client.objects.CkanResource class method)</a>
-  </dt>
-
-      </dl></dd>
       
-  <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.from_environment">from_environment() (ckan_api_client.tests.conftest.CkanEnvironment class method)</a>
+  <dt><a href="modules/utils.html#ckan_api_client.utils.FrozenSequence">FrozenSequence (class in ckan_api_client.utils)</a>
+  </dt>
+
+      
+  <dt><a href="modules/utils.html#ckan_api_client.utils.FrozenTuple">FrozenTuple (class in ckan_api_client.utils)</a>
   </dt>
 
   </dl></td>
@@ -469,30 +466,18 @@
   <dt><a href="testing/utility.html#ckan_api_client.tests.utils.strings.generate_password">generate_password() (in module ckan_api_client.tests.utils.strings)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="testing/utility.html#ckan_api_client.tests.utils.strings.generate_random_alphanum">generate_random_alphanum() (in module ckan_api_client.tests.utils.strings)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="testing/utility.html#ckan_api_client.tests.utils.generate.generate_resource">generate_resource() (in module ckan_api_client.tests.utils.generate)</a>
   </dt>
 
       
   <dt><a href="testing/utility.html#ckan_api_client.tests.utils.generate.generate_tags">generate_tags() (in module ckan_api_client.tests.utils.generate)</a>
-  </dt>
-
-      
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanDatasetResources.get_by_id">get_by_id() (ckan_api_client.objects.CkanDatasetResources method)</a>
-  </dt>
-
-      
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanDatasetResources.get_by_name">get_by_name() (ckan_api_client.objects.CkanDatasetResources method)</a>
-  </dt>
-
-      
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanDatasetResources.get_by_url">get_by_url() (ckan_api_client.objects.CkanDatasetResources method)</a>
   </dt>
 
       
@@ -548,7 +533,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="objects/exceptions.html#ckan_api_client.exceptions.HTTPError">HTTPError</a>
+  <dt><a href="modules/exceptions.html#ckan_api_client.exceptions.HTTPError">HTTPError</a>
   </dt>
 
   </dl></td>
@@ -558,37 +543,17 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanDatasetResources.insert">insert() (ckan_api_client.objects.CkanDatasetResources method)</a>
+  <dt><a href="modules/utils.html#ckan_api_client.utils.IDMap">IDMap (class in ckan_api_client.utils)</a>
   </dt>
 
       
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanDataset.is_equivalent">is_equivalent() (ckan_api_client.objects.CkanDataset method)</a>
+  <dt><a href="modules/utils.html#ckan_api_client.utils.IDPair">IDPair (class in ckan_api_client.utils)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanObject.is_equivalent">(ckan_api_client.objects.CkanObject method)</a>
-  </dt>
-
-        
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanResource.is_equivalent">(ckan_api_client.objects.CkanResource method)</a>
-  </dt>
-
-      </dl></dd>
       
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanDataset.is_modified">is_modified() (ckan_api_client.objects.CkanDataset method)</a>
+  <dt><a href="modules/utils.html#ckan_api_client.utils.WrappedList.insert">insert() (ckan_api_client.utils.WrappedList method)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanDatasetResources.is_modified">(ckan_api_client.objects.CkanDatasetResources method)</a>
-  </dt>
-
-        
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanResource.is_modified">(ckan_api_client.objects.CkanResource method)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
@@ -666,11 +631,21 @@
   </dl></td>
 </tr></table>
 
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="modules/exceptions.html#ckan_api_client.exceptions.HTTPError.message">message (ckan_api_client.exceptions.HTTPError attribute)</a>
+  </dt>
+
+  </dl></td>
+</tr></table>
+
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="objects/exceptions.html#ckan_api_client.exceptions.OperationFailure">OperationFailure</a>
+  <dt><a href="modules/exceptions.html#ckan_api_client.exceptions.OperationFailure">OperationFailure</a>
   </dt>
 
   </dl></td>
@@ -736,15 +711,19 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.request">request() (ckan_api_client.low_level.CkanLowlevelClient method)</a>
+  <dt><a href="modules/utils.html#ckan_api_client.utils.IDMap.remove">remove() (ckan_api_client.utils.IDMap method)</a>
   </dt>
 
       
-  <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.run_paster">run_paster() (ckan_api_client.tests.conftest.CkanEnvironment method)</a>
+  <dt><a href="clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.request">request() (ckan_api_client.low_level.CkanLowlevelClient method)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.run_paster">run_paster() (ckan_api_client.tests.conftest.CkanEnvironment method)</a>
+  </dt>
+
       
   <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.run_paster_with_conf">run_paster_with_conf() (ckan_api_client.tests.conftest.CkanEnvironment method)</a>
   </dt>
@@ -771,22 +750,26 @@
   <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.serve">serve() (ckan_api_client.tests.conftest.CkanEnvironment method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.setup">setup() (ckan_api_client.tests.conftest.CkanEnvironment method)</a>
   </dt>
 
-      
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanDatasetResources.sort">sort() (ckan_api_client.objects.CkanDatasetResources method)</a>
-  </dt>
-
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.CkanServerWrapper.start">start() (ckan_api_client.tests.conftest.CkanServerWrapper method)</a>
   </dt>
 
       
+  <dt><a href="modules/exceptions.html#ckan_api_client.exceptions.HTTPError.status_code">status_code (ckan_api_client.exceptions.HTTPError attribute)</a>
+  </dt>
+
+      
   <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.CkanServerWrapper.stop">stop() (ckan_api_client.tests.conftest.CkanServerWrapper method)</a>
+  </dt>
+
+      
+  <dt><a href="modules/utils.html#ckan_api_client.utils.SuppressExceptionIf">SuppressExceptionIf (class in ckan_api_client.utils)</a>
   </dt>
 
   </dl></td>
@@ -799,18 +782,16 @@
   <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.teardown">teardown() (ckan_api_client.tests.conftest.CkanEnvironment method)</a>
   </dt>
 
+      
+  <dt><a href="modules/utils.html#ckan_api_client.utils.IDMap.to_ckan">to_ckan() (ckan_api_client.utils.IDMap method)</a>
+  </dt>
+
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanDataset.to_dict">to_dict() (ckan_api_client.objects.CkanDataset method)</a>
+  <dt><a href="modules/utils.html#ckan_api_client.utils.IDMap.to_source">to_source() (ckan_api_client.utils.IDMap method)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="objects/objects.html#ckan_api_client.objects.CkanResource.to_dict">(ckan_api_client.objects.CkanResource method)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -843,6 +824,12 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="testing/fixtures.html#ckan_api_client.tests.conftest.wait_net_service">wait_net_service() (in module ckan_api_client.tests.conftest)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="modules/utils.html#ckan_api_client.utils.WrappedList">WrappedList (class in ckan_api_client.utils)</a>
   </dt>
 
   </dl></td>

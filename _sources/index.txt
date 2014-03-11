@@ -10,10 +10,10 @@ Contents:
 
 .. toctree::
     :maxdepth: 2
+    :glob:
 
     clients/index
-    objects/objects
-    objects/exceptions
+    modules/index
     testing/index
 
 

@@ -1,0 +1,288 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ckan_api_client.utils &mdash; Ckan API client 0.1a documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../',
+        VERSION:'0.1a',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="Ckan API client 0.1a documentation" href="../index.html"/>
+        <link rel="up" title="Modules" href="index.html"/>
+        <link rel="next" title="Testing" href="../testing/index.html"/>
+        <link rel="prev" title="ckan_api_client.objects" href="objects.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="icon icon-home"> Ckan API client</a>
+        <form class="wy-form" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../clients/index.html">Clients</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../clients/low-level.html">Low-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../clients/high-level.html">High-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../clients/syncing.html">Syncing</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="exceptions.html">ckan_api_client.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="objects.html">ckan_api_client.objects</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">ckan_api_client.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../testing/fixtures.html">Fixtures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../testing/utility.html">Testing utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">Ckan API client</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="../index.html">Docs</a> &raquo;</li>
+  <li><a href="">ckan_api_client.utils</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <div class="section" id="module-ckan_api_client.utils">
+<span id="ckan-api-client-utils"></span><h1>ckan_api_client.utils<a class="headerlink" href="#module-ckan_api_client.utils" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ckan_api_client.utils.IDPair">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.utils.</tt><tt class="descname">IDPair</tt><a class="reference internal" href="../_modules/ckan_api_client/utils.html#IDPair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.utils.IDPair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ckan_api_client.utils.IDPair" title="ckan_api_client.utils.IDPair"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.utils.IDPair</span></tt></a></p>
+<p>A pair (named tuple) mapping a &#8220;source&#8221; id with the one used
+internally in Ckan.</p>
+<p>This is mostly used associated with <a class="reference internal" href="#ckan_api_client.utils.IDMap" title="ckan_api_client.utils.IDMap"><tt class="xref py py-class docutils literal"><span class="pre">IDMap</span></tt></a>.</p>
+<p>Keys: <tt class="docutils literal"><span class="pre">source_id</span></tt>, <tt class="docutils literal"><span class="pre">ckan_id</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.utils.SuppressExceptionIf">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.utils.</tt><tt class="descname">SuppressExceptionIf</tt><big>(</big><em>cond</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/utils.html#SuppressExceptionIf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.utils.SuppressExceptionIf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Context manager used to suppress exceptions if they match
+a given condition.</p>
+<p>Usage example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">is_404</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">HTTPError</span><span class="p">)</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span>
+<span class="k">with</span> <span class="n">SuppressExceptionIf</span><span class="p">(</span><span class="n">is_404</span><span class="p">):</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.utils.IDMap">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.utils.</tt><tt class="descname">IDMap</tt><a class="reference internal" href="../_modules/ckan_api_client/utils.html#IDMap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.utils.IDMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Two-way hashmap to map source ids to ckan ids
+and the other way back.</p>
+<dl class="method">
+<dt id="ckan_api_client.utils.IDMap.to_ckan">
+<tt class="descname">to_ckan</tt><big>(</big><em>source_id</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/utils.html#IDMap.to_ckan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.utils.IDMap.to_ckan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a source id to ckan id</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.utils.IDMap.to_source">
+<tt class="descname">to_source</tt><big>(</big><em>ckan_id</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/utils.html#IDMap.to_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.utils.IDMap.to_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a ckan id to source id</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.utils.IDMap.add">
+<tt class="descname">add</tt><big>(</big><em>pair</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/utils.html#IDMap.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.utils.IDMap.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new id pair</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pair</strong> (<em>IDPair</em>) &#8211; the id pair to be added</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">if one of the two ids is found in a mismatching pair</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.utils.IDMap.remove">
+<tt class="descname">remove</tt><big>(</big><em>pair</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/utils.html#IDMap.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.utils.IDMap.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove an id pair.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pair</strong> (<em>IDPair</em>) &#8211; the id pair to be removed</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">if one of the two ids is found in a mismatching pair</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.utils.FrozenDict">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.utils.</tt><tt class="descname">FrozenDict</tt><big>(</big><em>*a</em>, <em>**kw</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/utils.html#FrozenDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.utils.FrozenDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">_abcoll.MutableMapping</span></tt></p>
+<p>Frozen dictionary.
+Acts as a read-only dictionary, preventing changes
+and returning frozen objects when asked for values.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.utils.FrozenSequence">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.utils.</tt><tt class="descname">FrozenSequence</tt><big>(</big><em>data</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/utils.html#FrozenSequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.utils.FrozenSequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">_abcoll.Sequence</span></tt></p>
+<p>Base class for the FrozenList/FrozenTuple classes.
+Acts as a read-only sequence type, returning frozen
+versions of mutable objects.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.utils.FrozenList">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.utils.</tt><tt class="descname">FrozenList</tt><big>(</big><em>data</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/utils.html#FrozenList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.utils.FrozenList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ckan_api_client.utils.FrozenSequence" title="ckan_api_client.utils.FrozenSequence"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.utils.FrozenSequence</span></tt></a></p>
+<p>Immutable list-like.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.utils.FrozenTuple">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.utils.</tt><tt class="descname">FrozenTuple</tt><big>(</big><em>data</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/utils.html#FrozenTuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.utils.FrozenTuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ckan_api_client.utils.FrozenSequence" title="ckan_api_client.utils.FrozenSequence"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.utils.FrozenSequence</span></tt></a></p>
+<p>Immutable tuple-like.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ckan_api_client.utils.freeze">
+<tt class="descclassname">ckan_api_client.utils.</tt><tt class="descname">freeze</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/utils.html#freeze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.utils.freeze" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the &#8220;frozen&#8221; version of a mutable type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Raises TypeError:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">if a frozen version for that object doesn&#8217;t exist</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.utils.WrappedList">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.utils.</tt><tt class="descname">WrappedList</tt><big>(</big><em>*a</em>, <em>**kw</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/utils.html#WrappedList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.utils.WrappedList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">_abcoll.MutableSequence</span></tt></p>
+<dl class="method">
+<dt id="ckan_api_client.utils.WrappedList.insert">
+<tt class="descname">insert</tt><big>(</big><em>pos</em>, <em>item</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/utils.html#WrappedList.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.utils.WrappedList.insert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          <footer>
+  
+    <div class="rst-footer-buttons">
+      
+        <a href="../testing/index.html" class="btn btn-neutral float-right" title="Testing"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="objects.html" class="btn btn-neutral" title="ckan_api_client.objects"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2014, Samuele Santi.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>

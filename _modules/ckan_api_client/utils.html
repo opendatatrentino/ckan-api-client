@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ckan_api_client.utils &mdash; Ckan API client 0.1a documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../../',
+        VERSION:'0.1a',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="Ckan API client 0.1a documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> Ckan API client</a>
+        <form class="wy-form" action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Clients</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/low-level.html">Low-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/high-level.html">High-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/syncing.html">Syncing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/exceptions.html">ckan_api_client.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/objects.html">ckan_api_client.objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utils.html">ckan_api_client.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing/fixtures.html">Fixtures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing/utility.html">Testing utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">Ckan API client</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="../../index.html">Docs</a> &raquo;</li>
+  <li><a href="">ckan_api_client.utils</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <h1>Source code for ckan_api_client.utils</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="p">(</span><span class="n">namedtuple</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">,</span>
+                         <span class="n">MutableMapping</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="IDPair"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.IDPair">[docs]</a><span class="k">class</span> <span class="nc">IDPair</span><span class="p">(</span><span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;IDPair&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;source_id&#39;</span><span class="p">,</span> <span class="s">&#39;ckan_id&#39;</span><span class="p">])):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A pair (named tuple) mapping a &quot;source&quot; id with the one used</span>
+<span class="sd">    internally in Ckan.</span>
+
+<span class="sd">    This is mostly used associated with :py:class:`IDMap`.</span>
+
+<span class="sd">    Keys: ``source_id``, ``ckan_id``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="SuppressExceptionIf"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.SuppressExceptionIf">[docs]</a><span class="k">class</span> <span class="nc">SuppressExceptionIf</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Context manager used to suppress exceptions if they match</span>
+<span class="sd">    a given condition.</span>
+
+<span class="sd">    Usage example::</span>
+
+<span class="sd">        is_404 = lambda x: isinstance(x, HTTPError) and x.status_code == 404</span>
+<span class="sd">        with SuppressExceptionIf(is_404):</span>
+<span class="sd">            client.request(...)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cond</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">exc_value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cond</span><span class="p">):</span>
+            <span class="c"># If the callable returns True, exception</span>
+            <span class="c"># will be suppressed</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">exc_value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cond</span>
+
+</div>
+<div class="viewcode-block" id="IDMap"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.IDMap">[docs]</a><span class="k">class</span> <span class="nc">IDMap</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Two-way hashmap to map source ids to ckan ids</span>
+<span class="sd">    and the other way back.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_to_ckan</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ckan_to_source</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="IDMap.to_ckan"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.IDMap.to_ckan">[docs]</a>    <span class="k">def</span> <span class="nf">to_ckan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert a source id to ckan id&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_to_ckan</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="IDMap.to_source"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.IDMap.to_source">[docs]</a>    <span class="k">def</span> <span class="nf">to_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ckan_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert a ckan id to source id&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ckan_to_source</span><span class="p">[</span><span class="n">ckan_id</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="IDMap.add"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.IDMap.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pair</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a new id pair</span>
+
+<span class="sd">        :param IDPair pair:</span>
+<span class="sd">            the id pair to be added</span>
+<span class="sd">        :raises ValueError:</span>
+<span class="sd">            if one of the two ids is found in a mismatching pair</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">## Check both directions first..</span>
+        <span class="k">if</span> <span class="n">pair</span><span class="o">.</span><span class="n">source_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_to_ckan</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_to_ckan</span><span class="p">[</span><span class="n">pair</span><span class="o">.</span><span class="n">source_id</span><span class="p">]</span> <span class="o">!=</span> <span class="n">pair</span><span class="o">.</span><span class="n">ckan_id</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Mismatching information&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">pair</span><span class="o">.</span><span class="n">ckan_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ckan_to_source</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ckan_to_source</span><span class="p">[</span><span class="n">pair</span><span class="o">.</span><span class="n">ckan_id</span><span class="p">]</span> <span class="o">!=</span> <span class="n">pair</span><span class="o">.</span><span class="n">source_id</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Mismatching information&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_to_ckan</span><span class="p">[</span><span class="n">pair</span><span class="o">.</span><span class="n">source_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">pair</span><span class="o">.</span><span class="n">ckan_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ckan_to_source</span><span class="p">[</span><span class="n">pair</span><span class="o">.</span><span class="n">ckan_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">pair</span><span class="o">.</span><span class="n">source_id</span>
+</div>
+<div class="viewcode-block" id="IDMap.remove"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.IDMap.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pair</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove an id pair.</span>
+
+<span class="sd">        :param IDPair pair:</span>
+<span class="sd">            the id pair to be removed</span>
+<span class="sd">        :raises ValueError:</span>
+<span class="sd">            if one of the two ids is found in a mismatching pair</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">## Check both directions first..</span>
+        <span class="k">if</span> <span class="n">pair</span><span class="o">.</span><span class="n">source_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_to_ckan</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_to_ckan</span><span class="p">[</span><span class="n">pair</span><span class="o">.</span><span class="n">source_id</span><span class="p">]</span> <span class="o">!=</span> <span class="n">pair</span><span class="o">.</span><span class="n">ckan_id</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Mismatching information&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">pair</span><span class="o">.</span><span class="n">ckan_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ckan_to_source</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ckan_to_source</span><span class="p">[</span><span class="n">pair</span><span class="o">.</span><span class="n">ckan_id</span><span class="p">]</span> <span class="o">!=</span> <span class="n">pair</span><span class="o">.</span><span class="n">source_id</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Mismatching information&quot;</span><span class="p">)</span>
+
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_to_ckan</span><span class="p">[</span><span class="n">pair</span><span class="o">.</span><span class="n">source_id</span><span class="p">]</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ckan_to_source</span><span class="p">[</span><span class="n">pair</span><span class="o">.</span><span class="n">ckan_id</span><span class="p">]</span>
+
+
+<span class="c">##------------------------------------------------------------</span>
+<span class="c">## Frozen objects, mainly used while running tests,</span>
+<span class="c">## to make sure certain objects are left untouched.</span>
+<span class="c">##------------------------------------------------------------</span>
+</div></div>
+<div class="viewcode-block" id="FrozenDict"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.FrozenDict">[docs]</a><span class="k">class</span> <span class="nc">FrozenDict</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Frozen dictionary.</span>
+<span class="sd">    Acts as a read-only dictionary, preventing changes</span>
+<span class="sd">    and returning frozen objects when asked for values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">freeze</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;FrozenDict doesn&#39;t support item assignment&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;FrozenDict doesn&#39;t support item deletion&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="FrozenSequence"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.FrozenSequence">[docs]</a><span class="k">class</span> <span class="nc">FrozenSequence</span><span class="p">(</span><span class="n">Sequence</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for the FrozenList/FrozenTuple classes.</span>
+<span class="sd">    Acts as a read-only sequence type, returning frozen</span>
+<span class="sd">    versions of mutable objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">freeze</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="FrozenList"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.FrozenList">[docs]</a><span class="k">class</span> <span class="nc">FrozenList</span><span class="p">(</span><span class="n">FrozenSequence</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Immutable list-like.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="FrozenTuple"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.FrozenTuple">[docs]</a><span class="k">class</span> <span class="nc">FrozenTuple</span><span class="p">(</span><span class="n">FrozenSequence</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Immutable tuple-like.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="freeze"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.freeze">[docs]</a><span class="k">def</span> <span class="nf">freeze</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the &quot;frozen&quot; version of a mutable type.</span>
+
+<span class="sd">    :raises TypeError:</span>
+<span class="sd">        if a frozen version for that object doesn&#39;t exist</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">basestring</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">obj</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FrozenDict</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FrozenList</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FrozenTuple</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;I don&#39;t know how to freeze this!&quot;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="WrappedList"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.WrappedList">[docs]</a><span class="k">class</span> <span class="nc">WrappedList</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WrappedList.insert"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.WrappedList.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span> <span class="o">==</span> <span class="n">other</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">WrappedList</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">__wrapped</span>
+        <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">myname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="k">return</span> <span class="s">&quot;{0}({1!r})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">myname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped</span><span class="p">)</span></div>
+</pre></div>
+
+          <footer>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2014, Samuele Santi.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>

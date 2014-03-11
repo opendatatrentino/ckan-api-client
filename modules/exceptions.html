@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ckan_api_client.exceptions &mdash; Ckan API client 0.1a documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../',
+        VERSION:'0.1a',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="Ckan API client 0.1a documentation" href="../index.html"/>
+        <link rel="up" title="Modules" href="index.html"/>
+        <link rel="next" title="ckan_api_client.objects" href="objects.html"/>
+        <link rel="prev" title="Modules" href="index.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="icon icon-home"> Ckan API client</a>
+        <form class="wy-form" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../clients/index.html">Clients</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../clients/low-level.html">Low-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../clients/high-level.html">High-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../clients/syncing.html">Syncing</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Modules</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">ckan_api_client.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="objects.html">ckan_api_client.objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">ckan_api_client.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../testing/fixtures.html">Fixtures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../testing/utility.html">Testing utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">Ckan API client</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="../index.html">Docs</a> &raquo;</li>
+  <li><a href="">ckan_api_client.exceptions</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <div class="section" id="module-ckan_api_client.exceptions">
+<span id="ckan-api-client-exceptions"></span><h1>ckan_api_client.exceptions<a class="headerlink" href="#module-ckan_api_client.exceptions" title="Permalink to this headline">¶</a></h1>
+<p>Exceptions used all over the place</p>
+<dl class="exception">
+<dt id="ckan_api_client.exceptions.HTTPError">
+<em class="property">exception </em><tt class="descclassname">ckan_api_client.exceptions.</tt><tt class="descname">HTTPError</tt><big>(</big><em>status_code</em>, <em>message</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/exceptions.html#HTTPError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.exceptions.HTTPError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+<p>Exception representing an HTTP response error.</p>
+<dl class="attribute">
+<dt id="ckan_api_client.exceptions.HTTPError.status_code">
+<tt class="descname">status_code</tt><a class="headerlink" href="#ckan_api_client.exceptions.HTTPError.status_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP status code</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.exceptions.HTTPError.message">
+<tt class="descname">message</tt><a class="headerlink" href="#ckan_api_client.exceptions.HTTPError.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Informative error message, if available</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="ckan_api_client.exceptions.BadApiError">
+<em class="property">exception </em><tt class="descclassname">ckan_api_client.exceptions.</tt><tt class="descname">BadApiError</tt><a class="reference internal" href="../_modules/ckan_api_client/exceptions.html#BadApiError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.exceptions.BadApiError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+<p>Exception used to mark bad behavior from the API</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="ckan_api_client.exceptions.BadApiWarning">
+<em class="property">exception </em><tt class="descclassname">ckan_api_client.exceptions.</tt><tt class="descname">BadApiWarning</tt><a class="reference internal" href="../_modules/ckan_api_client/exceptions.html#BadApiWarning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.exceptions.BadApiWarning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.UserWarning</span></tt></p>
+<p>Warning to mark bad behavior from the API</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="ckan_api_client.exceptions.OperationFailure">
+<em class="property">exception </em><tt class="descclassname">ckan_api_client.exceptions.</tt><tt class="descname">OperationFailure</tt><a class="reference internal" href="../_modules/ckan_api_client/exceptions.html#OperationFailure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.exceptions.OperationFailure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+<p>Something went wrong // failed expectations somewhere..</p>
+</dd></dl>
+
+</div>
+
+
+          <footer>
+  
+    <div class="rst-footer-buttons">
+      
+        <a href="objects.html" class="btn btn-neutral float-right" title="ckan_api_client.objects"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Modules"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2014, Samuele Santi.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>

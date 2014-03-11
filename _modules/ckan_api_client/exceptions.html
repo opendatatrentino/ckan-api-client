@@ -75,8 +75,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../../clients/syncing.html">Syncing</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../objects/objects.html">Objects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../objects/exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/exceptions.html">ckan_api_client.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/objects.html">ckan_api_client.objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utils.html">ckan_api_client.utils</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../testing/fixtures.html">Fixtures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../testing/utility.html">Testing utilities</a></li>
@@ -110,7 +114,22 @@
 
           
   <h1>Source code for ckan_api_client.exceptions</h1><div class="highlight"><pre>
-<div class="viewcode-block" id="HTTPError"><a class="viewcode-back" href="../../objects/exceptions.html#ckan_api_client.exceptions.HTTPError">[docs]</a><span class="k">class</span> <span class="nc">HTTPError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="sd">&quot;&quot;&quot;Exceptions used all over the place&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="HTTPError"><a class="viewcode-back" href="../../modules/exceptions.html#ckan_api_client.exceptions.HTTPError">[docs]</a><span class="k">class</span> <span class="nc">HTTPError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Exception representing an HTTP response error.</span>
+
+<span class="sd">    .. attribute:: status_code</span>
+
+<span class="sd">        HTTP status code</span>
+
+<span class="sd">    .. attribute:: message</span>
+
+<span class="sd">        Informative error message, if available</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">status_code</span> <span class="o">=</span> <span class="n">status_code</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
@@ -119,17 +138,17 @@
         <span class="k">return</span> <span class="s">&quot;HTTPError [{0}]: {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="BadApiError"><a class="viewcode-back" href="../../objects/exceptions.html#ckan_api_client.exceptions.BadApiError">[docs]</a><span class="k">class</span> <span class="nc">BadApiError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="BadApiError"><a class="viewcode-back" href="../../modules/exceptions.html#ckan_api_client.exceptions.BadApiError">[docs]</a><span class="k">class</span> <span class="nc">BadApiError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Exception used to mark bad behavior from the API&quot;&quot;&quot;</span>
     <span class="k">pass</span>
 
 </div>
-<div class="viewcode-block" id="BadApiWarning"><a class="viewcode-back" href="../../objects/exceptions.html#ckan_api_client.exceptions.BadApiWarning">[docs]</a><span class="k">class</span> <span class="nc">BadApiWarning</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">):</span>
+<div class="viewcode-block" id="BadApiWarning"><a class="viewcode-back" href="../../modules/exceptions.html#ckan_api_client.exceptions.BadApiWarning">[docs]</a><span class="k">class</span> <span class="nc">BadApiWarning</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Warning to mark bad behavior from the API&quot;&quot;&quot;</span>
     <span class="k">pass</span>
 
 </div>
-<div class="viewcode-block" id="OperationFailure"><a class="viewcode-back" href="../../objects/exceptions.html#ckan_api_client.exceptions.OperationFailure">[docs]</a><span class="k">class</span> <span class="nc">OperationFailure</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="OperationFailure"><a class="viewcode-back" href="../../modules/exceptions.html#ckan_api_client.exceptions.OperationFailure">[docs]</a><span class="k">class</span> <span class="nc">OperationFailure</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Something went wrong // failed expectations somewhere..&quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 </pre></div>
