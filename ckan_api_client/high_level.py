@@ -35,7 +35,7 @@ class CkanHighlevelClient(object):
         """
 
         data = self._client.get_dataset(id)
-        return CkanDataset.from_dict(data)
+        return CkanDataset(data)
 
     def save_dataset(self, dataset):
         """
@@ -65,8 +65,8 @@ class CkanHighlevelClient(object):
         if dataset.id is not None:
             raise ValueError("Cannot specify an id when creating an object")
 
-        data = self._client.post_dataset(dataset.to_dict())
-        created = CkanDataset.from_dict(data)
+        data = self._client.post_dataset(dataset.serialize())
+        created = CkanDataset(data)
 
         if not created.is_equivalent(dataset):
             raise OperationFailure("Created dataset doesn't match")
@@ -85,8 +85,8 @@ class CkanHighlevelClient(object):
         if dataset.id is None:
             raise ValueError("Trying to update a dataset without an id")
 
-        data = self._client.put_dataset(dataset.to_dict())
-        updated = CkanDataset.from_dict(data)
+        data = self._client.put_dataset(dataset.serialize())
+        updated = CkanDataset(data)
 
         if not updated.is_equivalent(dataset):
             raise OperationFailure("Updated dataset doesn't match")
@@ -110,7 +110,7 @@ class CkanHighlevelClient(object):
 
     def get_organization(self, id):
         data = self._client.get_organization(id)
-        return CkanOrganization.from_dict(data)
+        return CkanOrganization.serialize(data)
 
     def save_organization(self, organization):
         if not isinstance(organization, CkanOrganization):
@@ -126,8 +126,8 @@ class CkanHighlevelClient(object):
         if organization.id is not None:
             raise ValueError("Cannot specify an id when creating an object")
 
-        data = self._client.post_organization(organization.to_dict())
-        created = CkanOrganization.from_dict(data)
+        data = self._client.post_organization(organization.serialize())
+        created = CkanOrganization.serialize(data)
 
         if not created.is_equivalent(organization):
             raise OperationFailure("Created organization doesn't match")
@@ -140,8 +140,8 @@ class CkanHighlevelClient(object):
         if organization.id is None:
             raise ValueError("Trying to update a organization without an id")
 
-        data = self._client.put_organization(organization.to_dict())
-        updated = CkanDataset.from_dict(data)
+        data = self._client.put_organization(organization.serialize())
+        updated = CkanDataset(data)
 
         if not updated.is_equivalent(organization):
             raise OperationFailure("Updated organization doesn't match")
@@ -164,7 +164,7 @@ class CkanHighlevelClient(object):
 
     def get_group(self, id):
         data = self._client.get_group(id)
-        return CkanGroup.from_dict(data)
+        return CkanGroup.serialize(data)
 
     def save_group(self, group):
         if not isinstance(group, CkanGroup):
@@ -180,8 +180,8 @@ class CkanHighlevelClient(object):
         if group.id is not None:
             raise ValueError("Cannot specify an id when creating an object")
 
-        data = self._client.post_group(group.to_dict())
-        created = CkanGroup.from_dict(data)
+        data = self._client.post_group(group.serialize())
+        created = CkanGroup.serialize(data)
 
         if not created.is_equivalent(group):
             raise OperationFailure("Created group doesn't match")
@@ -194,8 +194,8 @@ class CkanHighlevelClient(object):
         if group.id is None:
             raise ValueError("Trying to update a group without an id")
 
-        data = self._client.put_group(group.to_dict())
-        updated = CkanGroup.from_dict(data)
+        data = self._client.put_group(group.serialize())
+        updated = CkanGroup.serialize(data)
 
         if not updated.is_equivalent(group):
             raise OperationFailure("Updated group doesn't match")
