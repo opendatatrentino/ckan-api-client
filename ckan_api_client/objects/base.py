@@ -38,6 +38,12 @@ class BaseField(object):
             self.is_key = is_key
         self.required = required
 
+        self._conf = {
+            'default': self.default,
+            'is_key': self.is_key,
+            'required': self.required,
+        }
+
     def get(self, instance, name):
         """
         Get the value for the field from the main instace,
@@ -121,6 +127,12 @@ class BaseField(object):
 
         ## Just perform simple comparison between values
         return getattr(instance, name) == getattr(other, name)
+
+    def __repr__(self):
+        myname = self.__class__.__name__
+        kwargs = ', '.join('{0}={1!r}'.format(key, value)
+                           for key, value in self._conf.iteritems())
+        return "{0}({1})".format(myname, kwargs)
 
 
 class BaseObject(object):
