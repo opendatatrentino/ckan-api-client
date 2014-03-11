@@ -14,7 +14,7 @@ def test_string_field():
 
     ## --- Test #1: no initial values
     obj = MyObject()
-    assert obj.field == ''
+    assert obj.field is None
     assert obj.is_modified() is False
 
     ## --- Test #2: initial values
@@ -24,7 +24,7 @@ def test_string_field():
 
     ## --- Test #3: empty initial values
     obj = MyObject({})
-    assert obj.field == ''
+    assert obj.field is None
     assert obj.is_modified() is False
 
     ##--------------------------------------------------
@@ -86,8 +86,8 @@ def test_string_field_invalid_values():
     ##
 
     obj = MyObject1()
-    assert obj.field == ''
-    assert obj.req_field == ''
+    assert obj.field is None
+    assert obj.req_field is None
 
     obj.field = None
     with pytest.raises(TypeError):
@@ -166,7 +166,7 @@ def test_string_field_serialize():
         field = StringField(default='default_value')
 
     obj = MyObject1()
-    assert obj.serialize() == {'field': ''}
+    assert obj.serialize() == {'field': None}
     obj.field = 'updated_value'
     assert obj.serialize() == {'field': 'updated_value'}
     del obj
@@ -211,25 +211,25 @@ def test_string_fiel_multiple():
     ## Initial checks
 
     assert obj1.serialize() == {
-        'field1': '',
-        'field2': '',
+        'field1': None,
+        'field2': None,
         'field3': 'F3-default',
         'field4': 'F4-default',
     }
     assert obj2.serialize() == {
-        'field1': '',
-        'field2': '',
+        'field1': None,
+        'field2': None,
         'field3': 'F3-default',
         'field4': 'F4-default',
     }
     assert obj3.serialize() == {
         'field1': 'F1-initial',
-        'field2': '',
+        'field2': None,
         'field3': 'F3-initial',
         'field4': 'F4-default',
     }
     assert obj4.serialize() == {
-        'field1': '',
+        'field1': None,
         'field2': 'F2-initial',
         'field3': 'F3-default',
         'field4': 'F4-initial',
@@ -250,19 +250,19 @@ def test_string_fiel_multiple():
         'field4': 'F4-updated',
     }
     assert obj2.serialize() == {
-        'field1': '',
-        'field2': '',
+        'field1': None,
+        'field2': None,
         'field3': 'F3-default',
         'field4': 'F4-default',
     }
     assert obj3.serialize() == {
         'field1': 'F1-initial',
-        'field2': '',
+        'field2': None,
         'field3': 'F3-initial',
         'field4': 'F4-default',
     }
     assert obj4.serialize() == {
-        'field1': '',
+        'field1': None,
         'field2': 'F2-initial',
         'field3': 'F3-default',
         'field4': 'F4-initial',
@@ -277,8 +277,8 @@ def test_string_fiel_multiple():
     del obj1.field4
 
     assert obj1.serialize() == {
-        'field1': '',
-        'field2': '',
+        'field1': None,
+        'field2': None,
         'field3': 'F3-default',
         'field4': 'F4-default',
     }

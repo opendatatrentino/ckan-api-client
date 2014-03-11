@@ -68,7 +68,7 @@ def test_object_serialization():
         fld3 = StringField()
 
     obj = MyObject({'foo': 'ignored', 'fld1': 'hello'})
-    assert obj.serialize() == {'fld1': 'hello', 'fld2': 'Hi!', 'fld3': ''}
+    assert obj.serialize() == {'fld1': 'hello', 'fld2': 'Hi!', 'fld3': None}
 
 
 def test_object_comparison():
