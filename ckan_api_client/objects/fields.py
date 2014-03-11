@@ -8,15 +8,13 @@ __all__ = ['StringField', 'ListField', 'DictField',
 
 
 class StringField(BaseField):
-    default = ''
+    default = None
 
     def validate(self, instance, name, value):
-        super(StringField, self).validate(instance, name, value)
-
         if value is None:
             if self.required:
                 raise TypeError("Required field cannot be None")
-            return ''
+            return None
 
         if not isinstance(value, basestring):
             raise TypeError("Invalid type for string field {0!r}: {1!r}"
@@ -36,13 +34,30 @@ class BoolField(BaseField):
 
         if value is False or value is None:
             return False
+
         if value is True:
             return True
+
         raise TypeError("Invalid type for boolean field {0!r}: {1!r}"
                         .format(name, type(value)))
 
     def serialize(self, instance, name):
         return self.get(instance, name)
+
+class IntegerField(BaseField):
+    default = False
+
+    def validate(self, instance, name, value):
+        if value is None:
+            if self.required:
+                raise TypeError("Required field cannot be None")
+            return None
+
+        if not isinstance(value, int):
+            raise TypeError("Invalid type for integer field {0!r}: {1!r}"
+                            .format(name, type(value)))
+
+        return value
 
 
 class MutableFieldMixin(object):
