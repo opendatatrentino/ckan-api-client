@@ -1,7 +1,8 @@
 from ckan_api_client.utils import WrappedList
 
 from .base import BaseObject
-from .fields import StringField, GroupsField, ExtrasField, ListField
+from .fields import (StringField, GroupsField, ExtrasField, ListField,
+                     BoolField, IntegerField)
 
 
 __all__ = ['ResourcesField', 'CkanDataset', 'CkanResource']
@@ -75,7 +76,7 @@ class CkanDataset(BaseObject):
     maintainer_email = StringField()
     notes = StringField()
     owner_org = StringField()
-    private = StringField(default=False)
+    private = BoolField(default=False)
     state = StringField(default='active')
     type = StringField(default='dataset')
     url = StringField()
