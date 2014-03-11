@@ -118,6 +118,567 @@
   <div class="section" id="module-ckan_api_client.objects">
 <span id="ckan-api-client-objects"></span><h1>ckan_api_client.objects<a class="headerlink" href="#module-ckan_api_client.objects" title="Permalink to this headline">¶</a></h1>
 <p>Classes to represent / validate Ckan objects.</p>
+<div class="section" id="module-ckan_api_client.objects.base">
+<span id="base-objects"></span><h2>Base objects<a class="headerlink" href="#module-ckan_api_client.objects.base" title="Permalink to this headline">¶</a></h2>
+<p>Classes to represent / validate Ckan objects.</p>
+<dl class="class">
+<dt id="ckan_api_client.objects.base.BaseField">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.base.</tt><tt class="descname">BaseField</tt><big>(</big><em>default=&lt;object object at 0x1e3f720&gt;</em>, <em>is_key=&lt;object object at 0x1e3f720&gt;</em>, <em>required=False</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Pseudo-descriptor, accepting field names along with instance,
+to allow better retrieving data for the instance itself.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Beware that fields shouldn&#8217;t carry state of their own, a part
+from the one used for generic field configuration, as they
+are shared between instances.</p>
+</div>
+<dl class="attribute">
+<dt id="ckan_api_client.objects.base.BaseField.default">
+<tt class="descname">default</tt><em class="property"> = None</em><a class="headerlink" href="#ckan_api_client.objects.base.BaseField.default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.base.BaseField.is_key">
+<tt class="descname">is_key</tt><em class="property"> = False</em><a class="headerlink" href="#ckan_api_client.objects.base.BaseField.is_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.base.BaseField.get">
+<tt class="descname">get</tt><big>(</big><em>instance</em>, <em>name</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseField.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseField.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value for the field from the main instace,
+by looking at the first found in:</p>
+<ul class="simple">
+<li>the updated value</li>
+<li>the initial value</li>
+<li>the default value</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.base.BaseField.get_default">
+<tt class="descname">get_default</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseField.get_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseField.get_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.base.BaseField.validate">
+<tt class="descname">validate</tt><big>(</big><em>instance</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseField.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseField.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>The validate method should be the (updated)
+value to be used as the field value, or raise
+an exception in case it is not acceptable at all.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.base.BaseField.set_initial">
+<tt class="descname">set_initial</tt><big>(</big><em>instance</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseField.set_initial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseField.set_initial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the initial value for a field</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.base.BaseField.set">
+<tt class="descname">set</tt><big>(</big><em>instance</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseField.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseField.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the modified value for a field</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.base.BaseField.delete">
+<tt class="descname">delete</tt><big>(</big><em>instance</em>, <em>name</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseField.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseField.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the modified value for a field (logically
+restores the original one)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.base.BaseField.serialize">
+<tt class="descname">serialize</tt><big>(</big><em>instance</em>, <em>name</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseField.serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseField.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the &#8220;serialized&#8221; (json-encodable) version of
+the object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.base.BaseField.is_modified">
+<tt class="descname">is_modified</tt><big>(</big><em>instance</em>, <em>name</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseField.is_modified"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseField.is_modified" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether this field has been modified on the
+main instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.base.BaseField.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><em>instance</em>, <em>name</em>, <em>other</em>, <em>ignore_key=True</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseField.is_equivalent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseField.is_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.objects.base.BaseObject">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.base.</tt><tt class="descname">BaseObject</tt><big>(</big><em>values=None</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Base for the other objects, dispatching get/set/deletes
+to <tt class="docutils literal"><span class="pre">BaseField</span></tt> instances, if available.</p>
+<dl class="classmethod">
+<dt id="ckan_api_client.objects.base.BaseObject.from_dict">
+<em class="property">classmethod </em><tt class="descname">from_dict</tt><big>(</big><em>data</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseObject.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseObject.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.base.BaseObject.set_initial">
+<tt class="descname">set_initial</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseObject.set_initial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseObject.set_initial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set initial values for all fields</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.base.BaseObject.to_dict">
+<tt class="descname">to_dict</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseObject.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseObject.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.base.BaseObject.serialize">
+<tt class="descname">serialize</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseObject.serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseObject.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a serializable representation of the object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.base.BaseObject.iter_fields">
+<tt class="descname">iter_fields</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseObject.iter_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseObject.iter_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over fields in this objects, yielding
+(name, field) pairs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.base.BaseObject.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><em>other</em>, <em>ignore_key=True</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseObject.is_equivalent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseObject.is_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalency check between objects.
+Will make sure that values in all the non-key
+fields match.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>other</strong> &#8211; other object to compare</li>
+<li><strong>ignore_key</strong> &#8211; if set to True (the default), it will ignore
+&#8220;key&#8221; fields during comparison</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.base.BaseObject.is_modified">
+<tt class="descname">is_modified</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/base.html#BaseObject.is_modified"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.base.BaseObject.is_modified" title="Permalink to this definition">¶</a></dt>
+<dd><p>The object is modified if any of its fields reports
+itself as modified.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ckan_api_client.objects.fields">
+<span id="base-fields"></span><h2>Base fields<a class="headerlink" href="#module-ckan_api_client.objects.fields" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ckan_api_client.objects.fields.StringField">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.fields.</tt><tt class="descname">StringField</tt><big>(</big><em>default=&lt;object object at 0x1e3f720&gt;</em>, <em>is_key=&lt;object object at 0x1e3f720&gt;</em>, <em>required=False</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/fields.html#StringField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.fields.StringField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ckan_api_client.objects.base.BaseField" title="ckan_api_client.objects.base.BaseField"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.base.BaseField</span></tt></a></p>
+<dl class="attribute">
+<dt id="ckan_api_client.objects.fields.StringField.default">
+<tt class="descname">default</tt><em class="property"> = None</em><a class="headerlink" href="#ckan_api_client.objects.fields.StringField.default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.fields.StringField.validate">
+<tt class="descname">validate</tt><big>(</big><em>instance</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/fields.html#StringField.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.fields.StringField.validate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.objects.fields.ListField">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.fields.</tt><tt class="descname">ListField</tt><big>(</big><em>default=&lt;object object at 0x1e3f720&gt;</em>, <em>is_key=&lt;object object at 0x1e3f720&gt;</em>, <em>required=False</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/fields.html#ListField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.fields.ListField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.fields.MutableFieldMixin</span></tt>, <a class="reference internal" href="#ckan_api_client.objects.base.BaseField" title="ckan_api_client.objects.base.BaseField"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.base.BaseField</span></tt></a></p>
+<dl class="staticmethod">
+<dt id="ckan_api_client.objects.fields.ListField.default">
+<em class="property">static </em><tt class="descname">default</tt><big>(</big><big>)</big><a class="headerlink" href="#ckan_api_client.objects.fields.ListField.default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.fields.ListField.validate">
+<tt class="descname">validate</tt><big>(</big><em>instance</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/fields.html#ListField.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.fields.ListField.validate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.objects.fields.DictField">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.fields.</tt><tt class="descname">DictField</tt><big>(</big><em>default=&lt;object object at 0x1e3f720&gt;</em>, <em>is_key=&lt;object object at 0x1e3f720&gt;</em>, <em>required=False</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/fields.html#DictField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.fields.DictField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.fields.MutableFieldMixin</span></tt>, <a class="reference internal" href="#ckan_api_client.objects.base.BaseField" title="ckan_api_client.objects.base.BaseField"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.base.BaseField</span></tt></a></p>
+<dl class="staticmethod">
+<dt id="ckan_api_client.objects.fields.DictField.default">
+<em class="property">static </em><tt class="descname">default</tt><big>(</big><big>)</big><a class="headerlink" href="#ckan_api_client.objects.fields.DictField.default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.fields.DictField.validate">
+<tt class="descname">validate</tt><big>(</big><em>instance</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/fields.html#DictField.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.fields.DictField.validate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.objects.fields.GroupsField">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.fields.</tt><tt class="descname">GroupsField</tt><big>(</big><em>default=&lt;object object at 0x1e3f720&gt;</em>, <em>is_key=&lt;object object at 0x1e3f720&gt;</em>, <em>required=False</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/fields.html#GroupsField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.fields.GroupsField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ckan_api_client.objects.fields.ListField" title="ckan_api_client.objects.fields.ListField"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.fields.ListField</span></tt></a></p>
+<dl class="method">
+<dt id="ckan_api_client.objects.fields.GroupsField.validate">
+<tt class="descname">validate</tt><big>(</big><em>instance</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/fields.html#GroupsField.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.fields.GroupsField.validate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.objects.fields.ExtrasField">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.fields.</tt><tt class="descname">ExtrasField</tt><big>(</big><em>default=&lt;object object at 0x1e3f720&gt;</em>, <em>is_key=&lt;object object at 0x1e3f720&gt;</em>, <em>required=False</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/fields.html#ExtrasField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.fields.ExtrasField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ckan_api_client.objects.fields.DictField" title="ckan_api_client.objects.fields.DictField"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.fields.DictField</span></tt></a></p>
+<dl class="method">
+<dt id="ckan_api_client.objects.fields.ExtrasField.validate">
+<tt class="descname">validate</tt><big>(</big><em>instance</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/fields.html#ExtrasField.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.fields.ExtrasField.validate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ckan_api_client.objects.ckan_dataset">
+<span id="ckan-dataset-resource"></span><h2>Ckan dataset / resource<a class="headerlink" href="#module-ckan_api_client.objects.ckan_dataset" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ckan_api_client.objects.ckan_dataset.ResourcesField">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.ckan_dataset.</tt><tt class="descname">ResourcesField</tt><big>(</big><em>default=&lt;object object at 0x1e3f720&gt;</em>, <em>is_key=&lt;object object at 0x1e3f720&gt;</em>, <em>required=False</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/ckan_dataset.html#ResourcesField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.ResourcesField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ckan_api_client.objects.fields.ListField" title="ckan_api_client.objects.fields.ListField"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.fields.ListField</span></tt></a></p>
+<p>The ResourcesField should behave pretty much as a list field,
+but will keep track of changes, and make sure all elements
+are CkanResources.</p>
+<dl class="method">
+<dt id="ckan_api_client.objects.ckan_dataset.ResourcesField.validate">
+<tt class="descname">validate</tt><big>(</big><em>instance</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/ckan_dataset.html#ResourcesField.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.ResourcesField.validate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.ckan_dataset.ResourcesField.serialize">
+<tt class="descname">serialize</tt><big>(</big><em>instance</em>, <em>name</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/ckan_dataset.html#ResourcesField.serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.ResourcesField.serialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.objects.ckan_dataset.ResourcesField.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><em>instance</em>, <em>name</em>, <em>other</em>, <em>ignore_key=True</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/ckan_dataset.html#ResourcesField.is_equivalent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.ResourcesField.is_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.ckan_dataset.</tt><tt class="descname">CkanDataset</tt><big>(</big><em>values=None</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/ckan_dataset.html#CkanDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ckan_api_client.objects.base.BaseObject" title="ckan_api_client.objects.base.BaseObject"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.base.BaseObject</span></tt></a></p>
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.id">
+<tt class="descname">id</tt><em class="property"> = StringField(default=None, is_key=True, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.name">
+<tt class="descname">name</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.title">
+<tt class="descname">title</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.title" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.author">
+<tt class="descname">author</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.author" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.author_email">
+<tt class="descname">author_email</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.author_email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.license_id">
+<tt class="descname">license_id</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.license_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.maintainer">
+<tt class="descname">maintainer</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.maintainer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.maintainer_email">
+<tt class="descname">maintainer_email</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.maintainer_email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.notes">
+<tt class="descname">notes</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.notes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.owner_org">
+<tt class="descname">owner_org</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.owner_org" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.private">
+<tt class="descname">private</tt><em class="property"> = BoolField(default=False, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.private" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.state">
+<tt class="descname">state</tt><em class="property"> = StringField(default='active', is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.type">
+<tt class="descname">type</tt><em class="property"> = StringField(default='dataset', is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.url">
+<tt class="descname">url</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.extras">
+<tt class="descname">extras</tt><em class="property"> = ExtrasField(default=&lt;function &lt;lambda&gt; at 0x1f3e5f0&gt;, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.extras" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.groups">
+<tt class="descname">groups</tt><em class="property"> = GroupsField(default=&lt;function &lt;lambda&gt; at 0x1f3e500&gt;, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanDataset.resources">
+<tt class="descname">resources</tt><em class="property"> = ResourcesField(default=&lt;function &lt;lambda&gt; at 0x1f3e500&gt;, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanDataset.resources" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanResource">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.ckan_dataset.</tt><tt class="descname">CkanResource</tt><big>(</big><em>values=None</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/ckan_dataset.html#CkanResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ckan_api_client.objects.base.BaseObject" title="ckan_api_client.objects.base.BaseObject"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.base.BaseObject</span></tt></a></p>
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanResource.id">
+<tt class="descname">id</tt><em class="property"> = StringField(default=None, is_key=True, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanResource.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanResource.description">
+<tt class="descname">description</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanResource.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanResource.format">
+<tt class="descname">format</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanResource.format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanResource.mimetype">
+<tt class="descname">mimetype</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanResource.mimetype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanResource.mimetype_inner">
+<tt class="descname">mimetype_inner</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanResource.mimetype_inner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanResource.name">
+<tt class="descname">name</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanResource.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanResource.resource_type">
+<tt class="descname">resource_type</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanResource.resource_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanResource.size">
+<tt class="descname">size</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanResource.size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanResource.url">
+<tt class="descname">url</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanResource.url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_dataset.CkanResource.url_type">
+<tt class="descname">url_type</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_dataset.CkanResource.url_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ckan_api_client.objects.ckan_group">
+<span id="ckan-group"></span><h2>Ckan group<a class="headerlink" href="#module-ckan_api_client.objects.ckan_group" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ckan_api_client.objects.ckan_group.CkanGroup">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.ckan_group.</tt><tt class="descname">CkanGroup</tt><big>(</big><em>values=None</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/ckan_group.html#CkanGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.ckan_group.CkanGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ckan_api_client.objects.base.BaseObject" title="ckan_api_client.objects.base.BaseObject"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.base.BaseObject</span></tt></a></p>
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_group.CkanGroup.id">
+<tt class="descname">id</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_group.CkanGroup.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_group.CkanGroup.name">
+<tt class="descname">name</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_group.CkanGroup.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_group.CkanGroup.title">
+<tt class="descname">title</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_group.CkanGroup.title" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_group.CkanGroup.approval_status">
+<tt class="descname">approval_status</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_group.CkanGroup.approval_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_group.CkanGroup.description">
+<tt class="descname">description</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_group.CkanGroup.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_group.CkanGroup.image_display_url">
+<tt class="descname">image_display_url</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_group.CkanGroup.image_display_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_group.CkanGroup.image_url">
+<tt class="descname">image_url</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_group.CkanGroup.image_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_group.CkanGroup.is_organization">
+<tt class="descname">is_organization</tt><em class="property"> = StringField(default=False, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_group.CkanGroup.is_organization" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_group.CkanGroup.state">
+<tt class="descname">state</tt><em class="property"> = StringField(default='active', is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_group.CkanGroup.state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_group.CkanGroup.type">
+<tt class="descname">type</tt><em class="property"> = StringField(default='group', is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_group.CkanGroup.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_group.CkanGroup.extras">
+<tt class="descname">extras</tt><em class="property"> = ExtrasField(default=&lt;function &lt;lambda&gt; at 0x1f3e5f0&gt;, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_group.CkanGroup.extras" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_group.CkanGroup.groups">
+<tt class="descname">groups</tt><em class="property"> = GroupsField(default=&lt;function &lt;lambda&gt; at 0x1f3e500&gt;, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_group.CkanGroup.groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_group.CkanGroup.tags">
+<tt class="descname">tags</tt><em class="property"> = ListField(default=&lt;function &lt;lambda&gt; at 0x1f3e500&gt;, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_group.CkanGroup.tags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_group.CkanGroup.users">
+<tt class="descname">users</tt><em class="property"> = ListField(default=&lt;function &lt;lambda&gt; at 0x1f3e500&gt;, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_group.CkanGroup.users" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ckan_api_client.objects.ckan_organization">
+<span id="ckan-organization"></span><h2>Ckan organization<a class="headerlink" href="#module-ckan_api_client.objects.ckan_organization" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ckan_api_client.objects.ckan_organization.CkanOrganization">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.objects.ckan_organization.</tt><tt class="descname">CkanOrganization</tt><big>(</big><em>values=None</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/objects/ckan_organization.html#CkanOrganization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.objects.ckan_organization.CkanOrganization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ckan_api_client.objects.base.BaseObject" title="ckan_api_client.objects.base.BaseObject"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.base.BaseObject</span></tt></a></p>
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_organization.CkanOrganization.id">
+<tt class="descname">id</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_organization.CkanOrganization.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_organization.CkanOrganization.name">
+<tt class="descname">name</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_organization.CkanOrganization.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_organization.CkanOrganization.title">
+<tt class="descname">title</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_organization.CkanOrganization.title" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_organization.CkanOrganization.approval_status">
+<tt class="descname">approval_status</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_organization.CkanOrganization.approval_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_organization.CkanOrganization.description">
+<tt class="descname">description</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_organization.CkanOrganization.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_organization.CkanOrganization.image_display_url">
+<tt class="descname">image_display_url</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_organization.CkanOrganization.image_display_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_organization.CkanOrganization.image_url">
+<tt class="descname">image_url</tt><em class="property"> = StringField(default=None, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_organization.CkanOrganization.image_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_organization.CkanOrganization.is_organization">
+<tt class="descname">is_organization</tt><em class="property"> = StringField(default=True, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_organization.CkanOrganization.is_organization" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_organization.CkanOrganization.state">
+<tt class="descname">state</tt><em class="property"> = StringField(default='active', is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_organization.CkanOrganization.state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_organization.CkanOrganization.type">
+<tt class="descname">type</tt><em class="property"> = StringField(default='organization', is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_organization.CkanOrganization.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_organization.CkanOrganization.extras">
+<tt class="descname">extras</tt><em class="property"> = ExtrasField(default=&lt;function &lt;lambda&gt; at 0x1f3e5f0&gt;, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_organization.CkanOrganization.extras" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_organization.CkanOrganization.groups">
+<tt class="descname">groups</tt><em class="property"> = GroupsField(default=&lt;function &lt;lambda&gt; at 0x1f3e500&gt;, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_organization.CkanOrganization.groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_organization.CkanOrganization.tags">
+<tt class="descname">tags</tt><em class="property"> = ListField(default=&lt;function &lt;lambda&gt; at 0x1f3e500&gt;, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_organization.CkanOrganization.tags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.objects.ckan_organization.CkanOrganization.users">
+<tt class="descname">users</tt><em class="property"> = ListField(default=&lt;function &lt;lambda&gt; at 0x1f3e500&gt;, is_key=False, required=False)</em><a class="headerlink" href="#ckan_api_client.objects.ckan_organization.CkanOrganization.users" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 

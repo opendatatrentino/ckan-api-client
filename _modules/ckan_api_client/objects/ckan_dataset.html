@@ -1,0 +1,270 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ckan_api_client.objects.ckan_dataset &mdash; Ckan API client 0.1a documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../../../',
+        VERSION:'0.1a',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="Ckan API client 0.1a documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="icon icon-home"> Ckan API client</a>
+        <form class="wy-form" action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/index.html">Clients</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/low-level.html">Low-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/high-level.html">High-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/syncing.html">Syncing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/exceptions.html">ckan_api_client.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/objects.html">ckan_api_client.objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/utils.html">ckan_api_client.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../testing/fixtures.html">Fixtures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../testing/utility.html">Testing utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">Ckan API client</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="../../../index.html">Docs</a> &raquo;</li>
+  <li><a href="">ckan_api_client.objects.ckan_dataset</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <h1>Source code for ckan_api_client.objects.ckan_dataset</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">ckan_api_client.utils</span> <span class="kn">import</span> <span class="n">WrappedList</span>
+
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseObject</span>
+<span class="kn">from</span> <span class="nn">.fields</span> <span class="kn">import</span> <span class="p">(</span><span class="n">StringField</span><span class="p">,</span> <span class="n">GroupsField</span><span class="p">,</span> <span class="n">ExtrasField</span><span class="p">,</span> <span class="n">ListField</span><span class="p">,</span>
+                     <span class="n">BoolField</span><span class="p">,</span> <span class="n">IntegerField</span><span class="p">)</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ResourcesField&#39;</span><span class="p">,</span> <span class="s">&#39;CkanDataset&#39;</span><span class="p">,</span> <span class="s">&#39;CkanResource&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="ResourcesField"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.ckan_dataset.ResourcesField">[docs]</a><span class="k">class</span> <span class="nc">ResourcesField</span><span class="p">(</span><span class="n">ListField</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The ResourcesField should behave pretty much as a list field,</span>
+<span class="sd">    but will keep track of changes, and make sure all elements</span>
+<span class="sd">    are CkanResources.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ResourcesField.validate"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.ckan_dataset.ResourcesField.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ResourcesList</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">ResourcesList</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ResourcesField.serialize"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.ckan_dataset.ResourcesField.serialize">[docs]</a>    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ResourcesList</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">value</span>
+        <span class="p">]</span>
+</div>
+<div class="viewcode-block" id="ResourcesField.is_equivalent"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.ckan_dataset.ResourcesField.is_equivalent">[docs]</a>    <span class="k">def</span> <span class="nf">is_equivalent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">ignore_key</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="c">## We are now comparing two ResourcesList instances,</span>
+        <span class="c">## but we need to ignore all the key fields when comparing</span>
+        <span class="c">## resources</span>
+
+        <span class="n">our_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">other_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">our_value</span><span class="p">,</span> <span class="n">ResourcesList</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other_value</span><span class="p">,</span> <span class="n">ResourcesList</span><span class="p">)</span>
+
+        <span class="c">## Different length -- clearly two different things</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">our_value</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">other_value</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="c">## Compare resources one-by-one, by calling their &quot;is_equivalent&quot;</span>
+        <span class="c">## methods.</span>
+        <span class="k">for</span> <span class="n">resource1</span><span class="p">,</span> <span class="n">resource2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">our_value</span><span class="p">,</span> <span class="n">other_value</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">resource1</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">resource2</span><span class="p">,</span> <span class="n">ignore_key</span><span class="o">=</span><span class="n">ignore_key</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="k">return</span> <span class="bp">True</span>
+
+</div></div>
+<span class="k">class</span> <span class="nc">ResourcesList</span><span class="p">(</span><span class="n">WrappedList</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">initial</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ResourcesList</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ResourcesList</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_check_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">initial</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_check_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">CkanResource</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">CkanResource</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Invalid resource. Must be a CkanResource &quot;</span>
+                            <span class="s">&quot;or a dict, got {0!r} instead.&quot;</span>
+                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_item</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ResourcesList</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ResourcesList</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="c">## Invalid type -- cannot be contained</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ResourcesList</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__contains__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CkanDataset"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.ckan_dataset.CkanDataset">[docs]</a><span class="k">class</span> <span class="nc">CkanDataset</span><span class="p">(</span><span class="n">BaseObject</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">is_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c">## Core fields</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+
+    <span class="n">author</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">author_email</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">license_id</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">maintainer</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">maintainer_email</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">notes</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">owner_org</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">private</span> <span class="o">=</span> <span class="n">BoolField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;active&#39;</span><span class="p">)</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;dataset&#39;</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+
+    <span class="c">## Special fields</span>
+    <span class="n">extras</span> <span class="o">=</span> <span class="n">ExtrasField</span><span class="p">()</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="n">GroupsField</span><span class="p">()</span>
+    <span class="n">resources</span> <span class="o">=</span> <span class="n">ResourcesField</span><span class="p">()</span>
+    <span class="c"># relationships = ListField()</span>
+
+</div>
+<div class="viewcode-block" id="CkanResource"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.ckan_dataset.CkanResource">[docs]</a><span class="k">class</span> <span class="nc">CkanResource</span><span class="p">(</span><span class="n">BaseObject</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">is_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="n">description</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">format</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">mimetype</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">mimetype_inner</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="c"># position = IntegerField()  # Ignore, as it is generated</span>
+    <span class="n">resource_type</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">url_type</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="c">## To allow comparison with dict</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">CkanResource</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CkanResource</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></div>
+</pre></div>
+
+          <footer>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2014, Samuele Santi.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>
