@@ -29,10 +29,9 @@ class MutableFieldMixin(object):
         """
 
         if name not in instance._updates:
-            if name in instance._values:
-                value = instance._values[name]
-            else:
-                value = self.get_default()
+            if name not in instance._values:
+                instance._values[name] = self.get_default()
+            value = instance._values[name]
 
             ## to be extra safe, make copy here, even on
             ## default values, which might get shared..

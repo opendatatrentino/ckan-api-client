@@ -21,6 +21,7 @@ class ResourcesField(ListField):
 
     def serialize(self, instance, name):
         value = self.get(instance, name)
+        assert isinstance(value, ResourcesList)
         return [
             r.serialize() for r in value
         ]
@@ -91,3 +92,8 @@ class CkanResource(BaseObject):
     size = StringField()
     url = StringField()
     url_type = StringField()
+
+    def __eq__(self, other):
+        if isinstance(other, dict):
+            return self == CkanResource(other)
+        return super(CkanResource, self).__eq__(other)

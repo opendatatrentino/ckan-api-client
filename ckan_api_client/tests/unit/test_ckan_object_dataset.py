@@ -1,5 +1,7 @@
 """Tests for CkanDataset"""
 
+import json
+
 import pytest
 
 from ckan_api_client.objects import CkanDataset, CkanResource
@@ -44,8 +46,7 @@ def test_ckandataset_creation():
     }
 
 
-@pytest.mark.xfail(run=False, reason='Needs refactoring')
-def test_ckandataset_resources():
+def test_ckan_dataset_resources():
     dataset = CkanDataset({
         'name': 'example-dataset',
     })
@@ -63,22 +64,43 @@ def test_ckandataset_resources():
         {'name': 'resource-1'},
         {'name': 'resource-2'},
     ]
-    assert dataset.resources == [
-        CkanResource({'name': 'resource-1'}),
-        CkanResource({'name': 'resource-2'}),
-    ]
+
+    ## Make sure type conversions have been applied
+    assert isinstance(dataset.resources, ResourcesList)
+    for item in dataset.resources:
+        assert isinstance(item, CkanResource)
+
+    ## Make sure dataset is marked as modified
     assert dataset.is_modified() is True
 
+    ## We allow comparison to plain objects
+    assert dataset.resources == [
+        {'name': 'resource-1'},
+        {'name': 'resource-2'},
+    ]
+
+    ## Or to the actual types used internally, of course
+    assert dataset.resources == ResourcesList([
+        CkanResource({'name': 'resource-1'}),
+        CkanResource({'name': 'resource-2'}),
+    ])
+
+    ## Do some tests for object serialization
     serialized = dataset.serialize()
+
     assert isinstance(serialized['resources'], list)
     assert len(serialized['resources']) == 2
-    assert isinstance(serialized['resources'][0], CkanResource)
-    assert serialized['resources'][0].name == 'resource-1'
-    assert isinstance(serialized['resources'][1], CkanResource)
-    assert serialized['resources'][1].name == 'resource-2'
+
+    assert isinstance(serialized['resources'][0], dict)
+    assert serialized['resources'][0]['name'] == 'resource-1'
+
+    assert isinstance(serialized['resources'][1], dict)
+    assert serialized['resources'][1]['name'] == 'resource-2'
+
+    ## Serialized data must be json-serializable
+    json.dumps(serialized)
 
 
-@pytest.mark.xfail(run=False, reason='Needs refactoring')
 def test_ckandataset_resources_update():
     dataset = CkanDataset({
         'name': 'example-dataset',

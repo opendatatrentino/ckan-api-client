@@ -178,7 +178,7 @@ class WrappedList(MutableSequence):
     def __init__(self, iterable=None):
         self._list = []
         if iterable is not None:
-            self._list.extend(iterable)
+            self.extend(iterable)
 
     def __getitem__(self, name):
         return self._list[name]
@@ -197,3 +197,13 @@ class WrappedList(MutableSequence):
 
     def __contains__(self, item):
         return item in self._list
+
+    def __eq__(self, other):
+        if isinstance(other, list):
+            return self._list == other
+        if isinstance(other, WrappedList):
+            return self._list == other._list
+        return NotImplemented
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
