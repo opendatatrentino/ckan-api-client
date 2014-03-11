@@ -93,7 +93,7 @@ class BaseField(object):
         Returns the "serialized" (json-encodable) version of
         the object.
         """
-        raise NotImplementedError
+        return self.get(instance, name)
 
     def is_modified(self, instance, name):
         """
@@ -101,6 +101,26 @@ class BaseField(object):
         main instance.
         """
         return name in instance._updates
+
+    def is_equivalent(self, instance, name, other, ignore_key=True):
+        if ignore_key and self.is_key:
+
+            ## If we want to ignore keys from comparison,
+            ## key comparison should always return True
+            ## for fields marked as keys.
+
+            ##--------------------------------------------------
+            ## NOTE: This should not be needed, as this part
+            ## won't even be called in case it is a key **and**
+            ## ignore_key=True. Its main purpose is to be
+            ## used recursively by fields containing related
+            ## objects.
+            ##--------------------------------------------------
+
+            return True
+
+        ## Just perform simple comparison between values
+        return getattr(instance, name) == getattr(other, name)
 
 
 class BaseObject(object):
@@ -215,11 +235,14 @@ class BaseObject(object):
             return False
 
         for name, field in self.iter_fields():
+            ## Ignore key fields if we are required to
+            ## ignore keys.
             if ignore_key and field.is_key:
                 continue
-            value = getattr(self, name)
-            other_value = getattr(other, name)
-            if value != other_value:
+
+            ## Use the equivalency check for fields
+            if not field.is_equivalent(
+                    self, name, other, ignore_key=ignore_key):
                 return False
 
         return True
