@@ -12,9 +12,16 @@ class StringField(BaseField):
 
     def validate(self, instance, name, value):
         super(StringField, self).validate(instance, name, value)
+
+        if value is None:
+            if self.required:
+                raise TypeError("Required field cannot be None")
+            return ''
+
         if not isinstance(value, basestring):
             raise TypeError("String field {0} value must be a string. "
                             "Got {1!r} instead.".format(name, type(value)))
+
         return value
 
     def serialize(self, instance, name):
