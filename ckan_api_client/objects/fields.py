@@ -22,16 +22,11 @@ class StringField(BaseField):
 
         return value
 
-    def serialize(self, instance, name):
-        return self.get(instance, name)
-
 
 class BoolField(BaseField):
     default = False
 
     def validate(self, instance, name, value):
-        super(BoolField, self).validate(instance, name, value)
-
         if value is False or value is None:
             return False
 
@@ -41,11 +36,9 @@ class BoolField(BaseField):
         raise TypeError("Invalid type for boolean field {0!r}: {1!r}"
                         .format(name, type(value)))
 
-    def serialize(self, instance, name):
-        return self.get(instance, name)
 
 class IntegerField(BaseField):
-    default = False
+    default = 0
 
     def validate(self, instance, name, value):
         if value is None:
