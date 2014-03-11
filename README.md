@@ -2,6 +2,8 @@
 
 Improved Python client for the [Ckan](http://ckan.org) API.
 
+[![Build Status](https://travis-ci.org/rshk/ckan-api-client.png?branch=master)](https://travis-ci.org/rshk/ckan-api-client)
+
 This package provides:
 
 - a **low-level client**, which is pretty much just a wrapper around
