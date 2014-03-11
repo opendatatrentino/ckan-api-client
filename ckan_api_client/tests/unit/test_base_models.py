@@ -61,32 +61,94 @@ def test_object_inspection():
     assert isinstance(fields_dict['fld2'], StringField)
 
 
-# def test_object_serialization():
-#     class MyObject(BaseObject):
-#         fld1 = StringField()
-#         fld2 = StringField(default=lambda: "Hi!")
-#         fld3 = StringField()
-#     obj = MyObject({'foo': 'ignored', 'fld1': 'hello'})
-#     assert obj.to_dict() == {'fld1': 'hello', 'fld2': 'Hi!', 'fld3': None}
+def test_object_serialization():
+    class MyObject(BaseObject):
+        fld1 = StringField()
+        fld2 = StringField(default=lambda: "Hi!")
+        fld3 = StringField()
+
+    obj = MyObject({'foo': 'ignored', 'fld1': 'hello'})
+    assert obj.serialize() == {'fld1': 'hello', 'fld2': 'Hi!', 'fld3': ''}
 
 
-# def test_complex_fields():
-#     class MyObject(BaseObject):
-#         fld1 = StringField()
-#         fld2 = ListField()
-#         fld3 = DictField()
-#     obj = MyObject({
-#         'fld1': 'hello',
-#         'fld2': ['1', '2', '3'],
-#         'fld3': {'a': 'A', 'b': 'B'},
-#     })
+def test_object_comparison():
+    class MyObject(BaseObject):
+        field1 = StringField()
+        field2 = StringField(default='something')
+        field3 = StringField()
 
-#     assert obj.fld1 == 'hello'
-#     assert obj.fld2 == ['1', '2', '3']
-#     assert obj.fld3 == {'a': 'A', 'b': 'B'}
+    obj1 = MyObject({'field1': 'value1'})
+    obj2 = MyObject({'field1': 'value1'})
+    assert obj1 == obj2
+    assert obj1.is_equivalent(obj2)
+    assert obj2.is_equivalent(obj1)
 
-#     assert obj.serialize() == {
-#         'fld1': 'hello',
-#         'fld2': ['1', '2', '3'],
-#         'fld3': {'a': 'A', 'b': 'B'},
-#     }
+    obj1.field1 = 'another value'
+    assert obj1 != obj2
+    assert not obj1.is_equivalent(obj2)
+    assert not obj2.is_equivalent(obj1)
+
+    del obj1.field1
+    assert obj1 == obj2
+    assert obj1.is_equivalent(obj2)
+    assert obj2.is_equivalent(obj1)
+
+
+def test_object_comparison_type():
+    class MyObject(BaseObject):
+        pass
+
+    class MySubObject1(MyObject):
+        pass
+
+    class MySubObject2(MyObject):
+        pass
+
+    assert not MyObject().is_equivalent({})
+    assert not MyObject().is_equivalent('hello')
+    assert not MyObject().is_equivalent(MySubObject1())
+    assert not MySubObject1().is_equivalent(MyObject())
+    assert not MySubObject1().is_equivalent(MySubObject2())
+
+
+def test_object_comparison_with_key_field():
+    ## Now with "key" fields
+    class MyObject2(BaseObject):
+        id = StringField(is_key=True)
+        field1 = StringField()
+        field2 = StringField()
+
+    obj1 = MyObject2({'id': 'eggs'})
+    obj2 = MyObject2({'id': 'bacon'})
+    assert obj1 != obj2
+    assert obj1.is_equivalent(obj2)
+    assert obj2.is_equivalent(obj1)
+
+    obj1.field1 = 'spam'
+    assert obj1 != obj2
+    assert not obj1.is_equivalent(obj2)
+    assert not obj2.is_equivalent(obj1)
+
+    obj2.field1 = 'spam'
+    assert obj1 != obj2
+    assert obj1.is_equivalent(obj2)
+    assert obj2.is_equivalent(obj1)
+
+
+def test_object_invalid_init():
+    class MyObject(BaseObject):
+        field1 = StringField()
+        field2 = StringField()
+
+    with pytest.raises(TypeError):
+        MyObject("this is not a dict")
+    with pytest.raises(TypeError):
+        MyObject(["this is", "not", "a dict"])
+
+
+def test_object_depracation_warnings(recwarn):
+    class MyObject(BaseObject):
+        pass
+    obj = MyObject()
+    pytest.deprecated_call(obj.from_dict, {})
+    pytest.deprecated_call(obj.to_dict)
