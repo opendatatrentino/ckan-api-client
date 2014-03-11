@@ -85,7 +85,7 @@ class ResourcesList(WrappedList):
 
 
 class CkanDataset(BaseObject):
-    id = StringField()
+    id = StringField(is_key=True)
 
     ## Core fields
     name = StringField()
@@ -111,7 +111,7 @@ class CkanDataset(BaseObject):
 
 
 class CkanResource(BaseObject):
-    id = StringField()
+    id = StringField(is_key=True)
 
     description = StringField()
     format = StringField()
