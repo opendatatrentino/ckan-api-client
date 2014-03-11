@@ -75,41 +75,87 @@ def test_string_field():
 def test_string_field_invalid_values():
     class MyObject1(BaseObject):
         field = StringField()
+        req_field = StringField(required=True)
 
     class MyObject2(BaseObject):
         field = StringField(default='default_value')
+        req_field = StringField(required=True, default='default_value')
 
-    obj1 = MyObject1()
-    assert obj1.field == ''
-    with pytest.raises(TypeError):
-        obj1.field = None
-    with pytest.raises(TypeError):
-        obj1.field = 123
-    del obj1
+    ##--------------------------------------------------
+    ## Default: NO ; Initial: NO
+    ##
 
-    obj1 = MyObject1({'field': 'initial_value'})
-    assert obj1.field == 'initial_value'
-    with pytest.raises(TypeError):
-        obj1.field = None
-    with pytest.raises(TypeError):
-        obj1.field = 123
-    del obj1
+    obj = MyObject1()
+    assert obj.field == ''
+    assert obj.req_field == ''
 
-    obj2 = MyObject2()
-    assert obj2.field == 'default_value'
+    obj.field = None
     with pytest.raises(TypeError):
-        obj2.field = None
-    with pytest.raises(TypeError):
-        obj2.field = 123
-    del obj2
+        obj.req_field = None
 
-    obj2 = MyObject2({'field': 'initial_value'})
-    assert obj2.field == 'initial_value'
     with pytest.raises(TypeError):
-        obj2.field = None
+        obj.field = 123
     with pytest.raises(TypeError):
-        obj2.field = 123
-    del obj2
+        obj.req_field = 123
+
+    del obj
+
+    ##--------------------------------------------------
+    ## Default: NO ; Initial: YES
+    ##
+
+    obj = MyObject1({'field': 'initial_value', 'req_field': 'initial_value'})
+    assert obj.field == 'initial_value'
+    assert obj.req_field == 'initial_value'
+
+    obj.field = None
+    with pytest.raises(TypeError):
+        obj.req_field = None
+
+    with pytest.raises(TypeError):
+        obj.field = 123
+    with pytest.raises(TypeError):
+        obj.req_field = 123
+
+    del obj
+
+    ##--------------------------------------------------
+    ## Default: YES ; Initial: NO
+    ##
+
+    obj = MyObject2()
+    assert obj.field == 'default_value'
+    assert obj.req_field == 'default_value'
+
+    obj.field = None
+    with pytest.raises(TypeError):
+        obj.req_field = None
+
+    with pytest.raises(TypeError):
+        obj.field = 123
+    with pytest.raises(TypeError):
+        obj.req_field = 123
+
+    del obj
+
+    ##--------------------------------------------------
+    ## Default: YES ; Initial: YES
+    ##
+
+    obj = MyObject2({'field': 'initial_value', 'req_field': 'initial_value'})
+    assert obj.field == 'initial_value'
+    assert obj.req_field == 'initial_value'
+
+    obj.field = None
+    with pytest.raises(TypeError):
+        obj.req_field = None
+
+    with pytest.raises(TypeError):
+        obj.field = 123
+    with pytest.raises(TypeError):
+        obj.req_field = 123
+
+    del obj
 
 
 def test_string_field_serialize():
