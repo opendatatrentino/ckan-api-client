@@ -22,7 +22,7 @@ class BaseField(object):
     default = None
     is_key = False
 
-    def __init__(self, default=NOTSET, is_key=NOTSET):
+    def __init__(self, default=NOTSET, is_key=NOTSET, required=False):
         """
         :param default:
             Default value (if not callable) or function
@@ -36,6 +36,7 @@ class BaseField(object):
             self.default = default
         if is_key is not NOTSET:
             self.is_key = is_key
+        self.required = required
 
     def get(self, instance, name):
         """
