@@ -102,6 +102,11 @@ def test_ckan_dataset_resources():
 
 
 def test_ckandataset_resources_update():
+    def _typecheck_resources(resources):
+        assert isinstance(resources, ResourcesList)
+        for item in resources:
+            assert isinstance(item, CkanResource)
+
     dataset = CkanDataset({
         'name': 'example-dataset',
         'resources': [
@@ -110,27 +115,52 @@ def test_ckandataset_resources_update():
         ]
     })
     assert dataset.is_modified() is False
-
     assert dataset.resources == [
-        CkanResource({'name': 'resource-1'}),
-        CkanResource({'name': 'resource-2'}),
+        {'name': 'resource-1'},
+        {'name': 'resource-2'},
     ]
+
+    ## Getting should not affect is_modified(), although
+    ## it is manipulating things internally..
     assert dataset.is_modified() is False
 
-    dataset.resources.append(CkanResource({'name': 'resource-3'}))
+    dataset.resources.append({'name': 'resource-3'})
     assert dataset.is_modified() is True
     assert dataset.resources == [
-        CkanResource({'name': 'resource-1'}),
-        CkanResource({'name': 'resource-2'}),
-        CkanResource({'name': 'resource-3'}),
+        {'name': 'resource-1'},
+        {'name': 'resource-2'},
+        {'name': 'resource-3'},
     ]
+    _typecheck_resources(dataset.resources)
 
-    serialized = dataset.serialize()
-    assert isinstance(serialized['resources'], list)
-    assert len(serialized['resources']) == 2
-    assert isinstance(serialized['resources'][0], CkanResource)
-    assert serialized['resources'][0].name == 'resource-1'
-    assert isinstance(serialized['resources'][1], CkanResource)
-    assert serialized['resources'][1].name == 'resource-2'
-    assert isinstance(serialized['resources'][2], CkanResource)
-    assert serialized['resources'][2].name == 'resource-3'
+    dataset.resources.insert(0, {'name': 'resource-0'})
+    assert dataset.is_modified() is True
+    assert dataset.resources == [
+        {'name': 'resource-0'},
+        {'name': 'resource-1'},
+        {'name': 'resource-2'},
+        {'name': 'resource-3'},
+    ]
+    _typecheck_resources(dataset.resources)
+
+    dataset.resources[2] = {'name': 'RESOURCE-2'}
+    assert dataset.is_modified() is True
+    assert dataset.resources == [
+        {'name': 'resource-0'},
+        {'name': 'resource-1'},
+        {'name': 'RESOURCE-2'},
+        {'name': 'resource-3'},
+    ]
+    _typecheck_resources(dataset.resources)
+
+    dataset.resources = [{'name': 'Hello'}]
+    assert dataset.is_modified() is True
+    assert dataset.resources == [
+        {'name': 'Hello'},
+    ]
+    _typecheck_resources(dataset.resources)
+
+    ## "Contains" test is successful as fields left to
+    ## default values just get ignored during comparison.
+    assert {'name': 'Hello'} in dataset.resources
+    assert {'name': 'WTF'} not in dataset.resources
