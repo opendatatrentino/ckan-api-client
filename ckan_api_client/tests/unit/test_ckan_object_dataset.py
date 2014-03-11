@@ -6,7 +6,6 @@ from ckan_api_client.objects import CkanDataset, CkanResource
 from ckan_api_client.objects.ckan_dataset import ResourcesList
 
 
-@pytest.mark.xfail(run=False, reason='Needs refactoring')
 def test_ckandataset_creation():
     dataset = CkanDataset({
         'name': 'example-dataset',

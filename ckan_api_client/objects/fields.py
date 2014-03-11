@@ -36,7 +36,8 @@ class MutableFieldMixin(object):
 
             ## to be extra safe, make copy here, even on
             ## default values, which might get shared..
-            instance._updates[name] = copy.deepcopy(value)
+            instance._updates[name] = copy.deepcopy(
+                self.validate(instance, name, value))
 
         return instance._updates[name]
 
