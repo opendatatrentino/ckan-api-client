@@ -118,13 +118,14 @@ class CkanResource(BaseObject):
     mimetype = StringField()
     mimetype_inner = StringField()
     name = StringField()
-    position = StringField()
+    # position = IntegerField()  # Ignore, as it is generated
     resource_type = StringField()
     size = StringField()
     url = StringField()
     url_type = StringField()
 
     def __eq__(self, other):
+        ## To allow comparison with dict
         if isinstance(other, dict):
             return self == CkanResource(other)
         return super(CkanResource, self).__eq__(other)
