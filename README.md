@@ -1,22 +1,28 @@
 # Ckan API client
 
-Python client for [Ckan](http://ckan.org) API.
+Improved Python client for the [Ckan](http://ckan.org) API.
 
 This package provides:
 
-- a low-level client, which is pretty much just a wrapper around
+- a **low-level client**, which is pretty much just a wrapper around
   HTTP calls, handling serialization and exception-raising.
 
-- a high-level client, attempting to make it easier / safer to perform
+- a **high-level client**, attempting to make it easier / safer to perform
   certain operations on a ckan catalog.
 
-- a "syncing" client, used to provide some automation for synchronization
-  tasks of collections of datasets (commonly referred to as "harvesting").
+- a **synchronization client**, used to provide some automation
+  for synchronization tasks of collections of datasets into a catalog
+  (commonly referred to as "harvesting").
+
+
+Other than that, it attempts to get work around some common issues
+with that API, such as inconsistencies and bugs, trying to make
+sure problems are discovered earlier.
 
 
 ## Documentation
 
-Coming soon. Keep tuned.
+Documentation is hosted on GitHub pages here: https://rshk.github.io/ckan-api-client/
 
 
 ## Running tests
@@ -27,8 +33,8 @@ You'll need:
 - PostgreSQL instance, with administrative access
 - Solr instance, with Ckan schema installed
 
-To configure & run tests:
 
+To configure & run tests:
 
 ```bash
 export CKAN_VIRTUALENV=$VIRTUAL_ENV
