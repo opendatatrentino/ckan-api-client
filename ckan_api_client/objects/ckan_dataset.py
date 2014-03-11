@@ -28,6 +28,13 @@ class ResourcesField(ListField):
 
 
 class ResourcesList(WrappedList):
+    def __init__(self, initial=None):
+        if initial is None:
+            super(ResourcesList, self).__init__()
+        else:
+            super(ResourcesList, self).__init__(
+                self._check_item(item) for item in initial)
+
     def _check_item(self, value):
         if isinstance(value, dict):
             return CkanResource(value)
@@ -43,14 +50,15 @@ class ResourcesList(WrappedList):
 
     def insert(self, pos, item):
         item = self._check_item(item)
-        self._list.insert(pos, item)
+        return super(ResourcesList, self).insert(pos, item)
 
     def __contains__(self, item):
         try:
             item = self._check_item(item)
         except TypeError:
+            ## Invalid type -- cannot be contained
             return False
-        return item in self._list
+        return super(ResourcesList, self).__contains__(item)
 
 
 class CkanDataset(BaseObject):

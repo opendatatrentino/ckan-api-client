@@ -164,3 +164,28 @@ def test_ckandataset_resources_update():
     ## default values just get ignored during comparison.
     assert {'name': 'Hello'} in dataset.resources
     assert {'name': 'WTF'} not in dataset.resources
+
+
+def test_resources_list():
+    def _typecheck_resources(resources):
+        assert isinstance(resources, ResourcesList)
+        for item in resources:
+            assert isinstance(item, CkanResource)
+
+    rl1 = ResourcesList([
+        CkanResource({'name': 'hello-resource'}),
+    ])
+    _typecheck_resources(rl1)
+
+    rl2 = ResourcesList([
+        {'name': 'hello-resource'},
+    ])
+    _typecheck_resources(rl2)
+
+    rl3 = ResourcesList()
+    rl3.append(CkanResource({'name': 'hello-resource'}))
+    _typecheck_resources(rl3)
+
+    rl4 = ResourcesList()
+    rl4.append({'name': 'hello-resource'})
+    _typecheck_resources(rl4)
