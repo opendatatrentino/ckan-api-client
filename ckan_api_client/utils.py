@@ -1,4 +1,5 @@
-from collections import namedtuple, Mapping, Sequence, MutableSequence
+from collections import (namedtuple, Mapping, Sequence, MutableSequence,
+                         MutableMapping)
 
 
 class IDPair(namedtuple('IDPair', ['source_id', 'ckan_id'])):
@@ -107,18 +108,24 @@ class IDMap(object):
 ## to make sure certain objects are left untouched.
 ##------------------------------------------------------------
 
-class FrozenDict(Mapping):
+class FrozenDict(MutableMapping):
     """
     Frozen dictionary.
     Acts as a read-only dictionary, preventing changes
     and returning frozen objects when asked for values.
     """
 
-    def __init__(self, data):
-        self.__wrapped = data
+    def __init__(self, *a, **kw):
+        self.__wrapped = dict(*a, **kw)
 
     def __getitem__(self, name):
         return freeze(self.__wrapped[name])
+
+    def __setitem__(self, name, value):
+        raise TypeError("FrozenDict doesn't support item assignment")
+
+    def __delitem__(self, name):
+        raise TypeError("FrozenDict doesn't support item deletion")
 
     def __iter__(self):
         return iter(self.__wrapped)
@@ -175,35 +182,37 @@ def freeze(obj):
 
 
 class WrappedList(MutableSequence):
-    def __init__(self, iterable=None):
-        self._list = []
-        if iterable is not None:
-            self.extend(iterable)
+    def __init__(self, *a, **kw):
+        self.__wrapped = list(*a, **kw)
 
     def __getitem__(self, name):
-        return self._list[name]
+        return self.__wrapped[name]
 
     def __setitem__(self, name, value):
-        self._list[name] = value
+        self.__wrapped[name] = value
 
     def __delitem__(self, name):
-        del self._list[name]
+        del self.__wrapped[name]
 
     def __len__(self):
-        return len(self._list)
+        return len(self.__wrapped)
 
     def insert(self, pos, item):
-        self._list.insert(pos, item)
+        self.__wrapped.insert(pos, item)
 
     def __contains__(self, item):
-        return item in self._list
+        return item in self.__wrapped
 
     def __eq__(self, other):
         if isinstance(other, list):
-            return self._list == other
+            return self.__wrapped == other
         if isinstance(other, WrappedList):
-            return self._list == other._list
+            return self.__wrapped == other.__wrapped
         return NotImplemented
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def __repr__(self):
+        myname = self.__class__.__name__
+        return "{0}({1!r})".format(myname, self.__wrapped)

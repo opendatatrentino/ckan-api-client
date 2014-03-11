@@ -5,31 +5,46 @@ from ckan_api_client.utils import freeze, FrozenDict, FrozenList
 
 def test_frozendict():
     my_dict = {
-        'hello': 'world',
-        'eggs': 'bacon',
+        'key': 'DEFAULT',
     }
+
     my_frozen_dict = freeze(my_dict)
     assert my_dict == my_frozen_dict
+    assert isinstance(my_frozen_dict, FrozenDict)
 
-    my_dict['hello'] = 'World'
-    del my_dict['hello']
-    my_dict['hello'] = 'World'  # restore..
+    ##----------------------------------------
+    ## We can mutate my_dict
 
-    assert my_dict['hello'] == 'World'
-    assert my_frozen_dict['hello'] == 'World'
+    my_dict['key'] = 'UPDATED-1'
+    assert my_dict['key'] == 'UPDATED-1'
+    assert my_frozen_dict['key'] == 'DEFAULT'
+
+    del my_dict['key']
+    assert 'key' not in my_dict
+    assert 'key' in my_frozen_dict
+    assert my_frozen_dict['key'] == 'DEFAULT'
+
+    my_dict['key'] = 'UPDATED-2'
+    assert my_dict['key'] == 'UPDATED-2'
+    assert my_frozen_dict['key'] == 'DEFAULT'
+
+    ##----------------------------------------
+    ## We cannot mutate my_frozen_dict
 
     with pytest.raises(TypeError):
-        my_frozen_dict['hello'] = 'WROLD!!'
+        my_frozen_dict['key'] = 'WROLD!!'
 
     with pytest.raises(TypeError):
-        del my_frozen_dict['hello']
+        del my_frozen_dict['key']
 
-    with pytest.raises(AttributeError):
-        ## frozen dict doesn't have pop()
-        my_frozen_dict.pop('hello')
+    with pytest.raises(TypeError):
+        my_frozen_dict.pop('key')
 
-    assert my_dict['hello'] == 'World'
-    assert my_frozen_dict['hello'] == 'World'
+    with pytest.raises(TypeError):
+        my_frozen_dict.update({'foo': 'bar'})
+
+    assert my_dict['key'] == 'UPDATED-2'
+    assert my_frozen_dict['key'] == 'DEFAULT'  # lowercase
 
 
 def test_frozenlist():
