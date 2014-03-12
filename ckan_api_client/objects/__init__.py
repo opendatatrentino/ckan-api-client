@@ -173,7 +173,7 @@ from .ckan_organization import *
 #             return
 
 #         if name == 'id':
-#             raise RuntimeError("Cannot alter value of a field used as a key!")
+#             raise RuntimeError("Cannot alter value of a field used as a key!")  # noqa
 
 #         if name in self._schema['core']:
 #             if not isinstance(value, basestring):
@@ -333,8 +333,8 @@ from .ckan_organization import *
 #         """
 #         Filter resources in-place.
 
-#         :param cond: A callable that accepts a single :py:class:`CkanResource`
-#             as its argument, and returns ``True`` if the object is to be kept,
+#         :param cond: A callable that accepts a single :py:class:`CkanResource`  # noqa
+#             as its argument, and returns ``True`` if the object is to be kept,  # noqa
 #             ``False`` otherwise.
 #         """
 #         ## This allows filter(None, ...) too, list comprehension does not
@@ -422,7 +422,7 @@ from .ckan_organization import *
 #             return
 
 #         if name == 'id':
-#             raise RuntimeError("Cannot alter value of a field used as a key!")
+#             raise RuntimeError("Cannot alter value of a field used as a key!")  # noqa
 
 #         if name in self._schema['core']:
 #             if not isinstance(value, basestring):
@@ -556,7 +556,7 @@ from .ckan_organization import *
 #             return
 
 #         if name == 'id':
-#             raise RuntimeError("Cannot alter value of a field used as a key!")
+#             raise RuntimeError("Cannot alter value of a field used as a key!")  # noqa
 
 #         if name in self._schema['core']:
 #             if not isinstance(value, basestring):
