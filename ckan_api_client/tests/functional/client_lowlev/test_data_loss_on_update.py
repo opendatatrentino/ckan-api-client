@@ -23,13 +23,11 @@ them from being deleted.
 
 import copy
 
-import pytest
-
-from .utils import check_dataset
+from .utils import check_dataset, clean_dataset
+from ckan_api_client.tests.utils.diff import diff_mappings
 from ckan_api_client.tests.utils.generate import generate_dataset
 
 
-@pytest.mark.xfail(run=False, reason="Requires rewrite of prepare_dataset()")
 def test_data_loss_on_update(request, ckan_client_ll):
     """
     Check whether / which data gets lost if not passed back
@@ -43,29 +41,33 @@ def test_data_loss_on_update(request, ckan_client_ll):
     4. We check that update affected only the desired keys
     """
 
-    # our_dataset = prepare_dataset(ckan_client_ll)
-    our_dataset = generate_dataset()
+    ##--------------------------------------------------
+    ## Create a brand new dataset
 
-    ## Create the dataset
-    created_dataset = ckan_client_ll.post_dataset(our_dataset)
-    dataset_id = created_dataset['id']
-    request.addfinalizer(lambda: ckan_client_ll.delete_dataset(dataset_id))
+    stage_1pre = generate_dataset()
+    stage_1 = ckan_client_ll.post_dataset(stage_1pre)
+    dataset_id = stage_1['id']
+    check_dataset(stage_1pre, stage_1)
 
+    ##--------------------------------------------------
     ## Make sure that the thing we created makes sense
-    retrieved_dataset = ckan_client_ll.get_dataset(dataset_id)
-    assert retrieved_dataset == created_dataset
-    check_dataset(retrieved_dataset, our_dataset)
 
-    ## Ok, now we can start updating and see what happens..
-    updates = {'title': "My new dataset title"}
+    retrieved = ckan_client_ll.get_dataset(dataset_id)
+    assert retrieved == stage_1
+    check_dataset(stage_1pre, stage_1)
 
-    expected_updated_dataset = copy.deepcopy(our_dataset)
-    expected_updated_dataset.update(updates)
+    ##--------------------------------------------------
+    ## Try updating, then double-check
 
-    updated_dataset = ckan_client_ll.update_dataset(dataset_id, updates)
-    retrieved_dataset = ckan_client_ll.get_dataset(dataset_id)
-    assert updated_dataset == retrieved_dataset
+    stage_2pre = copy.deepcopy(retrieved)
+    stage_2pre['title'] = 'My new dataset title'
 
-    check_dataset(updated_dataset, expected_updated_dataset)
+    stage_2 = ckan_client_ll.put_dataset(stage_2pre)
+    assert stage_2['title'] == 'My new dataset title'
 
-    ## todo: now do the same with other fields (groups, extras, ..)
+    ## Compare with previous stage
+    diffs = diff_mappings(*map(clean_dataset, (stage_1, stage_2)))
+    assert diffs['right'] == diffs['left'] == set()
+    assert diffs['differing'] == set(['title'])
+
+    check_dataset(stage_2pre, stage_2)
