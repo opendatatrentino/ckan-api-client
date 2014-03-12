@@ -58,21 +58,23 @@ def generate_dataset():
 
     - ``name`` -- random string, in the form ``dataset-{random}``
     - ``title`` -- random string, in the form ``Dataset {random}``
-    - ``url`` -- random url of dataset on an "external source"
-    - ``type`` -- fixed string: ``"dataset"``
-    - ``maintainer_email`` -- random-generated email address
-    - ``maintainer`` -- random-generated name
-    - ``author_email`` -- random-generated email address
+
     - ``author`` -- random-generated name
+    - ``author_email`` -- random-generated email address
     - ``license_id`` -- random license id. One of ``cc-by``, ``cc-zero``,
       ``cc-by-sa`` or ``notspecified``.
-    - ``private`` -- Fixed to ``False``
+    - ``maintainer`` -- random-generated name
+    - ``maintainer_email`` -- random-generated email address
     - ``notes`` -- random string, containing some markdown
-    - ``tags`` -- random list of tags (strings)
-    - ``extras`` -- dictionary containing random key / value pairs
-    - ``resources`` -- list of random resources
-    - ``groups`` -- empty list
     - ``owner_org`` -- set to None
+    - ``private`` -- Fixed to ``False``
+    - ``tags`` -- random list of tags (strings)
+    - ``type`` -- fixed string: ``"dataset"``
+    - ``url`` -- random url of dataset on an "external source"
+
+    - ``extras`` -- dictionary containing random key / value pairs
+    - ``groups`` -- empty list
+    - ``resources`` -- list of random resources
     - ``relationships`` -- empty list
 
     .. note::
