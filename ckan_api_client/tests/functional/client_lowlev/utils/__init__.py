@@ -1,3 +1,6 @@
+from ckan_api_client.objects import CkanDataset, CkanGroup, CkanOrganization
+
+
 def _check_obj(obj_class, obj1, obj2):
     _obj1 = obj_class.from_dict(obj1)
     _obj2 = obj_class.from_dict(obj2)
@@ -9,15 +12,24 @@ def _check_obj(obj_class, obj1, obj2):
 
 
 def check_dataset(dataset, expected):
-    from ckan_api_client.objects import CkanDataset
     return _check_obj(CkanDataset, dataset, expected)
 
 
 def check_group(group, expected):
-    from ckan_api_client.objects import CkanGroup
     return _check_obj(CkanGroup, group, expected)
 
 
 def check_organization(organization, expected):
-    from ckan_api_client.objects import CkanOrganization
     return _check_obj(CkanOrganization, organization, expected)
+
+
+def clean_dataset(obj):
+    return CkanDataset(obj).serialize()
+
+
+def clean_group(obj):
+    return CkanGroup(obj).serialize()
+
+
+def clean_organization(obj):
+    return CkanOrganization(obj).serialize()
