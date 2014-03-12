@@ -1,6 +1,8 @@
 """Tests for CkanDataset"""
 
 import json
+import itertools
+import collections
 
 import pytest
 
@@ -189,3 +191,57 @@ def test_resources_list():
     rl4 = ResourcesList()
     rl4.append({'name': 'hello-resource'})
     _typecheck_resources(rl4)
+
+
+##------------------------------------------------------------
+## Create datasets in different ways, compare them
+##------------------------------------------------------------
+
+
+def _gen_ckandataset_update_extras_cases():
+    def init_extras():
+        return CkanDataset({'extras': {'KEY': 'VALUE'}})
+
+    def set_extras():
+        ds = CkanDataset()
+        ds.extras['KEY'] = 'VALUE'
+        return ds
+
+    def upd_extras():
+        ds = CkanDataset({'extras': {'KEY': 'ORIGINAL-VALUE'}})
+        ds.extras['KEY'] = 'VALUE'
+        return ds
+
+    def add_extras():
+        ds = CkanDataset()
+        ds.extras = {'KEY': 'VALUE'}
+        return ds
+
+    def repl_extras():
+        ds = CkanDataset({'extras': {'KEY': 'ORIGINAL-VALUE'}})
+        ds.extras = {'KEY': 'VALUE'}
+        return ds
+
+    ## We need to generate pairs
+    functions = [(f.func_name, f) for f in [
+        init_extras, set_extras, upd_extras, add_extras, repl_extras]]
+
+    prod = itertools.product(functions, functions)
+    return collections.OrderedDict(
+        (','.join((r[0][0], r[1][0])), (r[0][1], r[1][1]))
+        for r in prod)
+
+
+_ckandataset_update_extras_cases = \
+    _gen_ckandataset_update_extras_cases()
+
+
+@pytest.mark.parametrize('case_name', _ckandataset_update_extras_cases)
+def test_ckandataset_update_extras(case_name):
+    df1, df2 = _ckandataset_update_extras_cases[case_name]
+    dataset1 = df1()
+    dataset2 = df2()
+
+    assert dataset1.is_equivalent(dataset2)
+    assert dataset2.is_equivalent(dataset1)
+    assert dataset1.serialize() == dataset2.serialize()
