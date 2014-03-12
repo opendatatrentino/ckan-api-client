@@ -48,6 +48,17 @@ export CKAN_SOLR
 
 ## --- Launch tests
 # exec py.test -vvv -rsxX ckan_api_client/tests "$@"
-exec py.test -vvv -rsxX --pep8 \
-     --cov-report=term-missing --cov=ckan_api_client \
-     ckan_api_client/tests "$@"
+
+# exec py.test -vvv -rsxX --pep8 \
+#      --cov-report=term-missing --cov=ckan_api_client \
+#      ckan_api_client/tests "$@"
+
+PYTEST_ARGS="-vvv -rsxX"
+PYTEST_ARGS+=" --pep8"
+PYTEST_ARGS+=" --cov-report=term-missing --cov=ckan_api_client"
+
+if [ -z "$1" ]; then
+    PYTEST_ARGS+=" ckan_api_client/tests"
+fi
+
+exec py.test $PYTEST_ARGS "$@"
