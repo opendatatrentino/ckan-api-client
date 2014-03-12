@@ -1,6 +1,6 @@
 import copy
 
-from .base import BaseField
+from .base import BaseField, MAPPING_TYPES, SEQUENCE_TYPES
 
 
 __all__ = ['StringField', 'ListField', 'DictField',
@@ -95,7 +95,7 @@ class ListField(MutableFieldMixin, BaseField):
 
     def validate(self, instance, name, value):
         value = super(ListField, self).validate(instance, name, value)
-        if not isinstance(value, list):
+        if not isinstance(value, SEQUENCE_TYPES):
             raise ValueError("{0} must be a list".format(name))
         return value
 
@@ -105,7 +105,7 @@ class DictField(MutableFieldMixin, BaseField):
 
     def validate(self, instance, name, value):
         value = super(DictField, self).validate(instance, name, value)
-        if not isinstance(value, dict):
+        if not isinstance(value, MAPPING_TYPES):
             raise ValueError("{0} must be a dict".format(name))
         return value
 

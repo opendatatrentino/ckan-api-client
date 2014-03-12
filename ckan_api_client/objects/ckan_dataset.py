@@ -1,8 +1,8 @@
 from ckan_api_client.utils import WrappedList
 
-from .base import BaseObject
+from .base import BaseObject, MAPPING_TYPES, SEQUENCE_TYPES
 from .fields import (StringField, GroupsField, ExtrasField, ListField,
-                     BoolField, IntegerField)
+                     BoolField)
 
 
 __all__ = ['ResourcesField', 'CkanDataset', 'CkanResource']
@@ -59,7 +59,7 @@ class ResourcesList(WrappedList):
                 self._check_item(item) for item in initial)
 
     def _check_item(self, value):
-        if isinstance(value, dict):
+        if isinstance(value, MAPPING_TYPES):
             return CkanResource(value)
         if not isinstance(value, CkanResource):
             raise TypeError("Invalid resource. Must be a CkanResource "
@@ -125,7 +125,8 @@ class CkanResource(BaseObject):
     url_type = StringField()
 
     def __eq__(self, other):
-        ## To allow comparison with dict
-        if isinstance(other, dict):
+        ## To allow comparison with dict..
+        ## todo: move this in the BaseObject?
+        if isinstance(other, MAPPING_TYPES):
             return self == CkanResource(other)
         return super(CkanResource, self).__eq__(other)

@@ -3,9 +3,12 @@ Classes to represent / validate Ckan objects.
 """
 
 import warnings
+import collections
 
 
 NOTSET = object()
+MAPPING_TYPES = (dict, collections.Mapping)
+SEQUENCE_TYPES = (list, tuple, collections.Sequence)
 
 
 class BaseField(object):
@@ -32,6 +35,9 @@ class BaseField(object):
             or not. Key fields are ignored when comparing
             using :py:meth:`is_equivalent`
         """
+
+        ## todo: refactor to use kwargs
+
         if default is not NOTSET:
             self.default = default
         if is_key is not NOTSET:
@@ -147,7 +153,7 @@ class BaseObject(object):
     def __init__(self, values=None):
         if values is None:
             values = {}
-        if not isinstance(values, dict):
+        if not isinstance(values, MAPPING_TYPES):
             raise TypeError("Initial values must be a dict (or None). "
                             "Got {0!r} instead".format(type(values)))
 
