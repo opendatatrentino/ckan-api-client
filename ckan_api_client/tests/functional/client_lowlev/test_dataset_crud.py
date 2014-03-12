@@ -9,10 +9,10 @@ import copy
 import pytest
 
 from ckan_api_client.exceptions import HTTPError
-from ckan_api_client.tests.utils.strings import gen_random_id
-
-from ckan_api_client.tests.utils.validation import check_dataset
+from ckan_api_client.tests.utils.diff import diff_mappings
 from ckan_api_client.tests.utils.generate import generate_dataset
+from ckan_api_client.tests.utils.strings import gen_random_id
+from ckan_api_client.tests.utils.validation import check_dataset
 
 
 def test_dataset_simple_crud(ckan_client_ll):
@@ -78,25 +78,18 @@ def test_dataset_simple_crud(ckan_client_ll):
     ckan_client_ll.delete_dataset(dataset_id)
 
 
-@pytest.mark.xfail(run=False, reason="is using functions from hi-lev client")
 def test_dataset_delete(ckan_client_ll):
-    from ckan_api_client.objects import CkanDataset
-
-    dataset_dict = generate_dataset()
-    dataset = CkanDataset.from_dict(dataset_dict)
-    assert dataset_dict == dataset.to_dict()
-
-    created_dict = ckan_client_ll.post_dataset(dataset.to_dict())
-    created = CkanDataset.from_dict(created_dict)
-    assert dataset.is_equivalent(created)
-
-    dataset_id = created.id
+    ## Create dataset
+    stage_1pre = generate_dataset()
+    stage_1 = ckan_client_ll.post_dataset(stage_1pre)
+    check_dataset(stage_1pre, stage_1)
+    dataset_id = stage_1['id']
 
     ## Make sure it is in the list
     dataset_ids = ckan_client_ll.list_datasets()
     assert dataset_id in dataset_ids
 
-    ## Now delete
+    ## Now delete the dataset
     ckan_client_ll.delete_dataset(dataset_id)
 
     ## Anonymous users cannot see the dataset
@@ -114,17 +107,6 @@ def test_dataset_delete(ckan_client_ll):
     ## But it's still gone from the list
     dataset_ids = ckan_client_ll.list_datasets()
     assert dataset_id not in dataset_ids
-
-    # ## Yay! Let's delete everything!
-    # dataset_ids = ckan_client_ll.list_datasets()
-    # deleted = set()
-    # for dataset_id in dataset_ids[:10]:
-    #     ckan_client_ll.delete_dataset(dataset_id)
-    #     deleted.add(dataset_id)
-
-    # ## Check that they're really gone!
-    # dataset_ids = ckan_client_ll.list_datasets()
-    # assert deleted.intersection(dataset_ids) == set()
 
 
 @pytest.mark.xfail(run=False, reason='Uses functions from the hi-lev client')
