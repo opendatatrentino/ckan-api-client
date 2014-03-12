@@ -2,6 +2,8 @@
 
 __all__ = ['check_dataset', 'check_group', 'check_organization']
 
+import copy
+
 
 def _check_obj(obj_class, obj1, obj2):
     _obj1 = obj_class.from_dict(obj1)
@@ -29,3 +31,23 @@ def check_organization(organization, expected):
     """Make sure ``organization`` matches the ``expected`` one"""
     from ckan_api_client.objects import CkanOrganization
     return _check_obj(CkanOrganization, organization, expected)
+
+
+class MutableCheckpoint(object):
+    """
+    Checkpoint for mutable objects.
+    Keeps away a deepcopy of the original object,
+    and provides facility to ensure the original
+    one has not been mutated.
+    """
+
+    def __init__(self, *objects):
+        self._objects = [(o, copy.deepcopy(o)) for o in objects]
+
+    def add(self, obj):
+        self._objects.append((obj, copy.deepcopy(obj)))
+
+    def check(self):
+        for obj, orig in self._objects:
+            if obj != orig:
+                raise AssertionError("Object has been mutated")
