@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from ConfigParser import RawConfigParser
 import binascii
 import os
@@ -590,3 +592,9 @@ def ckan_client_hl(request, ckan_env):
 # def ckan_client_sync(request, ckan_env):
 #     from ckan_api_client.low_level import CkanLowlevelClient
 #     return _get_ckan_client(request, ckan_env, CkanLowlevelClient)
+
+def diff_eq(left, right):
+    from _pytest.assertion.util import assertrepr_compare
+    from pytest import config
+    for line in assertrepr_compare(config, '==', left, right):
+        print(line)

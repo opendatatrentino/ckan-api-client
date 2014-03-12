@@ -48,3 +48,10 @@ python ./simple_api_testing/run_tests.py
 
 (I usually put lines above in a simple bash script, just to make it
 easier to remember :))
+
+
+### Debugging
+
+To compare objects from the debugger, use functions from pytest::
+
+    from ckan_api_client.tests.conftest import diff_eq
