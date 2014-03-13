@@ -588,10 +588,11 @@ def ckan_client_hl(request, ckan_env):
     return _get_ckan_client(request, ckan_env, CkanHighlevelClient)
 
 
-# @pytest.fixture
-# def ckan_client_sync(request, ckan_env):
-#     from ckan_api_client.low_level import CkanLowlevelClient
-#     return _get_ckan_client(request, ckan_env, CkanLowlevelClient)
+@pytest.fixture
+def ckan_client_sync(request, ckan_env):
+    from ckan_api_client.syncing import SynchronizationClient
+    return _get_ckan_client(request, ckan_env, SynchronizationClient)
+
 
 def diff_eq(left, right):
     from _pytest.assertion.util import assertrepr_compare
