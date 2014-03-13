@@ -8,6 +8,9 @@ install_requires = [
     "requests",
 ]
 
+if sys.version_info < (2, 7):
+    install_requires.append('ordereddict')
+
 tests_require = [
     'pytest',
     'psycopg2',

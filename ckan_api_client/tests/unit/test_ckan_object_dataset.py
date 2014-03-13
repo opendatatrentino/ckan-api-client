@@ -2,12 +2,12 @@
 
 import json
 import itertools
-import collections
 
 import pytest
 
 from ckan_api_client.objects import CkanDataset, CkanResource
 from ckan_api_client.objects.ckan_dataset import ResourcesList
+from ckan_api_client.utils import OrderedDict
 
 
 def test_ckandataset_creation():
@@ -227,7 +227,7 @@ def _gen_ckandataset_update_extras_cases():
         init_extras, set_extras, upd_extras, add_extras, repl_extras]]
 
     prod = itertools.product(functions, functions)
-    return collections.OrderedDict(
+    return OrderedDict(
         (','.join((r[0][0], r[1][0])), (r[0][1], r[1][1]))
         for r in prod)
 

@@ -1,5 +1,13 @@
-from collections import (namedtuple, Mapping, Sequence, MutableSequence,
+from collections import (namedtuple, Sequence, MutableSequence,
                          MutableMapping)
+
+## If we're using Python < 2.7, there is no OrderedDict in the
+## collections module, so we should fallback on using the one from
+## the ordereddict module.
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict  # noqa
 
 
 class IDPair(namedtuple('IDPair', ['source_id', 'ckan_id'])):
