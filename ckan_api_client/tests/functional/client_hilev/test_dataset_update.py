@@ -55,38 +55,50 @@ def test_dataset_update_base_fields(ckan_client_hl):
 def test_dataset_update_extras(ckan_client_hl):
     client = ckan_client_hl  # shortcut
 
-    new_dataset = CkanDataset(generate_dataset())
-    created = client.create_dataset(new_dataset)
+    ds_dict = generate_dataset()
+    ds_dict['extras'] = {
+        'key-0': 'value-0',
+        'key-1': 'value-1',
+        'key-2': 'value-2',
+        'key-3': 'value-3',
+        'key-4': 'value-4',
+        'key-5': 'value-5',
+        'key-6': 'value-6',
+        'key-7': 'value-7',
+        'key-8': 'value-8',
+        'key-9': 'value-9',
+    }
+    stage_1pre = CkanDataset(ds_dict)
+    stage_1 = client.create_dataset(stage_1pre)
 
     ##--------------------------------------------------
     ## Try adding a new record
 
-    orig_dataset = client.get_dataset(created.id)
-    upd_dataset = copy.deepcopy(orig_dataset)
-    upd_dataset.extras['NEW_FIELD_NAME'] = 'NEW_FIELD_VALUE'
+    stage_1b = client.get_dataset(stage_1.id)
+    stage_2pre = copy.deepcopy(stage_1b)
+    stage_2pre.extras['NEW_FIELD_NAME'] = 'NEW_FIELD_VALUE'
 
-    updated = client.update_dataset(upd_dataset)
-    assert updated.is_equivalent(client.get_dataset(created.id))
-    diffs = diff_mappings(orig_dataset.serialize(), updated.serialize())
+    stage_2 = client.update_dataset(stage_2pre)
+    assert stage_2.is_equivalent(client.get_dataset(stage_1.id))
+    diffs = diff_mappings(stage_1b.serialize(), stage_2.serialize())
     assert diffs['left'] == diffs['right'] == set()
     assert diffs['differing'] == set(['extras'])
 
-    del orig_dataset, upd_dataset, updated, diffs
+    del stage_1b, stage_2pre, stage_2, diffs
 
     ##--------------------------------------------------
-    ## Try passing a custom new dict
+    ## Try removing the custom field
 
-    orig_dataset = client.get_dataset(created.id)
-    upd_dataset = client.get_dataset(created.id)
-    # upd_dataset = copy.deepcopy(orig_dataset)
-    upd_dataset.extras = dict(
-        ('key-{0}'.format(i), 'value-{0}'.format(i))
-        for i in xrange(10))
+    stage_2pre = client.get_dataset(stage_1.id)
+    del stage_2pre.extras['NEW_FIELD_NAME']
 
-    updated = client.update_dataset(upd_dataset)
-    assert updated.is_equivalent(client.get_dataset(created.id))
-    diffs = diff_mappings(orig_dataset.serialize(), updated.serialize())
-    assert diffs['left'] == diffs['right'] == set()
-    assert diffs['differing'] == set(['extras'])
+    stage_2 = client.update_dataset(stage_2pre)
+    assert stage_2.is_equivalent(client.get_dataset(stage_1.id))
+    assert 'NEW_FIELD_NAME' not in stage_2.extras
+    stage_2b = client.get_dataset(stage_1.id)
+    assert stage_2 == stage_2b
 
-    del orig_dataset, upd_dataset, updated, diffs
+    ## Make sure we brought it back to its original state
+    assert stage_1.is_equivalent(stage_2)
+
+    del stage_2pre, stage_2

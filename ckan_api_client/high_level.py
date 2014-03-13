@@ -85,9 +85,22 @@ class CkanHighlevelClient(object):
         if dataset.id is None:
             raise ValueError("Trying to update a dataset without an id")
 
-        data = self._client.put_dataset(dataset.serialize())
+        ## We need the original dataset to make sure
+        ## we are updating things correctly.
+        original_dataset = self.get_dataset(dataset.id)
+        updates_dict = dataset.serialize()
+
+        ## In order to remove an "extras" field, we need to
+        ## explicitly set its value to None
+        for key in original_dataset.extras:
+            if key not in updates_dict['extras']:
+                updates_dict['extras'][key] = None
+
+        ## Actually send HTTP request to update the dataset
+        data = self._client.put_dataset(updates_dict)
         updated = CkanDataset(data)
 
+        ## Make sure the returned dataset matches the desired state
         if not updated.is_equivalent(dataset):
             raise OperationFailure("Updated dataset doesn't match")
 
