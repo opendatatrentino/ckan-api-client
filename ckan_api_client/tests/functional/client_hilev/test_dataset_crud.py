@@ -1,9 +1,48 @@
 import copy
 
+import pytest
+
+from ckan_api_client.exceptions import HTTPError
 from ckan_api_client.objects import CkanDataset
+from ckan_api_client.tests.utils.diff import diff_mappings
 from ckan_api_client.tests.utils.generate import generate_dataset
 from ckan_api_client.tests.utils.validation import MutableCheckpoint
-from ckan_api_client.tests.utils.diff import diff_mappings
+
+
+def test_dataset_create(ckan_client_hl):
+    client = ckan_client_hl
+    dataset_dict = generate_dataset()
+    dataset = CkanDataset(dataset_dict)
+    created = client.create_dataset(dataset)
+    assert created.is_equivalent(dataset)
+
+
+def test_dataset_get_by_name(ckan_client_hl):
+    client = ckan_client_hl
+    dataset_dict = generate_dataset()
+    dataset_dict['name'] = 'example-dataset-name'
+    dataset = CkanDataset(dataset_dict)
+    created = client.create_dataset(dataset)
+    assert created.is_equivalent(dataset)
+    dataset_id = created.id
+
+    ## Try getting by id
+    dataset_1 = client.get_dataset(dataset_id)
+    assert created == dataset_1
+
+    ## Try getting by name
+    dataset_2 = client.get_dataset_by_name('example-dataset-name')
+    assert created == dataset_2
+
+    ## Try getting by id, but passing name instead
+    with pytest.raises(HTTPError) as excinfo:
+        client.get_dataset('example-dataset-name')
+    assert excinfo.value.status_code == 404
+
+    ## Try getting by name, but passing id instead
+    with pytest.raises(HTTPError) as excinfo:
+        client.get_dataset_by_name(dataset_id)
+    assert excinfo.value.status_code == 404
 
 
 def test_dataset_update_base_fields(ckan_client_hl):
@@ -102,3 +141,29 @@ def test_dataset_update_extras(ckan_client_hl):
     assert stage_1.is_equivalent(stage_2)
 
     del stage_2pre, stage_2
+
+
+def test_dataset_delete(ckan_client_hl):
+    client = ckan_client_hl
+
+    dataset_dict = generate_dataset()
+    dataset = CkanDataset(dataset_dict)
+
+    created = client.create_dataset(dataset)
+    assert created.is_equivalent(dataset)
+
+    ## Make sure it is in lists
+    assert created.id in client.list_datasets()
+
+    ## Delete it
+    client.delete_dataset(created.id)
+    assert created.id not in client.list_datasets()
+
+    ## Test that our workarounds work as expected..
+
+    with pytest.raises(HTTPError) as excinfo:
+        client.get_dataset(created.id)
+    assert excinfo.value.status_code == 404
+
+    retrieved = client.get_dataset(created.id, allow_deleted=True)
+    assert retrieved.state == 'deleted'
