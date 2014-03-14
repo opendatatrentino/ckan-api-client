@@ -88,10 +88,36 @@ class CkanLowlevelClient(object):
             ##       as it might be: json string, part of json object,
             ##       part of html document
             ##------------------------------------------------------------
-            raise HTTPError(response.status_code,
-                            "Error while performing request")
+            raise HTTPError(
+                status_code=response.status_code,
+                message="Error while performing request",
+                original=self._figure_out_error_message(response))
 
         return response
+
+    def _figure_out_error_message(self, response):
+        """
+        We have a response, which probably contains an error message,
+        but we need to figure that out..
+
+        Usual places for errors are:
+
+        - a json message, with {'error': {'message': ..., '__type': ...}}
+        - a html page, usually when things went seriously bad
+        """
+
+        with SuppressExceptionIf(True):
+            return self._figure_out_error_from_json(response.json())
+
+    def _figure_out_error_from_json(self, data):
+        if isinstance(data, dict) and 'error' in data:
+            with SuppressExceptionIf(True):
+                return '{0}: {1}'.format(data['error']['__type'],
+                                         data['error']['message'])
+            with SuppressExceptionIf(True):
+                return '{0}'.format(data['error']['message'])
+
+        raise ValueError("Unable to find message in JSON data")
 
     ##============================================================
     ## Validation helpers

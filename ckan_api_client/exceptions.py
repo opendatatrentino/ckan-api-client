@@ -14,12 +14,15 @@ class HTTPError(Exception):
         Informative error message, if available
     """
 
-    def __init__(self, status_code, message):
+    def __init__(self, status_code, message, original=None):
         self.status_code = status_code
         self.message = message
+        self.original = original
 
     def __str__(self):
-        return "HTTPError [{0}]: {1}".format(self.status_code, self.message)
+        return ("{0}({1!r}, {2!r}, original={3!r})"
+                .format(self.__class__.__name__,
+                        self.status_code, self.message, self.original))
 
 
 class BadApiError(Exception):
