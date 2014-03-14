@@ -147,8 +147,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a specific dataset, by id</span>
 
-<span class="sd">        :rtype: :py:class:`.objects.CkanDataset`</span>
-
 <span class="sd">        .. note::</span>
 
 <span class="sd">            Since the Ckan API use both ids and names as keys,</span>
@@ -165,7 +163,7 @@
 <span class="sd">            Whether to return even logically deleted objects.</span>
 <span class="sd">            If set to ``False`` (the default) will raise a</span>
 <span class="sd">            ``HTTPError(404, ..)`` if ``state != &#39;active&#39;``</span>
-<span class="sd">        :rtype: :py:class:`ckan_api_client.objects.CkanDataset`</span>
+<span class="sd">        :rtype: :py:class:`CkanDataset &lt;.objects.ckan_dataset.CkanDataset&gt;`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_dataset</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
@@ -190,7 +188,7 @@
 <span class="sd">            Whether to return even logically deleted objects.</span>
 <span class="sd">            If set to ``False`` (the default) will raise a</span>
 <span class="sd">            ``HTTPError(404, ..)`` if ``state != &#39;active&#39;``</span>
-<span class="sd">        :rtype: :py:class:`ckan_api_client.objects.CkanDataset`</span>
+<span class="sd">        :rtype: :py:class:`CkanDataset &lt;.objects.ckan_dataset.CkanDataset&gt;`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_dataset</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -209,7 +207,7 @@
 <span class="sd">        otherwise, call :py:meth:`create_dataset`.</span>
 
 <span class="sd">        :return: as returned by the called function.</span>
-<span class="sd">        :rtype: :py:class:`.objects.CkanDataset`</span>
+<span class="sd">        :rtype: :py:class:`CkanDataset &lt;.objects.ckan_dataset.CkanDataset&gt;`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">CkanDataset</span><span class="p">):</span>
@@ -223,7 +221,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a dataset</span>
 
-<span class="sd">        :rtype: :py:class:`.objects.CkanDataset`</span>
+<span class="sd">        :rtype: :py:class:`CkanDataset &lt;.objects.ckan_dataset.CkanDataset&gt;`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">CkanDataset</span><span class="p">):</span>
@@ -243,7 +241,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update a dataset</span>
 
-<span class="sd">        :rtype: :py:class:`.objects.CkanDataset`</span>
+<span class="sd">        :rtype: :py:class:`CkanDataset &lt;.objects.ckan_dataset.CkanDataset&gt;`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">CkanDataset</span><span class="p">):</span>
@@ -310,7 +308,8 @@
 <span class="sd">            Whether to return even logically deleted objects.</span>
 <span class="sd">            If set to ``False`` (the default) will raise a</span>
 <span class="sd">            ``HTTPError(404, ..)`` if ``state != &#39;active&#39;``</span>
-<span class="sd">        :rtype: :py:class:`ckan_api_client.objects.CkanOrganization`</span>
+<span class="sd">        :rtype: :py:class:`CkanOrganization</span>
+<span class="sd">            &lt;.objects.ckan_organization.CkanOrganization&gt;`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_organization</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
@@ -335,7 +334,8 @@
 <span class="sd">            Whether to return even logically deleted objects.</span>
 <span class="sd">            If set to ``False`` (the default) will raise a</span>
 <span class="sd">            ``HTTPError(404, ..)`` if ``state != &#39;active&#39;``</span>
-<span class="sd">        :rtype: :py:class:`ckan_api_client.objects.CkanOrganization`</span>
+<span class="sd">        :rtype: :py:class:`CkanOrganization</span>
+<span class="sd">            &lt;.objects.ckan_organization.CkanOrganization&gt;`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_organization</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -357,6 +357,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_organization</span><span class="p">(</span><span class="n">organization</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.create_organization"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.create_organization">[docs]</a>    <span class="k">def</span> <span class="nf">create_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :rtype: :py:class:`CkanOrganization</span>
+<span class="sd">            &lt;.objects.ckan_organization.CkanOrganization&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">organization</span><span class="p">,</span> <span class="n">CkanOrganization</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Organization must be a CkanOrganization&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">organization</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
@@ -371,6 +375,10 @@
         <span class="k">return</span> <span class="n">created</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.update_organization"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.update_organization">[docs]</a>    <span class="k">def</span> <span class="nf">update_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :rtype: :py:class:`CkanOrganization</span>
+<span class="sd">            &lt;.objects.ckan_organization.CkanOrganization&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">organization</span><span class="p">,</span> <span class="n">CkanOrganization</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Organization must be a CkanOrganization&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">organization</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -397,10 +405,6 @@
 <div class="viewcode-block" id="CkanHighlevelClient.iter_groups"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.iter_groups">[docs]</a>    <span class="k">def</span> <span class="nf">iter_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_groups</span><span class="p">():</span>
             <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
-
-    <span class="c"># def get_group(self, id):</span>
-    <span class="c">#     data = self._client.get_group(id)</span>
-    <span class="c">#     return CkanGroup.serialize(data)</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.get_group"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.get_group">[docs]</a>    <span class="k">def</span> <span class="nf">get_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">allow_deleted</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -414,7 +418,7 @@
 <span class="sd">            Whether to return even logically deleted objects.</span>
 <span class="sd">            If set to ``False`` (the default) will raise a</span>
 <span class="sd">            ``HTTPError(404, ..)`` if ``state != &#39;active&#39;``</span>
-<span class="sd">        :rtype: :py:class:`ckan_api_client.objects.CkanGroup`</span>
+<span class="sd">        :rtype: :py:class:`CkanGroup &lt;.objects.ckan_group.CkanGroup&gt;`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
@@ -439,7 +443,7 @@
 <span class="sd">            Whether to return even logically deleted objects.</span>
 <span class="sd">            If set to ``False`` (the default) will raise a</span>
 <span class="sd">            ``HTTPError(404, ..)`` if ``state != &#39;active&#39;``</span>
-<span class="sd">        :rtype: :py:class:`ckan_api_client.objects.CkanGroup`</span>
+<span class="sd">        :rtype: :py:class:`CkanGroup &lt;.objects.ckan_group.CkanGroup&gt;`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -461,6 +465,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.create_group"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.create_group">[docs]</a>    <span class="k">def</span> <span class="nf">create_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :rtype: :py:class:`CkanGroup &lt;.objects.ckan_group.CkanGroup&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">CkanGroup</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Group must be a CkanGroup&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
@@ -475,6 +482,9 @@
         <span class="k">return</span> <span class="n">created</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.update_group"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.update_group">[docs]</a>    <span class="k">def</span> <span class="nf">update_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :rtype: :py:class:`CkanGroup &lt;.objects.ckan_group.CkanGroup&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">CkanGroup</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Group must be a CkanGroup&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
