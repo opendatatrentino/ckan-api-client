@@ -1,6 +1,6 @@
 from .objects import CkanDataset, CkanOrganization, CkanGroup
 from .low_level import CkanLowlevelClient
-from .exceptions import OperationFailure
+from .exceptions import OperationFailure, HTTPError
 
 
 class CkanHighlevelClient(object):
@@ -27,14 +27,62 @@ class CkanHighlevelClient(object):
         for id in self.list_datasets():
             yield self.get_dataset(id)
 
-    def get_dataset(self, id):
+    def get_dataset(self, id, allow_deleted=False):
         """
         Get a specific dataset, by id
 
-        :rtype: :py:class:`.objects.CkanDataset`
+        .. note::
+
+            Since the Ckan API use both ids and names as keys,
+            both :py:meth:`get_dataset` and :py:meth:`get_dataset_by_name`
+            will perform the exact same request in the background.
+
+            The difference is only in the high-level handling:
+            the function will check whether the expected id has the correct
+            value, and raise an HTTPError(404, ..) otherwise..
+
+        :param str id:
+            the dataset id
+        :param allow_deleted:
+            Whether to return even logically deleted objects.
+            If set to ``False`` (the default) will raise a
+            ``HTTPError(404, ..)`` if ``state != 'active'``
+        :rtype: :py:class:`CkanDataset <.objects.ckan_dataset.CkanDataset>`
         """
 
         data = self._client.get_dataset(id)
+
+        if data['id'] != id:
+            raise HTTPError(404, '(logical) dataset id mismatch')
+
+        if not (allow_deleted or data['state'] == 'active'):
+            raise HTTPError(404, '(logical) dataset state is deleted')
+
+        return CkanDataset(data)
+
+    def get_dataset_by_name(self, name, allow_deleted=False):
+        """
+        Get a specific dataset, by name
+
+        .. note:: See note on :py:meth:`get_dataset`
+
+        :param str name:
+            the dataset name
+        :param allow_deleted:
+            Whether to return even logically deleted objects.
+            If set to ``False`` (the default) will raise a
+            ``HTTPError(404, ..)`` if ``state != 'active'``
+        :rtype: :py:class:`CkanDataset <.objects.ckan_dataset.CkanDataset>`
+        """
+
+        data = self._client.get_dataset(name)
+
+        if data['name'] != name:
+            raise HTTPError(404, '(logical) dataset name mismatch')
+
+        if not (allow_deleted or data['state'] == 'active'):
+            raise HTTPError(404, '(logical) dataset state is deleted')
+
         return CkanDataset(data)
 
     def save_dataset(self, dataset):
@@ -43,7 +91,7 @@ class CkanHighlevelClient(object):
         otherwise, call :py:meth:`create_dataset`.
 
         :return: as returned by the called function.
-        :rtype: :py:class:`.objects.CkanDataset`
+        :rtype: :py:class:`CkanDataset <.objects.ckan_dataset.CkanDataset>`
         """
 
         if not isinstance(dataset, CkanDataset):
@@ -57,7 +105,7 @@ class CkanHighlevelClient(object):
         """
         Create a dataset
 
-        :rtype: :py:class:`.objects.CkanDataset`
+        :rtype: :py:class:`CkanDataset <.objects.ckan_dataset.CkanDataset>`
         """
 
         if not isinstance(dataset, CkanDataset):
@@ -77,7 +125,7 @@ class CkanHighlevelClient(object):
         """
         Update a dataset
 
-        :rtype: :py:class:`.objects.CkanDataset`
+        :rtype: :py:class:`CkanDataset <.objects.ckan_dataset.CkanDataset>`
         """
 
         if not isinstance(dataset, CkanDataset):
@@ -126,15 +174,75 @@ class CkanHighlevelClient(object):
     ##------------------------------------------------------------
 
     def list_organizations(self):
+        return [
+            self.get_organization_by_name(name).id
+            for name in self.list_organization_names()
+        ]
+
+    def list_organization_names(self):
         return self._client.list_organizations()
 
     def iter_organizations(self):
-        for id in self.list_organizations():
-            yield self.get_organization(id)
+        for name in self.list_organization_names():
+            yield self.get_organization_by_name(name)
 
-    def get_organization(self, id):
+    def get_organization(self, id, allow_deleted=False):
+        """
+        Get organization, by id.
+
+        .. note:: See note on :py:meth:`get_dataset`
+
+        :param str id:
+            the organization id
+        :param allow_deleted:
+            Whether to return even logically deleted objects.
+            If set to ``False`` (the default) will raise a
+            ``HTTPError(404, ..)`` if ``state != 'active'``
+        :rtype: :py:class:`CkanOrganization
+            <.objects.ckan_organization.CkanOrganization>`
+        """
+
         data = self._client.get_organization(id)
-        return CkanOrganization.serialize(data)
+
+        if data['id'] != id:
+            raise HTTPError(404, '(logical) organization id mismatch')
+
+        if not (allow_deleted or data['state'] == 'active'):
+            raise HTTPError(404, '(logical) organization state is deleted')
+
+        if 'extras' in data:
+            data['extras'] = _destupidize_dict(data['extras'])
+
+        return CkanOrganization(data)
+
+    def get_organization_by_name(self, name, allow_deleted=False):
+        """
+        Get organization by name.
+
+        .. note:: See note on :py:meth:`get_dataset`
+
+        :param str name:
+            the organization name
+        :param allow_deleted:
+            Whether to return even logically deleted objects.
+            If set to ``False`` (the default) will raise a
+            ``HTTPError(404, ..)`` if ``state != 'active'``
+        :rtype: :py:class:`CkanOrganization
+            <.objects.ckan_organization.CkanOrganization>`
+        """
+
+        data = self._client.get_organization(name)
+
+        if data['name'] != name:
+            raise HTTPError(404, '(logical) organization name mismatch')
+
+        if not (allow_deleted or data['state'] == 'active'):
+                raise HTTPError(404, '(logical) organization state is deleted')
+
+        if 'extras' in data:
+            data['extras'] = _destupidize_dict(data['extras'])
+
+        return CkanOrganization(data)
 
     def save_organization(self, organization):
         if not isinstance(organization, CkanOrganization):
@@ -145,13 +253,28 @@ class CkanHighlevelClient(object):
         return self.create_organization(organization)
 
     def create_organization(self, organization):
+        """
+        Create an organization
+
+        :rtype: :py:class:`CkanOrganization
+            <.objects.ckan_organization.CkanOrganization>`
+        """
+
         if not isinstance(organization, CkanOrganization):
             raise TypeError("Organization must be a CkanOrganization")
         if organization.id is not None:
             raise ValueError("Cannot specify an id when creating an object")
 
-        data = self._client.post_organization(organization.serialize())
-        created = CkanOrganization.serialize(data)
+        serialized = organization.serialize()
+        if 'extras' in serialized:
+            serialized['extras'] = _stupidize_dict(serialized['extras'])
+
+        data = self._client.post_organization(serialized)
+
+        if 'extras' in data:
+            data['extras'] = _destupidize_dict(data['extras'])
+
+        created = CkanOrganization(data)
 
         if not created.is_equivalent(organization):
             raise OperationFailure("Created organization doesn't match")
@@ -159,12 +282,24 @@ class CkanHighlevelClient(object):
         return created
 
     def update_organization(self, organization):
+        """
+        :rtype: :py:class:`CkanOrganization
+            <.objects.ckan_organization.CkanOrganization>`
+        """
         if not isinstance(organization, CkanOrganization):
             raise TypeError("Organization must be a CkanOrganization")
         if organization.id is None:
             raise ValueError("Trying to update a organization without an id")
 
-        data = self._client.put_organization(organization.serialize())
+        serialized = organization.serialize()
+        if 'extras' in serialized:
+            serialized['extras'] = _stupidize_dict(serialized['extras'])
+
+        data = self._client.put_organization(serialized)
+
+        if 'extras' in data:
+            data['extras'] = _destupidize_dict(data['extras'])
+
         updated = CkanDataset(data)
 
         if not updated.is_equivalent(organization):
@@ -180,15 +315,67 @@ class CkanHighlevelClient(object):
     ##------------------------------------------------------------
 
     def list_groups(self):
+        return [
+            self.get_group_by_name(name).id
+            for name in self.list_group_names()
+        ]
+
+    def list_group_names(self):
         return self._client.list_groups()
 
     def iter_groups(self):
-        for id in self.list_groups():
-            yield self.get_group(id)
+        for name in self.list_group_names():
+            yield self.get_group_by_name(name)
 
-    def get_group(self, id):
+    def get_group(self, id, allow_deleted=False):
+        """
+        Get group, by id.
+
+        .. note:: See note on :py:meth:`get_dataset`
+
+        :param str id:
+            the group id
+        :param allow_deleted:
+            Whether to return even logically deleted objects.
+            If set to ``False`` (the default) will raise a
+            ``HTTPError(404, ..)`` if ``state != 'active'``
+        :rtype: :py:class:`CkanGroup <.objects.ckan_group.CkanGroup>`
+        """
+
         data = self._client.get_group(id)
-        return CkanGroup.serialize(data)
+
+        if data['id'] != id:
+            raise HTTPError(404, '(logical) group id mismatch')
+
+        if not (allow_deleted or data['state'] == 'active'):
+            raise HTTPError(404, '(logical) group state is deleted')
+
+        return CkanGroup(data)
+
+    def get_group_by_name(self, name, allow_deleted=False):
+        """
+        Get group by name.
+
+        .. note:: See note on :py:meth:`get_dataset`
+
+        :param str name:
+            the group name
+        :param allow_deleted:
+            Whether to return even logically deleted objects.
+            If set to ``False`` (the default) will raise a
+            ``HTTPError(404, ..)`` if ``state != 'active'``
+        :rtype: :py:class:`CkanGroup <.objects.ckan_group.CkanGroup>`
+        """
+
+        data = self._client.get_group(name)
+
+        if data['name'] != name:
+            raise HTTPError(404, '(logical) group name mismatch')
+
+        if not (allow_deleted or data['state'] == 'active'):
+                raise HTTPError(404, '(logical) group state is deleted')
+
+        return CkanGroup(data)
 
     def save_group(self, group):
         if not isinstance(group, CkanGroup):
@@ -199,6 +386,9 @@ class CkanHighlevelClient(object):
         return self.create_group(group)
 
     def create_group(self, group):
+        """
+        :rtype: :py:class:`CkanGroup <.objects.ckan_group.CkanGroup>`
+        """
         if not isinstance(group, CkanGroup):
             raise TypeError("Group must be a CkanGroup")
         if group.id is not None:
@@ -213,6 +403,9 @@ class CkanHighlevelClient(object):
         return created
 
     def update_group(self, group):
+        """
+        :rtype: :py:class:`CkanGroup <.objects.ckan_group.CkanGroup>`
+        """
         if not isinstance(group, CkanGroup):
             raise TypeError("Group must be a CkanGroup")
         if group.id is None:
@@ -228,3 +421,22 @@ class CkanHighlevelClient(object):
 
     def delete_group(self, id):
         return self._client.delete_group(id)
+
+
+##------------------------------------------------------------
+## Utility functions
+##------------------------------------------------------------
+
+def _stupidize_dict(mydict):
+    """Convert a dictionary to a list of ``{key: ..., value: ...}``"""
+    return [
+        {'key': key, 'value': value} for key, value in mydict.iteritems()
+    ]
+
+
+def _destupidize_dict(mylist):
+    """The opposite of _stupidize_dict()"""
+    output = {}
+    for item in mylist:
+        output[item['key']] = item['value']
+    return output
