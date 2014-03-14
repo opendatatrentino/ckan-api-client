@@ -694,18 +694,30 @@
 
 <span class="nd">@pytest.fixture</span>
 <div class="viewcode-block" id="ckan_client_ll"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ckan_client_ll">[docs]</a><span class="k">def</span> <span class="nf">ckan_client_ll</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :return: A low-level client attached to a running Ckan</span>
+<span class="sd">    :rtype: :py:class:`ckan_api_client.low_level.CkanLowlevelClient`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">ckan_api_client.low_level</span> <span class="kn">import</span> <span class="n">CkanLowlevelClient</span>
     <span class="k">return</span> <span class="n">_get_ckan_client</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">,</span> <span class="n">CkanLowlevelClient</span><span class="p">)</span>
 
 </div>
 <span class="nd">@pytest.fixture</span>
 <div class="viewcode-block" id="ckan_client_hl"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ckan_client_hl">[docs]</a><span class="k">def</span> <span class="nf">ckan_client_hl</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :return: A high-level client attached to a running Ckan</span>
+<span class="sd">    :rtype: :py:class:`ckan_api_client.high_level.CkanHighlevelClient`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">ckan_api_client.high_level</span> <span class="kn">import</span> <span class="n">CkanHighlevelClient</span>
     <span class="k">return</span> <span class="n">_get_ckan_client</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">,</span> <span class="n">CkanHighlevelClient</span><span class="p">)</span>
 
 </div>
 <span class="nd">@pytest.fixture</span>
 <div class="viewcode-block" id="ckan_client_sync"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ckan_client_sync">[docs]</a><span class="k">def</span> <span class="nf">ckan_client_sync</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :return: A synchronization client attached to a running Ckan</span>
+<span class="sd">    :rtype: :py:class:`ckan_api_client.syncing.SynchronizationClient`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">ckan_api_client.syncing</span> <span class="kn">import</span> <span class="n">SynchronizationClient</span>
     <span class="k">return</span> <span class="n">_get_ckan_client</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">,</span> <span class="n">SynchronizationClient</span><span class="p">)</span>
 
