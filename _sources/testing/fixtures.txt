@@ -16,6 +16,13 @@ Fixture functions
 
 .. autofunction:: data_dir
 
+.. autofunction:: ckan_client_ll
+
+.. autofunction:: ckan_client_hl
+
+.. autofunction:: ckan_client_sync
+
+
 
 Utility objects
 ===============

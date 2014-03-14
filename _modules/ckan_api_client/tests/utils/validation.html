@@ -118,6 +118,8 @@
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;check_dataset&#39;</span><span class="p">,</span> <span class="s">&#39;check_group&#39;</span><span class="p">,</span> <span class="s">&#39;check_organization&#39;</span><span class="p">]</span>
 
+<span class="kn">import</span> <span class="nn">copy</span>
+
 
 <span class="k">def</span> <span class="nf">_check_obj</span><span class="p">(</span><span class="n">obj_class</span><span class="p">,</span> <span class="n">obj1</span><span class="p">,</span> <span class="n">obj2</span><span class="p">):</span>
     <span class="n">_obj1</span> <span class="o">=</span> <span class="n">obj_class</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">obj1</span><span class="p">)</span>
@@ -144,7 +146,27 @@
 <div class="viewcode-block" id="check_organization"><a class="viewcode-back" href="../../../../testing/utility.html#ckan_api_client.tests.utils.validation.check_organization">[docs]</a><span class="k">def</span> <span class="nf">check_organization</span><span class="p">(</span><span class="n">organization</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Make sure ``organization`` matches the ``expected`` one&quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">ckan_api_client.objects</span> <span class="kn">import</span> <span class="n">CkanOrganization</span>
-    <span class="k">return</span> <span class="n">_check_obj</span><span class="p">(</span><span class="n">CkanOrganization</span><span class="p">,</span> <span class="n">organization</span><span class="p">,</span> <span class="n">expected</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_check_obj</span><span class="p">(</span><span class="n">CkanOrganization</span><span class="p">,</span> <span class="n">organization</span><span class="p">,</span> <span class="n">expected</span><span class="p">)</span>
+
+</div>
+<span class="k">class</span> <span class="nc">MutableCheckpoint</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checkpoint for mutable objects.</span>
+<span class="sd">    Keeps away a deepcopy of the original object,</span>
+<span class="sd">    and provides facility to ensure the original</span>
+<span class="sd">    one has not been mutated.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">objects</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_objects</span> <span class="o">=</span> <span class="p">[(</span><span class="n">o</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">o</span><span class="p">))</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_objects</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">obj</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">obj</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">orig</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_objects</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obj</span> <span class="o">!=</span> <span class="n">orig</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s">&quot;Object has been mutated&quot;</span><span class="p">)</span>
 </pre></div>
 
           <footer>

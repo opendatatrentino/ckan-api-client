@@ -114,8 +114,16 @@
 
           
   <h1>Source code for ckan_api_client.utils</h1><div class="highlight"><pre>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="p">(</span><span class="n">namedtuple</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">,</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="p">(</span><span class="n">namedtuple</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">,</span>
                          <span class="n">MutableMapping</span><span class="p">)</span>
+
+<span class="c">## If we&#39;re using Python &lt; 2.7, there is no OrderedDict in the</span>
+<span class="c">## collections module, so we should fallback on using the one from</span>
+<span class="c">## the ordereddict module.</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">ordereddict</span> <span class="kn">import</span> <span class="n">OrderedDict</span>  <span class="c"># noqa</span>
 
 
 <div class="viewcode-block" id="IDPair"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.IDPair">[docs]</a><span class="k">class</span> <span class="nc">IDPair</span><span class="p">(</span><span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;IDPair&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;source_id&#39;</span><span class="p">,</span> <span class="s">&#39;ckan_id&#39;</span><span class="p">])):</span>

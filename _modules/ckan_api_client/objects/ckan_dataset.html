@@ -116,9 +116,9 @@
   <h1>Source code for ckan_api_client.objects.ckan_dataset</h1><div class="highlight"><pre>
 <span class="kn">from</span> <span class="nn">ckan_api_client.utils</span> <span class="kn">import</span> <span class="n">WrappedList</span>
 
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseObject</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseObject</span><span class="p">,</span> <span class="n">MAPPING_TYPES</span><span class="p">,</span> <span class="n">SEQUENCE_TYPES</span>
 <span class="kn">from</span> <span class="nn">.fields</span> <span class="kn">import</span> <span class="p">(</span><span class="n">StringField</span><span class="p">,</span> <span class="n">GroupsField</span><span class="p">,</span> <span class="n">ExtrasField</span><span class="p">,</span> <span class="n">ListField</span><span class="p">,</span>
-                     <span class="n">BoolField</span><span class="p">,</span> <span class="n">IntegerField</span><span class="p">)</span>
+                     <span class="n">BoolField</span><span class="p">)</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ResourcesField&#39;</span><span class="p">,</span> <span class="s">&#39;CkanDataset&#39;</span><span class="p">,</span> <span class="s">&#39;CkanResource&#39;</span><span class="p">]</span>
@@ -175,7 +175,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_check_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">initial</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_check_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MAPPING_TYPES</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">CkanResource</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">CkanResource</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Invalid resource. Must be a CkanResource &quot;</span>
@@ -241,8 +241,9 @@
     <span class="n">url_type</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="c">## To allow comparison with dict</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="c">## To allow comparison with dict..</span>
+        <span class="c">## todo: move this in the BaseObject?</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">MAPPING_TYPES</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">CkanResource</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CkanResource</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></div>
 </pre></div>

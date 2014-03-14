@@ -1,0 +1,337 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ckan_api_client.syncing &mdash; Ckan API client 0.1a documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../../',
+        VERSION:'0.1a',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="Ckan API client 0.1a documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> Ckan API client</a>
+        <form class="wy-form" action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Clients</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/low-level.html">Low-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/high-level.html">High-level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/syncing.html">Syncing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/exceptions.html">ckan_api_client.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/objects.html">ckan_api_client.objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utils.html">ckan_api_client.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing/fixtures.html">Fixtures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing/utility.html">Testing utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">Ckan API client</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="../../index.html">Docs</a> &raquo;</li>
+  <li><a href="">ckan_api_client.syncing</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <h1>Source code for ckan_api_client.syncing</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Synchronization client.</span>
+
+
+<span class="sd">Strategy:</span>
+
+<span class="sd">- upsert organizations, get ``{source_id: ckan_id}`` map</span>
+<span class="sd">- upsert groups, get ``{source_id: ckan_id}`` map</span>
+<span class="sd">- create collection of CkanDatasets from original dicts</span>
+<span class="sd">- calculate differences between desired and actual state</span>
+<span class="sd">- perform syncrhonization</span>
+<span class="sd">- double-check differences</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">ckan_api_client.high_level</span> <span class="kn">import</span> <span class="n">CkanHighlevelClient</span>
+<span class="kn">from</span> <span class="nn">ckan_api_client.objects</span> <span class="kn">import</span> <span class="n">CkanDataset</span><span class="p">,</span> <span class="n">CkanOrganization</span><span class="p">,</span> <span class="n">CkanGroup</span>
+<span class="kn">from</span> <span class="nn">ckan_api_client.utils</span> <span class="kn">import</span> <span class="n">IDMap</span><span class="p">,</span> <span class="n">IDPair</span>
+
+
+<span class="c">## Extras field containing id of the external source.</span>
+<span class="c">## The id is simply source_name:</span>
+<span class="n">HARVEST_SOURCE_ID_FIELD</span> <span class="o">=</span> <span class="s">&#39;_harvest_source&#39;</span>
+
+
+<div class="viewcode-block" id="SynchronizationClient"><a class="viewcode-back" href="../../clients/syncing.html#ckan_api_client.syncing.SynchronizationClient">[docs]</a><span class="k">class</span> <span class="nc">SynchronizationClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Synchronization client, providing functionality for importing</span>
+<span class="sd">    collections of datasets into a Ckan instance.</span>
+
+<span class="sd">    Strategy:</span>
+
+<span class="sd">    - find all &quot;own&quot; datasets from Ckan</span>
+<span class="sd">    - figure out which datasets need insertion/update/deletion</span>
+<span class="sd">    - apply changes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_url</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">CkanHighlevelClient</span><span class="p">(</span><span class="n">base_url</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SynchronizationClient.sync"><a class="viewcode-back" href="../../clients/syncing.html#ckan_api_client.syncing.SynchronizationClient.sync">[docs]</a>    <span class="k">def</span> <span class="nf">sync</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Synchronize data from a source into Ckan.</span>
+
+<span class="sd">        :param source_name: string identifying the source</span>
+<span class="sd">        :param data: data to be synchronized</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c">## Upsert groups adn organizations</span>
+        <span class="n">groups_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_upsert_groups</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;group&#39;</span><span class="p">])</span>
+        <span class="n">orgs_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_upsert_organizations</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;organization&#39;</span><span class="p">])</span>
+
+        <span class="c">## Create list of datasets to be synced</span>
+        <span class="n">source_datasets</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">dataset_dict</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">]:</span>
+            <span class="n">_dataset_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">dataset_dict</span><span class="p">)</span>
+
+            <span class="c">## We need to make sure &quot;source&quot; datasets</span>
+            <span class="c">## don&#39;t have (otherwise misleading) ids</span>
+            <span class="n">_dataset_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+            <span class="c">## We need to update groups and organizations,</span>
+            <span class="c">## to map their name from the source into a</span>
+            <span class="c">## ckan id</span>
+            <span class="n">_dataset_dict</span><span class="p">[</span><span class="s">&#39;groups&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">groups_map</span><span class="o">.</span><span class="n">to_ckan</span><span class="p">(</span><span class="n">grp_id</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">grp_id</span> <span class="ow">in</span> <span class="n">_dataset_dict</span><span class="p">[</span><span class="s">&#39;groups&#39;</span><span class="p">]</span>
+            <span class="p">]</span>
+            <span class="n">_dataset_dict</span><span class="p">[</span><span class="s">&#39;owner_org&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">orgs_map</span><span class="o">.</span><span class="n">to_ckan</span><span class="p">(</span><span class="n">_dataset_dict</span><span class="p">[</span><span class="s">&#39;owner_org&#39;</span><span class="p">])</span>
+
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">CkanDataset</span><span class="p">(</span><span class="n">_dataset_dict</span><span class="p">)</span>
+
+            <span class="c">## We also want to add the &quot;source id&quot;, used for further</span>
+            <span class="c">## synchronizations to find stuff</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">extras</span><span class="p">[</span><span class="n">HARVEST_SOURCE_ID_FIELD</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="s">&#39;{0}:{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">source_name</span><span class="p">,</span> <span class="n">source_id</span><span class="p">)</span>
+
+            <span class="n">source_datasets</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">CkanDataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+        <span class="c">## Retrieve list of datasets from Ckan</span>
+        <span class="n">ckan_datasets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_datasets_by_source</span><span class="p">(</span><span class="n">source_name</span><span class="p">)</span>
+
+        <span class="c">## Compare collections to find differences</span>
+        <span class="n">differences</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare_collections</span><span class="p">(</span>
+            <span class="n">ckan_datasets</span><span class="p">,</span> <span class="n">source_datasets</span><span class="p">)</span>
+
+        <span class="c">##------------------------------------------------------------</span>
+        <span class="c">## We now need to create/update/delete datasets.</span>
+
+        <span class="c">## todo: we need to make sure dataset names are not</span>
+        <span class="c">##       already used by another dataset. The only</span>
+        <span class="c">##       way is to randomize resource names and hope</span>
+        <span class="c">##       a 409 response indicates duplicate name..</span>
+
+        <span class="c">## We delete first, in order to (possibly) deallocate</span>
+        <span class="c">## some already-used names..</span>
+        <span class="k">for</span> <span class="n">source_id</span> <span class="ow">in</span> <span class="n">differences</span><span class="p">[</span><span class="s">&#39;left&#39;</span><span class="p">]:</span>
+            <span class="n">ckan_id</span> <span class="o">=</span> <span class="n">ckan_datasets</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">delete_dataset</span><span class="p">(</span><span class="n">ckan_id</span><span class="p">)</span>
+
+        <span class="c">## Create missing datasets</span>
+        <span class="k">for</span> <span class="n">source_id</span> <span class="ow">in</span> <span class="n">differences</span><span class="p">[</span><span class="s">&#39;right&#39;</span><span class="p">]:</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">source_datasets</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">source_id</span> <span class="ow">in</span> <span class="n">differences</span><span class="p">[</span><span class="s">&#39;differing&#39;</span><span class="p">]:</span>
+            <span class="k">pass</span>
+        <span class="k">pass</span>
+</div>
+    <span class="k">def</span> <span class="nf">_sync_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">datasets</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Synchronize datasets into Ckan.</span>
+
+<span class="sd">        :param source_name:</span>
+<span class="sd">            Name of the data source</span>
+<span class="sd">        :param datasets:</span>
+<span class="sd">            Dictionary mapping ``source_id: CkanDataset()``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">_upsert_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Upsert a list of groups into Ckan.</span>
+
+<span class="sd">        :param groups:</span>
+<span class="sd">            a dict mapping ``name: CkanGroup()``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">_upsert_organizations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organizations</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">_find_datasets_by_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find all datasets matching the current source.</span>
+<span class="sd">        Returns a dict mapping source ids with dataset objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">iter_datasets</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">HARVEST_SOURCE_ID_FIELD</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">extras</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">source_id</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">extras</span><span class="p">[</span><span class="n">HARVEST_SOURCE_ID_FIELD</span><span class="p">]</span>
+            <span class="n">_name</span><span class="p">,</span> <span class="n">_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_source_id</span><span class="p">(</span><span class="n">source_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_name</span> <span class="o">==</span> <span class="n">source_id</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span>
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span> <span class="nf">_parse_source_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">):</span>
+        <span class="n">splitted</span> <span class="o">=</span> <span class="n">source_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">splitted</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Invalid source id&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">splitted</span>
+
+    <span class="k">def</span> <span class="nf">_compare_collections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compare two collections of objects.</span>
+
+<span class="sd">        Both collections are dictionaries mapping &quot;source&quot; ids</span>
+<span class="sd">        with objects.</span>
+
+<span class="sd">        :param left:</span>
+<span class="sd">            The &quot;original&quot; collection, retrieved from Ckan.</span>
+<span class="sd">            Objects will already have ids.</span>
+
+<span class="sd">        ``left`` is the collection retrieved</span>
+
+<span class="sd">        The two collections are simply dictionaries of objects;</span>
+<span class="sd">        keys are the ids (used internally by the source).</span>
+<span class="sd">        Values in the right will contain Ckan ids, while the ones</span>
+<span class="sd">        in the left will not.</span>
+
+<span class="sd">        :returns:</span>
+<span class="sd">            A dictionary mapping names to sets of keys:</span>
+
+<span class="sd">            * ``common`` -- keys in both mappings</span>
+<span class="sd">            * ``differing`` -- keys of differing objects</span>
+<span class="sd">            * ``left`` -- keys of objects that are only in ckan</span>
+<span class="sd">            * ``right`` -- keys of objects that are not in ckan</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">left_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">left</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">())</span>
+        <span class="n">right_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">right</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">())</span>
+
+        <span class="n">common_keys</span> <span class="o">=</span> <span class="n">left_keys</span> <span class="o">&amp;</span> <span class="n">right_keys</span>
+        <span class="n">left_only_keys</span> <span class="o">=</span> <span class="n">left_keys</span> <span class="o">-</span> <span class="n">right_keys</span>
+        <span class="n">right_only_keys</span> <span class="o">=</span> <span class="n">right_keys</span> <span class="o">-</span> <span class="n">left_keys</span>
+
+        <span class="n">differing</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">common_keys</span> <span class="k">if</span> <span class="n">left</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">!=</span> <span class="n">right</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">&#39;common&#39;</span><span class="p">:</span> <span class="n">common_keys</span><span class="p">,</span>
+            <span class="s">&#39;left&#39;</span><span class="p">:</span> <span class="n">left_only_keys</span><span class="p">,</span>
+            <span class="s">&#39;right&#39;</span><span class="p">:</span> <span class="n">right_only_keys</span><span class="p">,</span>
+            <span class="s">&#39;differing&#39;</span><span class="p">:</span> <span class="n">differing</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</pre></div>
+
+          <footer>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2014, Samuele Santi.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>

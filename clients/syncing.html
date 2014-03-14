@@ -117,6 +117,47 @@
           
   <div class="section" id="module-ckan_api_client.syncing">
 <span id="syncing"></span><h1>Syncing<a class="headerlink" href="#module-ckan_api_client.syncing" title="Permalink to this headline">¶</a></h1>
+<p>Synchronization client.</p>
+<p>Strategy:</p>
+<ul class="simple">
+<li>upsert organizations, get <tt class="docutils literal"><span class="pre">{source_id:</span> <span class="pre">ckan_id}</span></tt> map</li>
+<li>upsert groups, get <tt class="docutils literal"><span class="pre">{source_id:</span> <span class="pre">ckan_id}</span></tt> map</li>
+<li>create collection of CkanDatasets from original dicts</li>
+<li>calculate differences between desired and actual state</li>
+<li>perform syncrhonization</li>
+<li>double-check differences</li>
+</ul>
+<dl class="class">
+<dt id="ckan_api_client.syncing.SynchronizationClient">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.syncing.</tt><tt class="descname">SynchronizationClient</tt><big>(</big><em>base_url</em>, <em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/syncing.html#SynchronizationClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.syncing.SynchronizationClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Synchronization client, providing functionality for importing
+collections of datasets into a Ckan instance.</p>
+<p>Strategy:</p>
+<ul class="simple">
+<li>find all &#8220;own&#8221; datasets from Ckan</li>
+<li>figure out which datasets need insertion/update/deletion</li>
+<li>apply changes</li>
+</ul>
+<dl class="method">
+<dt id="ckan_api_client.syncing.SynchronizationClient.sync">
+<tt class="descname">sync</tt><big>(</big><em>source_name</em>, <em>data</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/syncing.html#SynchronizationClient.sync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.syncing.SynchronizationClient.sync" title="Permalink to this definition">¶</a></dt>
+<dd><p>Synchronize data from a source into Ckan.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>source_name</strong> &#8211; string identifying the source</li>
+<li><strong>data</strong> &#8211; data to be synchronized</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
