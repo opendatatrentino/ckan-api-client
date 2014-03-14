@@ -169,7 +169,7 @@
 
         <span class="c">## Create list of datasets to be synced</span>
         <span class="n">source_datasets</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">dataset_dict</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">dataset_dict</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
             <span class="n">_dataset_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">dataset_dict</span><span class="p">)</span>
 
             <span class="c">## We need to make sure &quot;source&quot; datasets</span>
@@ -243,6 +243,10 @@
 <span class="sd">        :param groups:</span>
 <span class="sd">            a dict mapping ``name: CkanGroup()``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">## Strategy:</span>
+        <span class="c">## - try getting group by name</span>
+        <span class="c">## - if found but deleted, restore (set state=&#39;active&#39;)</span>
+        <span class="c">## - if not found create</span>
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">_upsert_organizations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organizations</span><span class="p">):</span>

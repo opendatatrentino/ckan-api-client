@@ -144,13 +144,66 @@ we are handling consistent data (they have validators in place)</p>
 
 <dl class="method">
 <dt id="ckan_api_client.high_level.CkanHighlevelClient.get_dataset">
-<tt class="descname">get_dataset</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.get_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.get_dataset" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_dataset</tt><big>(</big><em>id</em>, <em>allow_deleted=False</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.get_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.get_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a specific dataset, by id</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">objects.CkanDataset</span></tt></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Since the Ckan API use both ids and names as keys,
+both <a class="reference internal" href="#ckan_api_client.high_level.CkanHighlevelClient.get_dataset" title="ckan_api_client.high_level.CkanHighlevelClient.get_dataset"><tt class="xref py py-meth docutils literal"><span class="pre">get_dataset()</span></tt></a> and <a class="reference internal" href="#ckan_api_client.high_level.CkanHighlevelClient.get_dataset_by_name" title="ckan_api_client.high_level.CkanHighlevelClient.get_dataset_by_name"><tt class="xref py py-meth docutils literal"><span class="pre">get_dataset_by_name()</span></tt></a>
+will perform the exact same request in the background.</p>
+<p class="last">The difference is only in the high-level handling:
+the function will check whether the expected id has the correct
+value, and raise an HTTPError(404, ..) otherwise..</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>id</strong> (<em>str</em>) &#8211; the dataset id</li>
+<li><strong>allow_deleted</strong> &#8211; Whether to return even logically deleted objects.
+If set to <tt class="docutils literal"><span class="pre">False</span></tt> (the default) will raise a
+<tt class="docutils literal"><span class="pre">HTTPError(404,</span> <span class="pre">..)</span></tt> if <tt class="docutils literal"><span class="pre">state</span> <span class="pre">!=</span> <span class="pre">'active'</span></tt></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.CkanDataset</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.get_dataset_by_name">
+<tt class="descname">get_dataset_by_name</tt><big>(</big><em>name</em>, <em>allow_deleted=False</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.get_dataset_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.get_dataset_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a specific dataset, by name</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">See note on <a class="reference internal" href="#ckan_api_client.high_level.CkanHighlevelClient.get_dataset" title="ckan_api_client.high_level.CkanHighlevelClient.get_dataset"><tt class="xref py py-meth docutils literal"><span class="pre">get_dataset()</span></tt></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; the dataset name</li>
+<li><strong>allow_deleted</strong> &#8211; Whether to return even logically deleted objects.
+If set to <tt class="docutils literal"><span class="pre">False</span></tt> (the default) will raise a
+<tt class="docutils literal"><span class="pre">HTTPError(404,</span> <span class="pre">..)</span></tt> if <tt class="docutils literal"><span class="pre">state</span> <span class="pre">!=</span> <span class="pre">'active'</span></tt></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.CkanDataset</span></tt></p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -219,8 +272,57 @@ otherwise, call <a class="reference internal" href="#ckan_api_client.high_level.
 
 <dl class="method">
 <dt id="ckan_api_client.high_level.CkanHighlevelClient.get_organization">
-<tt class="descname">get_organization</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.get_organization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.get_organization" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">get_organization</tt><big>(</big><em>id</em>, <em>allow_deleted=False</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.get_organization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.get_organization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get organization, by id.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">See note on <a class="reference internal" href="#ckan_api_client.high_level.CkanHighlevelClient.get_dataset" title="ckan_api_client.high_level.CkanHighlevelClient.get_dataset"><tt class="xref py py-meth docutils literal"><span class="pre">get_dataset()</span></tt></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>id</strong> (<em>str</em>) &#8211; the organization id</li>
+<li><strong>allow_deleted</strong> &#8211; Whether to return even logically deleted objects.
+If set to <tt class="docutils literal"><span class="pre">False</span></tt> (the default) will raise a
+<tt class="docutils literal"><span class="pre">HTTPError(404,</span> <span class="pre">..)</span></tt> if <tt class="docutils literal"><span class="pre">state</span> <span class="pre">!=</span> <span class="pre">'active'</span></tt></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.CkanOrganization</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.get_organization_by_name">
+<tt class="descname">get_organization_by_name</tt><big>(</big><em>name</em>, <em>allow_deleted=False</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.get_organization_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.get_organization_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get organization by name.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">See note on <a class="reference internal" href="#ckan_api_client.high_level.CkanHighlevelClient.get_dataset" title="ckan_api_client.high_level.CkanHighlevelClient.get_dataset"><tt class="xref py py-meth docutils literal"><span class="pre">get_dataset()</span></tt></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; the organization name</li>
+<li><strong>allow_deleted</strong> &#8211; Whether to return even logically deleted objects.
+If set to <tt class="docutils literal"><span class="pre">False</span></tt> (the default) will raise a
+<tt class="docutils literal"><span class="pre">HTTPError(404,</span> <span class="pre">..)</span></tt> if <tt class="docutils literal"><span class="pre">state</span> <span class="pre">!=</span> <span class="pre">'active'</span></tt></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.CkanOrganization</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ckan_api_client.high_level.CkanHighlevelClient.save_organization">
@@ -254,8 +356,57 @@ otherwise, call <a class="reference internal" href="#ckan_api_client.high_level.
 
 <dl class="method">
 <dt id="ckan_api_client.high_level.CkanHighlevelClient.get_group">
-<tt class="descname">get_group</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.get_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.get_group" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">get_group</tt><big>(</big><em>id</em>, <em>allow_deleted=False</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.get_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.get_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get group, by id.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">See note on <a class="reference internal" href="#ckan_api_client.high_level.CkanHighlevelClient.get_dataset" title="ckan_api_client.high_level.CkanHighlevelClient.get_dataset"><tt class="xref py py-meth docutils literal"><span class="pre">get_dataset()</span></tt></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>id</strong> (<em>str</em>) &#8211; the group id</li>
+<li><strong>allow_deleted</strong> &#8211; Whether to return even logically deleted objects.
+If set to <tt class="docutils literal"><span class="pre">False</span></tt> (the default) will raise a
+<tt class="docutils literal"><span class="pre">HTTPError(404,</span> <span class="pre">..)</span></tt> if <tt class="docutils literal"><span class="pre">state</span> <span class="pre">!=</span> <span class="pre">'active'</span></tt></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.CkanGroup</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.high_level.CkanHighlevelClient.get_group_by_name">
+<tt class="descname">get_group_by_name</tt><big>(</big><em>name</em>, <em>allow_deleted=False</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/high_level.html#CkanHighlevelClient.get_group_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.high_level.CkanHighlevelClient.get_group_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get group by name.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">See note on <a class="reference internal" href="#ckan_api_client.high_level.CkanHighlevelClient.get_dataset" title="ckan_api_client.high_level.CkanHighlevelClient.get_dataset"><tt class="xref py py-meth docutils literal"><span class="pre">get_dataset()</span></tt></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; the group name</li>
+<li><strong>allow_deleted</strong> &#8211; Whether to return even logically deleted objects.
+If set to <tt class="docutils literal"><span class="pre">False</span></tt> (the default) will raise a
+<tt class="docutils literal"><span class="pre">HTTPError(404,</span> <span class="pre">..)</span></tt> if <tt class="docutils literal"><span class="pre">state</span> <span class="pre">!=</span> <span class="pre">'active'</span></tt></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">ckan_api_client.objects.CkanGroup</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ckan_api_client.high_level.CkanHighlevelClient.save_group">
