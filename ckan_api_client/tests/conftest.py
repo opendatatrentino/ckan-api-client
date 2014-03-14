@@ -578,21 +578,36 @@ def _get_ckan_client(request, ckan_env, client_class):
 
 @pytest.fixture
 def ckan_client_ll(request, ckan_env):
+    """
+    :return: A low-level client attached to a running Ckan
+    :rtype: :py:class:`ckan_api_client.low_level.CkanLowlevelClient`
+    """
     from ckan_api_client.low_level import CkanLowlevelClient
     return _get_ckan_client(request, ckan_env, CkanLowlevelClient)
 
 
 @pytest.fixture
 def ckan_client_hl(request, ckan_env):
+    """
+    :return: A high-level client attached to a running Ckan
+    :rtype: :py:class:`ckan_api_client.high_level.CkanHighlevelClient`
+    """
     from ckan_api_client.high_level import CkanHighlevelClient
     return _get_ckan_client(request, ckan_env, CkanHighlevelClient)
 
 
 @pytest.fixture
 def ckan_client_sync(request, ckan_env):
+    """
+    :return: A synchronization client attached to a running Ckan
+    :rtype: :py:class:`ckan_api_client.syncing.SynchronizationClient`
+    """
     from ckan_api_client.syncing import SynchronizationClient
     return _get_ckan_client(request, ckan_env, SynchronizationClient)
 
+
+##------------------------------------------------------------
+## More utilities
 
 def diff_eq(left, right):
     from _pytest.assertion.util import assertrepr_compare
