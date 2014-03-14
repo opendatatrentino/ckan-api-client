@@ -6,13 +6,13 @@ __all__ = ['CkanOrganization']
 
 
 class CkanOrganization(BaseObject):
-    id = StringField()
+    id = StringField(is_key=True)
 
     name = StringField()
     title = StringField()
-    approval_status = StringField()
+    approval_status = StringField(default='approved')
     description = StringField()
-    image_display_url = StringField()
+    # image_display_url = StringField()
     image_url = StringField()
     is_organization = BoolField(default=True)
     state = StringField(default='active')
@@ -22,4 +22,4 @@ class CkanOrganization(BaseObject):
     extras = ExtrasField()
     groups = GroupsField()
     tags = ListField()
-    users = ListField()
+    # users = ListField()
