@@ -14,6 +14,7 @@ Strategy:
 
 import copy
 
+from ckan_api_client.exceptions import HTTPError
 from ckan_api_client.high_level import CkanHighlevelClient
 from ckan_api_client.objects import CkanDataset, CkanOrganization, CkanGroup
 from ckan_api_client.utils import IDMap, IDPair
@@ -47,13 +48,20 @@ class SynchronizationClient(object):
         :param data: data to be synchronized
         """
 
-        ## Upsert groups adn organizations
-        groups_map = self._upsert_groups(data['group'])
-        orgs_map = self._upsert_organizations(data['organization'])
+        groups = dict(
+            (key, CkanGroup(val))
+            for key, val in data['group'].iteritems())
+        organizations = dict(
+            (key, CkanOrganization(val))
+            for key, val in data['organization'].iteritems())
+
+        ## Upsert groups and organizations
+        groups_map = self._upsert_groups(groups)
+        orgs_map = self._upsert_organizations(organizations)
 
         ## Create list of datasets to be synced
         source_datasets = {}
-        for source_id, dataset_dict in data['dataset']:
+        for source_id, dataset_dict in data['dataset'].iteritems():
             _dataset_dict = copy.deepcopy(dataset_dict)
 
             ## We need to make sure "source" datasets
@@ -122,14 +130,53 @@ class SynchronizationClient(object):
 
     def _upsert_groups(self, groups):
         """
-        Upsert a list of groups into Ckan.
-
-        :param groups:
-            a dict mapping ``name: CkanGroup()``
+        :param organizations:
+            dict mapping ``{org_name : CkanGroup()}``
+        :return:
         """
-        pass
+
+        idmap = IDMap()
+
+        for group_name, group in groups.iteritems():
+            if group.name != group_name:
+                raise ValueError("Mismatching group name!")
+
+            try:
+                ckan_group = self._client.get_group_by_name(
+                    group_name, allow_deleted=True)
+
+            except HTTPError, e:
+                if e.status_code != 404:
+                    raise
+
+                ## We need to create the group
+                group.state = 'active'
+                updated_group = self._client.update_group(group)
+                idmap.add(IDPair(source_id=group['name'],
+                                 ckan_id=updated_group['id']))
+
+            else:
+                ## The group already exist. It might be logically
+                ## deleted, but we don't care -> just update and
+                ## make sure it is marked as active.
+
+                ## todo: make sure we don't need to preserve users and stuff,
+                ##       otherwise we need to workaround that in hi-lev client
+
+                group.id = ckan_group.id
+                group.state = 'active'
+                updated_group = self._client.update(group)
+                idmap.add(IDPair(source_id=group['name'],
+                                 ckan_id=updated_group['id']))
 
     def _upsert_organizations(self, organizations):
+        """
+        :param organizations:
+            dict mapping ``{org_name : CkanGroup()}``
+        """
+
+        for org_name, org in organizations.iteritems():
+            pass
         pass
 
     def _find_datasets_by_source(self, source_name):
