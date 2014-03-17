@@ -130,14 +130,19 @@ class SynchronizationClient(object):
 
     def _upsert_groups(self, groups):
         """
-        :param organizations:
+        :param groups:
             dict mapping ``{org_name : CkanGroup()}``
-        :return:
+        :return: a map of source/ckan ids of groups
+        :rtype: IDMap
         """
 
         idmap = IDMap()
 
         for group_name, group in groups.iteritems():
+            if not isinstance(group, CkanGroup):
+                raise TypeError("Expected CkanGroup, got {0!r}"
+                                .format(type(group)))
+
             if group.name != group_name:
                 raise ValueError("Mismatching group name!")
 
@@ -166,21 +171,53 @@ class SynchronizationClient(object):
 
                 group.id = ckan_group.id
                 group.state = 'active'
-                updated_group = self._client.update(group)
+                updated_group = self._client.update_group(group)
                 idmap.add(IDPair(source_id=group.name,
                                  ckan_id=updated_group['id'].id))
 
         return idmap
 
-    def _upsert_organizations(self, organizations):
+    def _upsert_organizations(self, orgs):
         """
-        :param organizations:
-            dict mapping ``{org_name : CkanGroup()}``
+        :param orgs:
+            dict mapping ``{org_name : CkanOrganization()}``
+        :return: a map of source/ckan ids of organizations
+        :rtype: IDMap
         """
 
-        for org_name, org in organizations.iteritems():
-            pass
-        pass
+        idmap = IDMap()
+
+        for org_name, org in orgs.iteritems():
+            if not isinstance(org, CkanOrganization):
+                raise TypeError("Expected CkanOrganization, got {0!r}"
+                                .format(type(org)))
+
+            if org.name != org_name:
+                raise ValueError("Mismatching org name!")
+
+            try:
+                ckan_org = self._client.get_organization_by_name(
+                    org_name, allow_deleted=True)
+
+            except HTTPError, e:
+                if e.status_code != 404:
+                    raise
+
+                ## We need to create the org
+                org.id = None
+                org.state = 'active'
+                created_org = self._client.create_organization(org)
+                idmap.add(IDPair(source_id=org.name,
+                                 ckan_id=created_org.id))
+
+            else:
+                org.id = ckan_org.id
+                org.state = 'active'
+                updated_org = self._client.update_organization(org)
+                idmap.add(IDPair(source_id=org.name,
+                                 ckan_id=updated_org['id'].id))
+
+        return idmap
 
     def _find_datasets_by_source(self, source_name):
         """
