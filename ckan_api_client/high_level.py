@@ -300,7 +300,7 @@ class CkanHighlevelClient(object):
         if 'extras' in data:
             data['extras'] = _destupidize_dict(data['extras'])
 
-        updated = CkanDataset(data)
+        updated = CkanOrganization(data)
 
         if not updated.is_equivalent(organization):
             raise OperationFailure("Updated organization doesn't match")
