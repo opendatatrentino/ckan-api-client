@@ -204,15 +204,41 @@
             <span class="c">##       as it might be: json string, part of json object,</span>
             <span class="c">##       part of html document</span>
             <span class="c">##------------------------------------------------------------</span>
-            <span class="k">raise</span> <span class="n">HTTPError</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
-                            <span class="s">&quot;Error while performing request&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">HTTPError</span><span class="p">(</span>
+                <span class="n">status_code</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="s">&quot;Error while performing request&quot;</span><span class="p">,</span>
+                <span class="n">original</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_figure_out_error_message</span><span class="p">(</span><span class="n">response</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">response</span>
+</div>
+    <span class="k">def</span> <span class="nf">_figure_out_error_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        We have a response, which probably contains an error message,</span>
+<span class="sd">        but we need to figure that out..</span>
+
+<span class="sd">        Usual places for errors are:</span>
+
+<span class="sd">        - a json message, with {&#39;error&#39;: {&#39;message&#39;: ..., &#39;__type&#39;: ...}}</span>
+<span class="sd">        - a html page, usually when things went seriously bad</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">with</span> <span class="n">SuppressExceptionIf</span><span class="p">(</span><span class="bp">True</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_figure_out_error_from_json</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_figure_out_error_from_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">SuppressExceptionIf</span><span class="p">(</span><span class="bp">True</span><span class="p">):</span>
+                <span class="k">return</span> <span class="s">&#39;{0}: {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">][</span><span class="s">&#39;__type&#39;</span><span class="p">],</span>
+                                         <span class="n">data</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">][</span><span class="s">&#39;message&#39;</span><span class="p">])</span>
+            <span class="k">with</span> <span class="n">SuppressExceptionIf</span><span class="p">(</span><span class="bp">True</span><span class="p">):</span>
+                <span class="k">return</span> <span class="s">&#39;{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">][</span><span class="s">&#39;message&#39;</span><span class="p">])</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Unable to find message in JSON data&quot;</span><span class="p">)</span>
 
     <span class="c">##============================================================</span>
     <span class="c">## Validation helpers</span>
     <span class="c">##============================================================</span>
-</div>
+
     <span class="k">def</span> <span class="nf">_validate_response_idlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;object&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">BadApiError</span><span class="p">(</span>
@@ -261,6 +287,14 @@
             <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dataset</span><span class="p">(</span><span class="n">ds_id</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="CkanLowlevelClient.get_dataset"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.get_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">get_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a dataset, using API v2</span>
+
+<span class="sd">        :param dataset_id: ID of the requested dataset</span>
+<span class="sd">        :return: a dict containing the data as returned from the API</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/dataset/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
@@ -268,6 +302,17 @@
         <span class="k">return</span> <span class="n">data</span>
 </div>
 <div class="viewcode-block" id="CkanLowlevelClient.post_dataset"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.post_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">post_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        POST a dataset, using API v2 (usually for creation)</span>
+
+<span class="sd">        :param dict dataset:</span>
+<span class="sd">            a dict containing data to be sent to Ckan.</span>
+<span class="sd">            Should not already contain an id</span>
+<span class="sd">        :return:</span>
+<span class="sd">            a dict containing the data as returned from the API</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/dataset&#39;</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;POST&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
@@ -275,6 +320,17 @@
         <span class="k">return</span> <span class="n">data</span>
 </div>
 <div class="viewcode-block" id="CkanLowlevelClient.put_dataset"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.put_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">put_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        PUT a dataset, using API v2 (usually for update)</span>
+
+<span class="sd">        :param dict dataset:</span>
+<span class="sd">            a dict containing data to be sent to Ckan.</span>
+<span class="sd">            Must contain an id, that will be used to build the URL</span>
+<span class="sd">        :return:</span>
+<span class="sd">            a dict containing the updated dataset as returned from the API</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/dataset/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;PUT&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
@@ -282,6 +338,14 @@
         <span class="k">return</span> <span class="n">data</span>
 </div>
 <div class="viewcode-block" id="CkanLowlevelClient.delete_dataset"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.delete_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">delete_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_id</span><span class="p">,</span> <span class="n">ignore_404</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        DELETE a dataset, using API v2</span>
+
+<span class="sd">        :param dataset_id: if of the dataset to be deleted</span>
+<span class="sd">        :param bool ignore_404: if ``True`` (the default), will</span>
+<span class="sd">            simply ignore http 404 errors from the API</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">ign404</span> <span class="o">=</span> <span class="n">SuppressExceptionIf</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">ignore_404</span> <span class="ow">and</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">))</span>
         <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/dataset/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>

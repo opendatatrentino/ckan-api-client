@@ -115,22 +115,22 @@
           
   <h1>Source code for ckan_api_client.objects.ckan_group</h1><div class="highlight"><pre>
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseObject</span>
-<span class="kn">from</span> <span class="nn">.fields</span> <span class="kn">import</span> <span class="n">StringField</span><span class="p">,</span> <span class="n">GroupsField</span><span class="p">,</span> <span class="n">ExtrasField</span><span class="p">,</span> <span class="n">ListField</span>
+<span class="kn">from</span> <span class="nn">.fields</span> <span class="kn">import</span> <span class="n">StringField</span><span class="p">,</span> <span class="n">GroupsField</span><span class="p">,</span> <span class="n">ExtrasField</span><span class="p">,</span> <span class="n">ListField</span><span class="p">,</span> <span class="n">BoolField</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;CkanGroup&#39;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="CkanGroup"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.ckan_group.CkanGroup">[docs]</a><span class="k">class</span> <span class="nc">CkanGroup</span><span class="p">(</span><span class="n">BaseObject</span><span class="p">):</span>
-    <span class="nb">id</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">is_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
     <span class="n">title</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
-    <span class="n">approval_status</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">approval_status</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;approved&#39;</span><span class="p">)</span>
     <span class="n">description</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
-    <span class="n">image_display_url</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="c"># image_display_url = StringField()</span>
     <span class="n">image_url</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
-    <span class="n">is_organization</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">is_organization</span> <span class="o">=</span> <span class="n">BoolField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
     <span class="n">state</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;active&#39;</span><span class="p">)</span>
     <span class="nb">type</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;group&#39;</span><span class="p">)</span>
 
@@ -138,7 +138,7 @@
     <span class="n">extras</span> <span class="o">=</span> <span class="n">ExtrasField</span><span class="p">()</span>
     <span class="n">groups</span> <span class="o">=</span> <span class="n">GroupsField</span><span class="p">()</span>
     <span class="n">tags</span> <span class="o">=</span> <span class="n">ListField</span><span class="p">()</span>
-    <span class="n">users</span> <span class="o">=</span> <span class="n">ListField</span><span class="p">()</span></div>
+    <span class="c"># users = ListField()</span></div>
 </pre></div>
 
           <footer>

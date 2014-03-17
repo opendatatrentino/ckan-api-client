@@ -216,6 +216,21 @@
         <span class="k">return</span> <span class="n">value</span>
 
 </div></div>
+<span class="k">class</span> <span class="nc">SetField</span><span class="p">(</span><span class="n">MutableFieldMixin</span><span class="p">,</span> <span class="n">BaseField</span><span class="p">):</span>
+    <span class="n">default</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">SetField</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">SEQUENCE_TYPES</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;{0} must be a set or list&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">)))</span>
+
+
 <div class="viewcode-block" id="DictField"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.fields.DictField">[docs]</a><span class="k">class</span> <span class="nc">DictField</span><span class="p">(</span><span class="n">MutableFieldMixin</span><span class="p">,</span> <span class="n">BaseField</span><span class="p">):</span>
     <span class="n">default</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{})</span>
 
@@ -226,7 +241,7 @@
         <span class="k">return</span> <span class="n">value</span>
 
 </div></div>
-<div class="viewcode-block" id="GroupsField"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.fields.GroupsField">[docs]</a><span class="k">class</span> <span class="nc">GroupsField</span><span class="p">(</span><span class="n">ListField</span><span class="p">):</span>
+<div class="viewcode-block" id="GroupsField"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.fields.GroupsField">[docs]</a><span class="k">class</span> <span class="nc">GroupsField</span><span class="p">(</span><span class="n">SetField</span><span class="p">):</span>
 <div class="viewcode-block" id="GroupsField.validate"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.fields.GroupsField.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="n">value</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">GroupsField</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">value</span><span class="p">):</span>

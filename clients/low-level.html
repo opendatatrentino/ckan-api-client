@@ -188,22 +188,77 @@ database.</p>
 <dl class="method">
 <dt id="ckan_api_client.low_level.CkanLowlevelClient.get_dataset">
 <tt class="descname">get_dataset</tt><big>(</big><em>dataset_id</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.get_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.get_dataset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get a dataset, using API v2</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dataset_id</strong> &#8211; ID of the requested dataset</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a dict containing the data as returned from the API</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ckan_api_client.low_level.CkanLowlevelClient.post_dataset">
 <tt class="descname">post_dataset</tt><big>(</big><em>dataset</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.post_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.post_dataset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>POST a dataset, using API v2 (usually for creation)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dataset</strong> (<em>dict</em>) &#8211; a dict containing data to be sent to Ckan.
+Should not already contain an id</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a dict containing the data as returned from the API</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ckan_api_client.low_level.CkanLowlevelClient.put_dataset">
 <tt class="descname">put_dataset</tt><big>(</big><em>dataset</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.put_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.put_dataset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>PUT a dataset, using API v2 (usually for update)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dataset</strong> (<em>dict</em>) &#8211; a dict containing data to be sent to Ckan.
+Must contain an id, that will be used to build the URL</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a dict containing the updated dataset as returned from the API</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ckan_api_client.low_level.CkanLowlevelClient.delete_dataset">
 <tt class="descname">delete_dataset</tt><big>(</big><em>dataset_id</em>, <em>ignore_404=True</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/low_level.html#CkanLowlevelClient.delete_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.low_level.CkanLowlevelClient.delete_dataset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>DELETE a dataset, using API v2</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dataset_id</strong> &#8211; if of the dataset to be deleted</li>
+<li><strong>ignore_404</strong> (<em>bool</em>) &#8211; if <tt class="docutils literal"><span class="pre">True</span></tt> (the default), will
+simply ignore http 404 errors from the API</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ckan_api_client.low_level.CkanLowlevelClient.list_groups">
