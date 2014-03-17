@@ -171,6 +171,14 @@ class CkanLowlevelClient(object):
             yield self.get_dataset(ds_id)
 
     def get_dataset(self, dataset_id):
+        """
+        Get a dataset, using API v2
+
+        :param dataset_id: ID of the requested dataset
+        :return: a dict containing the data as returned from the API
+        :rtype: dict
+        """
+
         path = '/api/2/rest/dataset/{0}'.format(dataset_id)
         response = self.request('GET', path)
         data = response.json()
@@ -178,6 +186,17 @@ class CkanLowlevelClient(object):
         return data
 
     def post_dataset(self, dataset):
+        """
+        POST a dataset, using API v2 (usually for creation)
+
+        :param dict dataset:
+            a dict containing data to be sent to Ckan.
+            Should not already contain an id
+        :return:
+            a dict containing the data as returned from the API
+        :rtype: dict
+        """
+
         path = '/api/2/rest/dataset'
         response = self.request('POST', path, data=dataset)
         data = response.json()
@@ -185,6 +204,17 @@ class CkanLowlevelClient(object):
         return data
 
     def put_dataset(self, dataset):
+        """
+        PUT a dataset, using API v2 (usually for update)
+
+        :param dict dataset:
+            a dict containing data to be sent to Ckan.
+            Must contain an id, that will be used to build the URL
+        :return:
+            a dict containing the updated dataset as returned from the API
+        :rtype: dict
+        """
+
         path = '/api/2/rest/dataset/{0}'.format(dataset['id'])
         response = self.request('PUT', path, data=dataset)
         data = response.json()
@@ -192,6 +222,14 @@ class CkanLowlevelClient(object):
         return data
 
     def delete_dataset(self, dataset_id, ignore_404=True):
+        """
+        DELETE a dataset, using API v2
+
+        :param dataset_id: if of the dataset to be deleted
+        :param bool ignore_404: if ``True`` (the default), will
+            simply ignore http 404 errors from the API
+        """
+
         ign404 = SuppressExceptionIf(
             lambda e: ignore_404 and (e.status_code == 404))
         path = '/api/2/rest/dataset/{0}'.format(dataset_id)
