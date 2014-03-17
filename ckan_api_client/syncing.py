@@ -176,7 +176,7 @@ class SynchronizationClient(object):
                 group.state = 'active'
                 updated_group = self._client.update_group(group)
                 idmap.add(IDPair(source_id=group.name,
-                                 ckan_id=updated_group['id'].id))
+                                 ckan_id=updated_group.id))
 
         return idmap
 
@@ -218,7 +218,7 @@ class SynchronizationClient(object):
                 org.state = 'active'
                 updated_org = self._client.update_organization(org)
                 idmap.add(IDPair(source_id=org.name,
-                                 ckan_id=updated_org['id'].id))
+                                 ckan_id=updated_org.id))
 
         return idmap
 
