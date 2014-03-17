@@ -16,7 +16,6 @@ from ckan_api_client.tests.utils.generate import (
 def generate_data():
     organizations = {}
     groups = {}
-    datasets = {}
 
     for i in xrange(3):
         org = generate_organization()
@@ -27,6 +26,9 @@ def generate_data():
         grp = generate_group()
         grp['id'] = grp['name'] = 'group-{0}'.format(i)
         groups[grp['id']] = grp
+
+    datasets = generate_datasets(
+        groups=groups, organizations=organizations, amount=20)
 
     for i in xrange(20):
         dataset = generate_dataset()
@@ -42,8 +44,44 @@ def generate_data():
     }
 
 
+def generate_datasets(groups, organizations, amount=20):
+    datasets = {}
+    for i in xrange(amount):
+        dataset = generate_dataset()
+        dataset['id'] = 'dataset-{0}'.format(i)
+        dataset['groups'] = random.sample(list(groups), random.randint(0, 3))
+        dataset['owner_org'] = random.choice(list(organizations))
+        datasets[dataset['id']] = dataset
+    return datasets
+
+
 def test_simple_harvesting(ckan_client_sync):
     client = ckan_client_sync
     data = generate_data()
 
     client.sync('dummy-source', data)
+    ## todo: check current status
+
+    new_datasets = generate_datasets(
+        groups=data['group'],
+        organizations=data['organization'],
+        amount=20)
+
+    data['dataset'].update(new_datasets)
+
+    client.sync('dummy-source', data)
+    ## todo: check current status
+
+    ## Randomly remove 15 datasets, add 20
+    todel = random.sample(data['dataset'].keys(), 15)
+    for key in todel:
+        del data['dataset'][key]
+
+    new_datasets = generate_datasets(
+        groups=data['group'],
+        organizations=data['organization'],
+        amount=20)
+    data['dataset'].update(new_datasets)
+
+    client.sync('dummy-source', data)
+    ## todo: check current status
