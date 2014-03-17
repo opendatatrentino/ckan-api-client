@@ -85,13 +85,13 @@ class SynchronizationClient(object):
             dataset.extras[HARVEST_SOURCE_ID_FIELD] = \
                 '{0}:{1}'.format(source_name, source_id)
 
-            source_datasets[source_id] = CkanDataset(dataset)
+            source_datasets[source_id] = dataset
 
         ## Retrieve list of datasets from Ckan
-        ckan_datasets = self.get_datasets_by_source(source_name)
+        ckan_datasets = self._find_datasets_by_source(source_name)
 
         ## Compare collections to find differences
-        differences = self.compare_collections(
+        differences = self._compare_collections(
             ckan_datasets, source_datasets)
 
         ##------------------------------------------------------------
@@ -113,9 +113,12 @@ class SynchronizationClient(object):
             dataset = source_datasets[source_id]
             self._client.create_dataset(dataset)
 
+        ## Update outdated datasets
         for source_id in differences['differing']:
-            pass
-        pass
+            dataset = source_datasets[source_id]
+            self._client.update_dataset(dataset)
+
+        ## Todo: double-check differences?
 
     def _sync_datasets(self, source_name, datasets):
         """

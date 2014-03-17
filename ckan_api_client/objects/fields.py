@@ -100,6 +100,21 @@ class ListField(MutableFieldMixin, BaseField):
         return value
 
 
+class SetField(MutableFieldMixin, BaseField):
+    default = staticmethod(lambda: [])
+
+    def validate(self, instance, name, value):
+        value = super(SetField, self).validate(instance, name, value)
+        if isinstance(value, set):
+            return value
+        if not isinstance(value, SEQUENCE_TYPES):
+            raise ValueError("{0} must be a set or list".format(name))
+        return set(value)
+
+    def serialize(self, instance, name):
+        return copy.deepcopy(list(self.get(instance, name)))
+
+
 class DictField(MutableFieldMixin, BaseField):
     default = staticmethod(lambda: {})
 
@@ -110,7 +125,7 @@ class DictField(MutableFieldMixin, BaseField):
         return value
 
 
-class GroupsField(ListField):
+class GroupsField(SetField):
     def validate(self, instance, name, value):
         value = super(GroupsField, self).validate(instance, name, value)
         if not all(isinstance(x, basestring) for x in value):
