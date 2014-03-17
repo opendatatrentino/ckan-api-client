@@ -4,6 +4,7 @@
 
 import json
 import random
+import string
 
 from .strings import gen_random_id, gen_picture
 
@@ -218,6 +219,11 @@ def generate_data(dataset_count=50, orgs_count=10, groups_count=15):
         data['dataset'][dataset['id']] = dataset
 
     return data
+
+
+def generate_id(length=10):
+    pool = string.ascii_lowercase + string.digits
+    return ''.join(random.choice(pool) for _ in xrange(length))
 
 
 if __name__ == '__main__':
