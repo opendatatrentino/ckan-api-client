@@ -83,7 +83,7 @@ class SynchronizationClient(object):
             ## We also want to add the "source id", used for further
             ## synchronizations to find stuff
             dataset.extras[HARVEST_SOURCE_ID_FIELD] = \
-                '{0}:{1}'.format(source_name, source_id)
+                self._join_source_id(source_name, source_id)
 
             source_datasets[source_id] = dataset
 
@@ -116,20 +116,21 @@ class SynchronizationClient(object):
         ## Update outdated datasets
         for source_id in differences['differing']:
             dataset = source_datasets[source_id]
+            dataset.id = ckan_datasets[source_id].id
             self._client.update_dataset(dataset)
 
         ## Todo: double-check differences?
 
-    def _sync_datasets(self, source_name, datasets):
-        """
-        Synchronize datasets into Ckan.
+    # def _sync_datasets(self, source_name, datasets):
+    #     """
+    #     Synchronize datasets into Ckan.
 
-        :param source_name:
-            Name of the data source
-        :param datasets:
-            Dictionary mapping ``source_id: CkanDataset()``
-        """
-        pass
+    #     :param source_name:
+    #         Name of the data source
+    #     :param datasets:
+    #         Dictionary mapping ``source_id: CkanDataset()``
+    #     """
+    #     pass
 
     def _upsert_groups(self, groups):
         """
@@ -234,7 +235,7 @@ class SynchronizationClient(object):
                 continue
             source_id = dataset.extras[HARVEST_SOURCE_ID_FIELD]
             _name, _id = self._parse_source_id(source_id)
-            if _name == source_id:
+            if _name == source_name:
                 results[_id] = dataset
         return results
 
@@ -243,6 +244,9 @@ class SynchronizationClient(object):
         if len(splitted) != 2:
             raise ValueError("Invalid source id")
         return splitted
+
+    def _join_source_id(self, source_name, source_id):
+        return ':'.join((source_name, source_id))
 
     def _compare_collections(self, left, right):
         """
