@@ -395,7 +395,7 @@ class CkanHighlevelClient(object):
             raise ValueError("Cannot specify an id when creating an object")
 
         data = self._client.post_group(group.serialize())
-        created = CkanGroup.serialize(data)
+        created = CkanGroup(data)
 
         if not created.is_equivalent(group):
             raise OperationFailure("Created group doesn't match")
@@ -412,7 +412,7 @@ class CkanHighlevelClient(object):
             raise ValueError("Trying to update a group without an id")
 
         data = self._client.put_group(group.serialize())
-        updated = CkanGroup.serialize(data)
+        updated = CkanGroup(data)
 
         if not updated.is_equivalent(group):
             raise OperationFailure("Updated group doesn't match")

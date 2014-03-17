@@ -150,10 +150,11 @@ class SynchronizationClient(object):
                     raise
 
                 ## We need to create the group
+                group.id = None
                 group.state = 'active'
-                updated_group = self._client.update_group(group)
-                idmap.add(IDPair(source_id=group['name'],
-                                 ckan_id=updated_group['id']))
+                created_group = self._client.create_group(group)
+                idmap.add(IDPair(source_id=group.name,
+                                 ckan_id=created_group.id))
 
             else:
                 ## The group already exist. It might be logically
@@ -166,8 +167,10 @@ class SynchronizationClient(object):
                 group.id = ckan_group.id
                 group.state = 'active'
                 updated_group = self._client.update(group)
-                idmap.add(IDPair(source_id=group['name'],
-                                 ckan_id=updated_group['id']))
+                idmap.add(IDPair(source_id=group.name,
+                                 ckan_id=updated_group['id'].id))
+
+        return idmap
 
     def _upsert_organizations(self, organizations):
         """
