@@ -27,7 +27,11 @@ def test_ckandataset_creation():
     assert isinstance(dataset.resources, ResourcesList)
     assert len(dataset.resources) == 0
 
-    assert dataset.serialize() == {
+    ## The order of groups doesn't matter..
+    _serialized = dataset.serialize()
+    assert sorted(_serialized.pop('groups')) == sorted(['one', 'two', 'three'])
+
+    assert _serialized == {
         'id': None,
         'name': 'example-dataset',
         'title': 'Example Dataset',
@@ -43,7 +47,6 @@ def test_ckandataset_creation():
         'type': 'dataset',
         'url': None,
         'extras': {'foo': 'bar', 'baz': 'SPAM!'},
-        'groups': ['one', 'two', 'three'],
         'resources': [],
     }
 
