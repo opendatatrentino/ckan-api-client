@@ -21,7 +21,7 @@ def test_ckandataset_creation():
     })
     assert dataset.name == 'example-dataset'
     assert dataset.title == 'Example Dataset'
-    assert dataset.groups == ['one', 'two', 'three']
+    assert dataset.groups == set(['one', 'two', 'three'])
     assert dataset.extras == {'foo': 'bar', 'baz': 'SPAM!'}
 
     assert isinstance(dataset.resources, ResourcesList)
