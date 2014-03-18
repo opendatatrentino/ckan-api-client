@@ -5,7 +5,8 @@ from setuptools.command.test import test as TestCommand
 version = '0.1-alpha'
 
 install_requires = [
-    "requests",
+    "requests",  # For performing HTTP requests
+    "cliff",  # For the CLI
 ]
 
 if sys.version_info < (2, 7):
@@ -13,9 +14,26 @@ if sys.version_info < (2, 7):
 
 tests_require = [
     'pytest',
+    'pytest-cov',
+    'pytest-pep8',
+
+    ## The next two are required in order to install
+    ## Ckan in a separate environment.
     'psycopg2',
     'solrpy',
 ]
+
+entry_points = {
+    'console_scripts': [
+        'ckanclient = ckan_api_client.cli:main',
+    ],
+    'ckan_api_client.cli': [
+        'list_datasets = ckan_api_client.commands.client_hilev:ListDatasets',
+        'iter_datasets = ckan_api_client.commands.client_hilev:IterDatasets',
+        'get_dataset = ckan_api_client.commands.client_hilev:GetDataset',
+        'import_dataset = ckan_api_client.commands.client_hilev:ImportDataset',
+    ],
+}
 
 
 class PyTest(TestCommand):
@@ -24,7 +42,7 @@ class PyTest(TestCommand):
         self.test_args = [
             '--ignore=build',
             '--verbose',
-            # '--cov=...',
+            # '--cov=ckan_api_client',
             # '--cov-report=term-missing',
             '--pep8',
             'datacat']
@@ -55,4 +73,5 @@ setup(
         "Programming Language :: Python :: 2.7",
     ],
     package_data={'': ['README.md', 'LICENSE']},
-    cmdclass={'test': PyTest})
+    cmdclass={'test': PyTest},
+    entry_points=entry_points)
