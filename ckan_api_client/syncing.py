@@ -13,6 +13,7 @@ Strategy:
 """
 
 import copy
+import random
 
 from ckan_api_client.exceptions import HTTPError
 from ckan_api_client.high_level import CkanHighlevelClient
@@ -108,16 +109,34 @@ class SynchronizationClient(object):
             ckan_id = ckan_datasets[source_id].id
             self._client.delete_dataset(ckan_id)
 
+        def force_dataset_operation(operation, dataset, retry=5):
+            _orig_name = dataset.name
+            while True:
+                try:
+                    result = operation(dataset)
+                except HTTPError, e:
+                    if e.status_code != 409:
+                        raise
+                    retry -= 1
+                    if retry < 0:
+                        raise
+                    dataset.name = '{0}-{1:06d}'.format(
+                        _orig_name,
+                        random.randint(0, 999999))
+                else:
+                    return result
+
         ## Create missing datasets
         for source_id in differences['right']:
             dataset = source_datasets[source_id]
-            self._client.create_dataset(dataset)
+            force_dataset_operation(self._client.create_dataset, dataset)
 
         ## Update outdated datasets
         for source_id in differences['differing']:
             dataset = source_datasets[source_id]
             dataset.id = ckan_datasets[source_id].id
-            self._client.update_dataset(dataset)
+            # self._client.update_dataset(dataset)
+            force_dataset_operation(self._client.update_dataset, dataset)
 
         ## Todo: double-check differences?
 
