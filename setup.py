@@ -23,15 +23,19 @@ tests_require = [
     'solrpy',
 ]
 
+## Shorten names
+_cch = 'ckan_api_client.commands.client_hilev'
+
 entry_points = {
     'console_scripts': [
         'ckanclient = ckan_api_client.cli:main',
     ],
     'ckan_api_client.cli': [
-        'list_datasets = ckan_api_client.commands.client_hilev:ListDatasets',
-        'iter_datasets = ckan_api_client.commands.client_hilev:IterDatasets',
-        'get_dataset = ckan_api_client.commands.client_hilev:GetDataset',
-        'import_dataset = ckan_api_client.commands.client_hilev:ImportDataset',
+        'list_datasets = {0}:ListDatasets'.format(_cch),
+        'iter_datasets = {0}:IterDatasets'.format(_cch),
+        'get_dataset = {0}:GetDataset'.format(_cch),
+        'import_dataset = {0}:ImportDataset'.format(_cch),
+        'import_directory = {0}:ImportDirectory'.format(_cch),
     ],
 }
 

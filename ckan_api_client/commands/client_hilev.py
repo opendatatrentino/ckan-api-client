@@ -3,35 +3,15 @@ Commands to query CKan data
 """
 
 import json
+import logging
 import os
 import sys
 
-from ckan_api_client.high_level import CkanHighlevelClient
-from ckan_api_client.objects import CkanDataset
-
-from cliff.command import Command
 from cliff.lister import Lister
 
-
-class CkanCommandBase(Command):
-    def get_parser(self, prog_name):
-        parser = super(CkanCommandBase, self).get_parser(prog_name)
-        parser.add_argument('--url')
-        parser.add_argument('--api-key')
-        return parser
-
-    def _get_client(self, parsed_args):
-        base_url = parsed_args.url
-        if base_url is None:
-            base_url = os.environ.get('CKAN_URL')
-        if base_url is None:
-            base_url = 'http://127.0.0.1:5000'
-
-        api_key = parsed_args.api_key
-        if api_key is None:
-            api_key = os.environ.get('CKAN_API_KEY')
-
-        return CkanHighlevelClient(base_url=base_url, api_key=api_key)
+from ckan_api_client.objects import CkanDataset
+from ckan_api_client.syncing import SynchronizationClient
+from .base import CkanCommandBase
 
 
 class ListDatasets(CkanCommandBase, Lister):
@@ -123,3 +103,60 @@ class ImportDataset(CkanCommandBase):
             resource.id = None
         created = client.create_dataset(dataset)
         self.app.stdout.write(json.dumps(created.serialize()))
+
+
+class ImportDirectory(CkanCommandBase):
+    """
+    Import data from a directory.
+    Data should be organized like this::
+
+        source_dir
+        |-- dataset
+        |   '-- <json files>
+        |-- group
+        |   '-- <json files>
+        '-- organization
+            '-- <json files>
+    """
+
+    log = logging.getLogger(__name__)
+
+    def get_parser(self, prog_name):
+        parser = super(ImportDirectory, self).get_parser(prog_name)
+        parser.add_argument('source_name', nargs=1)
+        parser.add_argument('source_dir', nargs=1)
+        return parser
+
+    def _load_data(self, source_dir):
+        data = {}
+        for obj_type in ('dataset', 'group', 'organization'):
+            data[obj_type] = {}
+            base_dir = os.path.join(source_dir, obj_type)
+            for basename in os.listdir(base_dir):
+                if basename.startswith('.') or basename.endswith('~'):
+                    ## Skip hidden / backup files
+                    continue
+                filename = os.path.join(base_dir, basename)
+                with open(filename, 'rb') as f:
+                    obj = json.load(f)
+                key = obj['id'] if obj_type == 'dataset' else obj['name']
+                data[obj_type][key] = obj
+        return data
+
+    def take_action(self, parsed_args):
+        client = self._get_client(parsed_args, SynchronizationClient)
+
+        source_name = parsed_args.source_name[0]
+
+        source_dir = parsed_args.source_dir[0]
+        if source_dir is None:
+            source_dir = os.getcwd()
+        source_dir = os.path.abspath(source_dir)
+
+        ## Load data into a big dictionary
+        self.log.info("Loading data")
+        data = self._load_data(source_dir)
+
+        ## Run syncing and hope for the best!
+        self.log.info("Synchronizing data")
+        client.sync(source_name, data)
