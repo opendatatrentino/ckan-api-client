@@ -9,7 +9,8 @@ python:
   - "2.7"
 
 install:
-  - python setup.py install
+  # - python setup.py install
+  - pip install .
   - ./scripts/travis-install.sh
 
 script:
