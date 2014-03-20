@@ -110,7 +110,10 @@ class SynchronizationClient(object):
             self._client.delete_dataset(ckan_id)
 
         def force_dataset_operation(operation, dataset, retry=5):
-            _orig_name = dataset.name
+            ## Maximum dataset name length is 100 characters
+            ## We trim it down to 80 just to be safe.
+            _orig_name = dataset.name[:80]
+            dataset.name = _orig_name
             while True:
                 try:
                     result = operation(dataset)

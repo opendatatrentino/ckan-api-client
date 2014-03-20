@@ -25,6 +25,7 @@ tests_require = [
 
 ## Shorten names
 _cch = 'ckan_api_client.commands.client_hilev'
+_ccs = 'ckan_api_client.commands.syncing'
 
 entry_points = {
     'console_scripts': [
@@ -35,7 +36,8 @@ entry_points = {
         'iter_datasets = {0}:IterDatasets'.format(_cch),
         'get_dataset = {0}:GetDataset'.format(_cch),
         'import_dataset = {0}:ImportDataset'.format(_cch),
-        'import_directory = {0}:ImportDirectory'.format(_cch),
+        'import_directory = {0}:ImportDirectory'.format(_ccs),
+        'import_sqlite = {0}:ImportSQLite'.format(_ccs),
     ],
 }
 
