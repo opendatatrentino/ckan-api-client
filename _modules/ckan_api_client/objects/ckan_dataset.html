@@ -116,7 +116,7 @@
   <h1>Source code for ckan_api_client.objects.ckan_dataset</h1><div class="highlight"><pre>
 <span class="kn">from</span> <span class="nn">ckan_api_client.utils</span> <span class="kn">import</span> <span class="n">WrappedList</span>
 
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseObject</span><span class="p">,</span> <span class="n">MAPPING_TYPES</span><span class="p">,</span> <span class="n">SEQUENCE_TYPES</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseObject</span><span class="p">,</span> <span class="n">MAPPING_TYPES</span>
 <span class="kn">from</span> <span class="nn">.fields</span> <span class="kn">import</span> <span class="p">(</span><span class="n">StringField</span><span class="p">,</span> <span class="n">GroupsField</span><span class="p">,</span> <span class="n">ExtrasField</span><span class="p">,</span> <span class="n">ListField</span><span class="p">,</span>
                      <span class="n">BoolField</span><span class="p">)</span>
 
@@ -144,21 +144,21 @@
         <span class="p">]</span>
 </div>
 <div class="viewcode-block" id="ResourcesField.is_equivalent"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.ckan_dataset.ResourcesField.is_equivalent">[docs]</a>    <span class="k">def</span> <span class="nf">is_equivalent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">ignore_key</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-        <span class="c">## We are now comparing two ResourcesList instances,</span>
-        <span class="c">## but we need to ignore all the key fields when comparing</span>
-        <span class="c">## resources</span>
+        <span class="c"># We are now comparing two ResourcesList instances,</span>
+        <span class="c"># but we need to ignore all the key fields when comparing</span>
+        <span class="c"># resources</span>
 
         <span class="n">our_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="n">other_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">our_value</span><span class="p">,</span> <span class="n">ResourcesList</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other_value</span><span class="p">,</span> <span class="n">ResourcesList</span><span class="p">)</span>
 
-        <span class="c">## Different length -- clearly two different things</span>
+        <span class="c"># Different length -- clearly two different things</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">our_value</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">other_value</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">False</span>
 
-        <span class="c">## Compare resources one-by-one, by calling their &quot;is_equivalent&quot;</span>
-        <span class="c">## methods.</span>
+        <span class="c"># Compare resources one-by-one, by calling their &quot;is_equivalent&quot;</span>
+        <span class="c"># methods.</span>
         <span class="k">for</span> <span class="n">resource1</span><span class="p">,</span> <span class="n">resource2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">our_value</span><span class="p">,</span> <span class="n">other_value</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">resource1</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">resource2</span><span class="p">,</span> <span class="n">ignore_key</span><span class="o">=</span><span class="n">ignore_key</span><span class="p">):</span>
                 <span class="k">return</span> <span class="bp">False</span>
@@ -195,7 +195,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="c">## Invalid type -- cannot be contained</span>
+            <span class="c"># Invalid type -- cannot be contained</span>
             <span class="k">return</span> <span class="bp">False</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ResourcesList</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__contains__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
@@ -203,7 +203,7 @@
 <div class="viewcode-block" id="CkanDataset"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.ckan_dataset.CkanDataset">[docs]</a><span class="k">class</span> <span class="nc">CkanDataset</span><span class="p">(</span><span class="n">BaseObject</span><span class="p">):</span>
     <span class="nb">id</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">is_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-    <span class="c">## Core fields</span>
+    <span class="c"># Core fields</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
     <span class="n">title</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
 
@@ -219,7 +219,7 @@
     <span class="nb">type</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;dataset&#39;</span><span class="p">)</span>
     <span class="n">url</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
 
-    <span class="c">## Special fields</span>
+    <span class="c"># Special fields</span>
     <span class="n">extras</span> <span class="o">=</span> <span class="n">ExtrasField</span><span class="p">()</span>
     <span class="n">groups</span> <span class="o">=</span> <span class="n">GroupsField</span><span class="p">()</span>
     <span class="n">resources</span> <span class="o">=</span> <span class="n">ResourcesField</span><span class="p">()</span>
@@ -241,8 +241,8 @@
     <span class="n">url_type</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="c">## To allow comparison with dict..</span>
-        <span class="c">## todo: move this in the BaseObject?</span>
+        <span class="c"># To allow comparison with dict..</span>
+        <span class="c"># todo: move this in the BaseObject?</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">MAPPING_TYPES</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">CkanResource</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CkanResource</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></div>
@@ -254,7 +254,7 @@
   <hr/>
 
   <p>
-      &copy; Copyright 2014, Samuele Santi.
+      &copy; Copyright 2014, Trento RISE.
   </p>
 
   <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>

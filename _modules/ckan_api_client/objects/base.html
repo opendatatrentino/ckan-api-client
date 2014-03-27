@@ -121,6 +121,8 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">collections</span>
 
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;BaseField&#39;</span><span class="p">,</span> <span class="s">&#39;BaseObject&#39;</span><span class="p">]</span>
+
 
 <span class="n">NOTSET</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
 <span class="n">MAPPING_TYPES</span> <span class="o">=</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span>
@@ -152,7 +154,7 @@
 <span class="sd">            using :py:meth:`is_equivalent`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c">## todo: refactor to use kwargs</span>
+        <span class="c"># todo: refactor to use kwargs</span>
 
         <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NOTSET</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">default</span>
@@ -212,8 +214,8 @@
 <span class="sd">        Delete the modified value for a field (logically</span>
 <span class="sd">        restores the original one)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c">## We don&#39;t want an exception here, as we just restore</span>
-        <span class="c">## field to its initial value..</span>
+        <span class="c"># We don&#39;t want an exception here, as we just restore</span>
+        <span class="c"># field to its initial value..</span>
         <span class="n">instance</span><span class="o">.</span><span class="n">_updates</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="BaseField.serialize"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.base.BaseField.serialize">[docs]</a>    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
@@ -233,21 +235,21 @@
 <div class="viewcode-block" id="BaseField.is_equivalent"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.base.BaseField.is_equivalent">[docs]</a>    <span class="k">def</span> <span class="nf">is_equivalent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">ignore_key</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">ignore_key</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_key</span><span class="p">:</span>
 
-            <span class="c">## If we want to ignore keys from comparison,</span>
-            <span class="c">## key comparison should always return True</span>
-            <span class="c">## for fields marked as keys.</span>
+            <span class="c"># If we want to ignore keys from comparison,</span>
+            <span class="c"># key comparison should always return True</span>
+            <span class="c"># for fields marked as keys.</span>
 
-            <span class="c">##--------------------------------------------------</span>
-            <span class="c">## NOTE: This should not be needed, as this part</span>
-            <span class="c">## won&#39;t even be called in case it is a key **and**</span>
-            <span class="c">## ignore_key=True. Its main purpose is to be</span>
-            <span class="c">## used recursively by fields containing related</span>
-            <span class="c">## objects.</span>
-            <span class="c">##--------------------------------------------------</span>
+            <span class="c"># --------------------------------------------------</span>
+            <span class="c"># NOTE: This should not be needed, as this part</span>
+            <span class="c"># won&#39;t even be called in case it is a key **and**</span>
+            <span class="c"># ignore_key=True. Its main purpose is to be</span>
+            <span class="c"># used recursively by fields containing related</span>
+            <span class="c"># objects.</span>
+            <span class="c"># --------------------------------------------------</span>
 
             <span class="k">return</span> <span class="bp">True</span>
 
-        <span class="c">## Just perform simple comparison between values</span>
+        <span class="c"># Just perform simple comparison between values</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 </div>
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -273,12 +275,12 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Initial values must be a dict (or None). &quot;</span>
                             <span class="s">&quot;Got {0!r} instead&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">values</span><span class="p">)))</span>
 
-        <span class="c">## Prepare variables to hold initial / updated values</span>
+        <span class="c"># Prepare variables to hold initial / updated values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_updates</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="c">## Set initial field values, by calling set_initial()</span>
-        <span class="c">## on the fields themselves.</span>
+        <span class="c"># Set initial field values, by calling set_initial()</span>
+        <span class="c"># on the fields themselves.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
@@ -364,17 +366,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
-            <span class="c">## We want to make sure the objects are of the</span>
-            <span class="c">## exact same type, not of some sub-type.</span>
+            <span class="c"># We want to make sure the objects are of the</span>
+            <span class="c"># exact same type, not of some sub-type.</span>
             <span class="k">return</span> <span class="bp">False</span>
 
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_fields</span><span class="p">():</span>
-            <span class="c">## Ignore key fields if we are required to</span>
-            <span class="c">## ignore keys.</span>
+            <span class="c"># Ignore key fields if we are required to</span>
+            <span class="c"># ignore keys.</span>
             <span class="k">if</span> <span class="n">ignore_key</span> <span class="ow">and</span> <span class="n">field</span><span class="o">.</span><span class="n">is_key</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="c">## Use the equivalency check for fields</span>
+            <span class="c"># Use the equivalency check for fields</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">field</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span>
                     <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">ignore_key</span><span class="o">=</span><span class="n">ignore_key</span><span class="p">):</span>
                 <span class="k">return</span> <span class="bp">False</span>
@@ -405,7 +407,7 @@
   <hr/>
 
   <p>
-      &copy; Copyright 2014, Samuele Santi.
+      &copy; Copyright 2014, Trento RISE.
   </p>
 
   <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>

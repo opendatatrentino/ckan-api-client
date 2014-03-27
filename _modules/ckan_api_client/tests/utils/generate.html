@@ -116,10 +116,11 @@
   <h1>Source code for ckan_api_client.tests.utils.generate</h1><div class="highlight"><pre>
 <span class="c">#!/usr/bin/env python</span>
 
-<span class="c">## Generate some dummy data, for testing purposes</span>
+<span class="c"># Generate some dummy data, for testing purposes</span>
 
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">string</span>
 
 <span class="kn">from</span> <span class="nn">.strings</span> <span class="kn">import</span> <span class="n">gen_random_id</span><span class="p">,</span> <span class="n">gen_picture</span>
 
@@ -214,8 +215,8 @@
         <span class="c"># ------------------------------------------------------------</span>
         <span class="c"># &quot;id&quot;: random_id,</span>
 
-        <span class="c">## Name should be taken as a &quot;suggestion&quot;: in case of naming conflict</span>
-        <span class="c">## with an existing dataset, it just be changed (todo: how?)</span>
+        <span class="c"># Name should be taken as a &quot;suggestion&quot;: in case of naming conflict</span>
+        <span class="c"># with an existing dataset, it just be changed (todo: how?)</span>
         <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;dataset-{0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
 
         <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Dataset {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random_id</span><span class="p">),</span>
@@ -235,22 +236,22 @@
 
         <span class="c"># &quot;state&quot;: &quot;active&quot;,  # automatic</span>
 
-        <span class="c">## Let&#39;s generate some tags</span>
+        <span class="c"># Let&#39;s generate some tags</span>
         <span class="s">&quot;tags&quot;</span><span class="p">:</span> <span class="n">generate_tags</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)),</span>
 
-        <span class="c">## Let&#39;s put some random stuff in here..</span>
+        <span class="c"># Let&#39;s put some random stuff in here..</span>
         <span class="s">&quot;extras&quot;</span><span class="p">:</span> <span class="n">generate_extras</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">)),</span>
 
-        <span class="c">## Some dummy resources</span>
+        <span class="c"># Some dummy resources</span>
         <span class="s">&quot;resources&quot;</span><span class="p">:</span> <span class="n">resources</span><span class="p">,</span>
 
-        <span class="c">## Need to be randomized later, to match existing groups</span>
+        <span class="c"># Need to be randomized later, to match existing groups</span>
         <span class="s">&quot;groups&quot;</span><span class="p">:</span> <span class="p">[],</span>
 
-        <span class="c">## Need to be randomized later, to match existing orgs</span>
+        <span class="c"># Need to be randomized later, to match existing orgs</span>
         <span class="s">&quot;owner_org&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
 
-        <span class="c">## WTF is this thing?</span>
+        <span class="c"># WTF is this thing?</span>
         <span class="s">&quot;relationships&quot;</span><span class="p">:</span> <span class="p">[],</span>
     <span class="p">}</span>
 
@@ -298,10 +299,10 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate a dict with ``amount`` random key/value pairs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">pairs</span> <span class="o">=</span> <span class="p">[(</span>
-        <span class="s">&#39;key-{0:03d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)),</span>
-        <span class="s">&#39;value {0:03d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)),</span>
-        <span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">amount</span><span class="p">)]</span>
+    <span class="n">pairs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s">&#39;key-{0:03d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)),</span>
+         <span class="s">&#39;value {0:03d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">amount</span><span class="p">)]</span>
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span>
 
 </div>
@@ -334,6 +335,11 @@
         <span class="n">data</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="n">dataset</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">dataset</span>
 
     <span class="k">return</span> <span class="n">data</span>
+
+</div>
+<div class="viewcode-block" id="generate_id"><a class="viewcode-back" href="../../../../testing/utility.html#ckan_api_client.tests.utils.generate.generate_id">[docs]</a><span class="k">def</span> <span class="nf">generate_id</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span>
+    <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">pool</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
 
 </div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
@@ -372,7 +378,7 @@
   <hr/>
 
   <p>
-      &copy; Copyright 2014, Samuele Santi.
+      &copy; Copyright 2014, Trento RISE.
   </p>
 
   <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>

@@ -117,9 +117,9 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="p">(</span><span class="n">namedtuple</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">,</span>
                          <span class="n">MutableMapping</span><span class="p">)</span>
 
-<span class="c">## If we&#39;re using Python &lt; 2.7, there is no OrderedDict in the</span>
-<span class="c">## collections module, so we should fallback on using the one from</span>
-<span class="c">## the ordereddict module.</span>
+<span class="c"># If we&#39;re using Python &lt; 2.7, there is no OrderedDict in the</span>
+<span class="c"># collections module, so we should fallback on using the one from</span>
+<span class="c"># the ordereddict module.</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -193,7 +193,7 @@
 <span class="sd">        :raises ValueError:</span>
 <span class="sd">            if one of the two ids is found in a mismatching pair</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c">## Check both directions first..</span>
+        <span class="c"># Check both directions first..</span>
         <span class="k">if</span> <span class="n">pair</span><span class="o">.</span><span class="n">source_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_to_ckan</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_to_ckan</span><span class="p">[</span><span class="n">pair</span><span class="o">.</span><span class="n">source_id</span><span class="p">]</span> <span class="o">!=</span> <span class="n">pair</span><span class="o">.</span><span class="n">ckan_id</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Mismatching information&quot;</span><span class="p">)</span>
@@ -214,7 +214,7 @@
 <span class="sd">        :raises ValueError:</span>
 <span class="sd">            if one of the two ids is found in a mismatching pair</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c">## Check both directions first..</span>
+        <span class="c"># Check both directions first..</span>
         <span class="k">if</span> <span class="n">pair</span><span class="o">.</span><span class="n">source_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_to_ckan</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_to_ckan</span><span class="p">[</span><span class="n">pair</span><span class="o">.</span><span class="n">source_id</span><span class="p">]</span> <span class="o">!=</span> <span class="n">pair</span><span class="o">.</span><span class="n">ckan_id</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Mismatching information&quot;</span><span class="p">)</span>
@@ -227,10 +227,10 @@
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ckan_to_source</span><span class="p">[</span><span class="n">pair</span><span class="o">.</span><span class="n">ckan_id</span><span class="p">]</span>
 
 
-<span class="c">##------------------------------------------------------------</span>
-<span class="c">## Frozen objects, mainly used while running tests,</span>
-<span class="c">## to make sure certain objects are left untouched.</span>
-<span class="c">##------------------------------------------------------------</span>
+<span class="c"># ------------------------------------------------------------</span>
+<span class="c"># Frozen objects, mainly used while running tests,</span>
+<span class="c"># to make sure certain objects are left untouched.</span>
+<span class="c"># ------------------------------------------------------------</span>
 </div></div>
 <div class="viewcode-block" id="FrozenDict"><a class="viewcode-back" href="../../modules/utils.html#ckan_api_client.utils.FrozenDict">[docs]</a><span class="k">class</span> <span class="nc">FrozenDict</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -348,7 +348,7 @@
   <hr/>
 
   <p>
-      &copy; Copyright 2014, Samuele Santi.
+      &copy; Copyright 2014, Trento RISE.
   </p>
 
   <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>

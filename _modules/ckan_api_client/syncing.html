@@ -129,6 +129,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">random</span>
 
 <span class="kn">from</span> <span class="nn">ckan_api_client.exceptions</span> <span class="kn">import</span> <span class="n">HTTPError</span>
 <span class="kn">from</span> <span class="nn">ckan_api_client.high_level</span> <span class="kn">import</span> <span class="n">CkanHighlevelClient</span>
@@ -136,8 +137,8 @@
 <span class="kn">from</span> <span class="nn">ckan_api_client.utils</span> <span class="kn">import</span> <span class="n">IDMap</span><span class="p">,</span> <span class="n">IDPair</span>
 
 
-<span class="c">## Extras field containing id of the external source.</span>
-<span class="c">## The id is simply source_name:</span>
+<span class="c"># Extras field containing id of the external source.</span>
+<span class="c"># The id is simply source_name:</span>
 <span class="n">HARVEST_SOURCE_ID_FIELD</span> <span class="o">=</span> <span class="s">&#39;_harvest_source&#39;</span>
 
 
@@ -171,22 +172,22 @@
             <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">CkanOrganization</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;organization&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">())</span>
 
-        <span class="c">## Upsert groups and organizations</span>
+        <span class="c"># Upsert groups and organizations</span>
         <span class="n">groups_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_upsert_groups</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
         <span class="n">orgs_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_upsert_organizations</span><span class="p">(</span><span class="n">organizations</span><span class="p">)</span>
 
-        <span class="c">## Create list of datasets to be synced</span>
+        <span class="c"># Create list of datasets to be synced</span>
         <span class="n">source_datasets</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">dataset_dict</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
             <span class="n">_dataset_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">dataset_dict</span><span class="p">)</span>
 
-            <span class="c">## We need to make sure &quot;source&quot; datasets</span>
-            <span class="c">## don&#39;t have (otherwise misleading) ids</span>
+            <span class="c"># We need to make sure &quot;source&quot; datasets</span>
+            <span class="c"># don&#39;t have (otherwise misleading) ids</span>
             <span class="n">_dataset_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
 
-            <span class="c">## We need to update groups and organizations,</span>
-            <span class="c">## to map their name from the source into a</span>
-            <span class="c">## ckan id</span>
+            <span class="c"># We need to update groups and organizations,</span>
+            <span class="c"># to map their name from the source into a</span>
+            <span class="c"># ckan id</span>
             <span class="n">_dataset_dict</span><span class="p">[</span><span class="s">&#39;groups&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">groups_map</span><span class="o">.</span><span class="n">to_ckan</span><span class="p">(</span><span class="n">grp_id</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">grp_id</span> <span class="ow">in</span> <span class="n">_dataset_dict</span><span class="p">[</span><span class="s">&#39;groups&#39;</span><span class="p">]</span>
@@ -196,57 +197,79 @@
 
             <span class="n">dataset</span> <span class="o">=</span> <span class="n">CkanDataset</span><span class="p">(</span><span class="n">_dataset_dict</span><span class="p">)</span>
 
-            <span class="c">## We also want to add the &quot;source id&quot;, used for further</span>
-            <span class="c">## synchronizations to find stuff</span>
+            <span class="c"># We also want to add the &quot;source id&quot;, used for further</span>
+            <span class="c"># synchronizations to find stuff</span>
             <span class="n">dataset</span><span class="o">.</span><span class="n">extras</span><span class="p">[</span><span class="n">HARVEST_SOURCE_ID_FIELD</span><span class="p">]</span> <span class="o">=</span> \
-                <span class="s">&#39;{0}:{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">source_name</span><span class="p">,</span> <span class="n">source_id</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_join_source_id</span><span class="p">(</span><span class="n">source_name</span><span class="p">,</span> <span class="n">source_id</span><span class="p">)</span>
 
             <span class="n">source_datasets</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span>
 
-        <span class="c">## Retrieve list of datasets from Ckan</span>
+        <span class="c"># Retrieve list of datasets from Ckan</span>
         <span class="n">ckan_datasets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_datasets_by_source</span><span class="p">(</span><span class="n">source_name</span><span class="p">)</span>
 
-        <span class="c">## Compare collections to find differences</span>
+        <span class="c"># Compare collections to find differences</span>
         <span class="n">differences</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare_collections</span><span class="p">(</span>
             <span class="n">ckan_datasets</span><span class="p">,</span> <span class="n">source_datasets</span><span class="p">)</span>
 
-        <span class="c">##------------------------------------------------------------</span>
-        <span class="c">## We now need to create/update/delete datasets.</span>
+        <span class="c"># ------------------------------------------------------------</span>
+        <span class="c"># We now need to create/update/delete datasets.</span>
 
-        <span class="c">## todo: we need to make sure dataset names are not</span>
-        <span class="c">##       already used by another dataset. The only</span>
-        <span class="c">##       way is to randomize resource names and hope</span>
-        <span class="c">##       a 409 response indicates duplicate name..</span>
+        <span class="c"># todo: we need to make sure dataset names are not</span>
+        <span class="c">#       already used by another dataset. The only</span>
+        <span class="c">#       way is to randomize resource names and hope</span>
+        <span class="c">#       a 409 response indicates duplicate name..</span>
 
-        <span class="c">## We delete first, in order to (possibly) deallocate</span>
-        <span class="c">## some already-used names..</span>
+        <span class="c"># We delete first, in order to (possibly) deallocate</span>
+        <span class="c"># some already-used names..</span>
         <span class="k">for</span> <span class="n">source_id</span> <span class="ow">in</span> <span class="n">differences</span><span class="p">[</span><span class="s">&#39;left&#39;</span><span class="p">]:</span>
             <span class="n">ckan_id</span> <span class="o">=</span> <span class="n">ckan_datasets</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">delete_dataset</span><span class="p">(</span><span class="n">ckan_id</span><span class="p">)</span>
 
-        <span class="c">## Create missing datasets</span>
+        <span class="k">def</span> <span class="nf">force_dataset_operation</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">retry</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+            <span class="c"># Maximum dataset name length is 100 characters</span>
+            <span class="c"># We trim it down to 80 just to be safe.</span>
+            <span class="n">_orig_name</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">80</span><span class="p">]</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">_orig_name</span>
+            <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">operation</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">HTTPError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">409</span><span class="p">:</span>
+                        <span class="k">raise</span>
+                    <span class="n">retry</span> <span class="o">-=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">retry</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">raise</span>
+                    <span class="n">dataset</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;{0}-{1:06d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">_orig_name</span><span class="p">,</span>
+                        <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">999999</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">result</span>
+
+        <span class="c"># Create missing datasets</span>
         <span class="k">for</span> <span class="n">source_id</span> <span class="ow">in</span> <span class="n">differences</span><span class="p">[</span><span class="s">&#39;right&#39;</span><span class="p">]:</span>
             <span class="n">dataset</span> <span class="o">=</span> <span class="n">source_datasets</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+            <span class="n">force_dataset_operation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
 
-        <span class="c">## Update outdated datasets</span>
+        <span class="c"># Update outdated datasets</span>
         <span class="k">for</span> <span class="n">source_id</span> <span class="ow">in</span> <span class="n">differences</span><span class="p">[</span><span class="s">&#39;differing&#39;</span><span class="p">]:</span>
             <span class="n">dataset</span> <span class="o">=</span> <span class="n">source_datasets</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">ckan_datasets</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
+            <span class="c"># self._client.update_dataset(dataset)</span>
+            <span class="n">force_dataset_operation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_dataset</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
 
-        <span class="c">## Todo: double-check differences?</span>
+        <span class="c"># Todo: double-check differences?</span>
+
+    <span class="c"># def _sync_datasets(self, source_name, datasets):</span>
+    <span class="c">#     &quot;&quot;&quot;</span>
+    <span class="c">#     Synchronize datasets into Ckan.</span>
+
+    <span class="c">#     :param source_name:</span>
+    <span class="c">#         Name of the data source</span>
+    <span class="c">#     :param datasets:</span>
+    <span class="c">#         Dictionary mapping ``source_id: CkanDataset()``</span>
+    <span class="c">#     &quot;&quot;&quot;</span>
+    <span class="c">#     pass</span>
 </div>
-    <span class="k">def</span> <span class="nf">_sync_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">datasets</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Synchronize datasets into Ckan.</span>
-
-<span class="sd">        :param source_name:</span>
-<span class="sd">            Name of the data source</span>
-<span class="sd">        :param datasets:</span>
-<span class="sd">            Dictionary mapping ``source_id: CkanDataset()``</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span>
-
     <span class="k">def</span> <span class="nf">_upsert_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param groups:</span>
@@ -273,7 +296,7 @@
                 <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">404</span><span class="p">:</span>
                     <span class="k">raise</span>
 
-                <span class="c">## We need to create the group</span>
+                <span class="c"># We need to create the group</span>
                 <span class="n">group</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="bp">None</span>
                 <span class="n">group</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;active&#39;</span>
                 <span class="n">created_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
@@ -281,18 +304,18 @@
                                  <span class="n">ckan_id</span><span class="o">=</span><span class="n">created_group</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="c">## The group already exist. It might be logically</span>
-                <span class="c">## deleted, but we don&#39;t care -&gt; just update and</span>
-                <span class="c">## make sure it is marked as active.</span>
+                <span class="c"># The group already exist. It might be logically</span>
+                <span class="c"># deleted, but we don&#39;t care -&gt; just update and</span>
+                <span class="c"># make sure it is marked as active.</span>
 
-                <span class="c">## todo: make sure we don&#39;t need to preserve users and stuff,</span>
-                <span class="c">##       otherwise we need to workaround that in hi-lev client</span>
+                <span class="c"># todo: make sure we don&#39;t need to preserve users and stuff,</span>
+                <span class="c">#       otherwise we need to workaround that in hi-lev client</span>
 
                 <span class="n">group</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">ckan_group</span><span class="o">.</span><span class="n">id</span>
                 <span class="n">group</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;active&#39;</span>
                 <span class="n">updated_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
                 <span class="n">idmap</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">IDPair</span><span class="p">(</span><span class="n">source_id</span><span class="o">=</span><span class="n">group</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                                 <span class="n">ckan_id</span><span class="o">=</span><span class="n">updated_group</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+                                 <span class="n">ckan_id</span><span class="o">=</span><span class="n">updated_group</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">idmap</span>
 
@@ -322,7 +345,7 @@
                 <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">404</span><span class="p">:</span>
                     <span class="k">raise</span>
 
-                <span class="c">## We need to create the org</span>
+                <span class="c"># We need to create the org</span>
                 <span class="n">org</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="bp">None</span>
                 <span class="n">org</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;active&#39;</span>
                 <span class="n">created_org</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">create_organization</span><span class="p">(</span><span class="n">org</span><span class="p">)</span>
@@ -334,7 +357,7 @@
                 <span class="n">org</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;active&#39;</span>
                 <span class="n">updated_org</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_organization</span><span class="p">(</span><span class="n">org</span><span class="p">)</span>
                 <span class="n">idmap</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">IDPair</span><span class="p">(</span><span class="n">source_id</span><span class="o">=</span><span class="n">org</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                                 <span class="n">ckan_id</span><span class="o">=</span><span class="n">updated_org</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+                                 <span class="n">ckan_id</span><span class="o">=</span><span class="n">updated_org</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">idmap</span>
 
@@ -350,7 +373,7 @@
                 <span class="k">continue</span>
             <span class="n">source_id</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">extras</span><span class="p">[</span><span class="n">HARVEST_SOURCE_ID_FIELD</span><span class="p">]</span>
             <span class="n">_name</span><span class="p">,</span> <span class="n">_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_source_id</span><span class="p">(</span><span class="n">source_id</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">_name</span> <span class="o">==</span> <span class="n">source_id</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_name</span> <span class="o">==</span> <span class="n">source_name</span><span class="p">:</span>
                 <span class="n">results</span><span class="p">[</span><span class="n">_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span>
         <span class="k">return</span> <span class="n">results</span>
 
@@ -359,6 +382,9 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">splitted</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Invalid source id&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">splitted</span>
+
+    <span class="k">def</span> <span class="nf">_join_source_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">source_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;:&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">source_name</span><span class="p">,</span> <span class="n">source_id</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_compare_collections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -410,7 +436,7 @@
   <hr/>
 
   <p>
-      &copy; Copyright 2014, Samuele Santi.
+      &copy; Copyright 2014, Trento RISE.
   </p>
 
   <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>

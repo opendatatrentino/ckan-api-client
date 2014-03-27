@@ -122,16 +122,16 @@
 <h2>Fixture functions<a class="headerlink" href="#fixture-functions" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="ckan_api_client.tests.conftest.ckan_env">
-<tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">ckan_env</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ckan_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ckan_env" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">ckan_env</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ckan_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ckan_env" title="Permalink to this definition">¶</a></dt>
 <dd><p>Example usage:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">test_example</span><span class="p">(</span><span class="n">ckan_env</span><span class="p">):</span>
+    <span class="n">instance</span> <span class="o">=</span> <span class="n">ckan_env</span><span class="o">.</span><span class="n">create_instance</span><span class="p">()</span>
 
-    <span class="k">with</span> <span class="n">ckan_env</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span> <span class="k">as</span> <span class="n">server</span><span class="p">:</span>
-        <span class="c">## Now make the client connect to ``server.url``</span>
+    <span class="k">with</span> <span class="n">instance</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span> <span class="k">as</span> <span class="n">server</span><span class="p">:</span>
+        <span class="c"># Now make the client connect to ``server.url``</span>
 
-        <span class="c">## If you need an API key:</span>
+        <span class="c"># If you need an API key:</span>
         <span class="n">api_key</span> <span class="o">=</span> <span class="n">ckan_env</span><span class="o">.</span><span class="n">get_sysadmin_api_key</span><span class="p">()</span>
-        <span class="k">pass</span>
 </pre></div>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
@@ -147,8 +147,13 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="ckan_api_client.tests.conftest.ckan_instance">
+<tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">ckan_instance</tt><big>(</big><em>request</em>, <em>ckan_env</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ckan_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ckan_instance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="ckan_api_client.tests.conftest.ckan_url">
-<tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">ckan_url</tt><big>(</big><em>request</em>, <em>ckan_env</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ckan_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ckan_url" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">ckan_url</tt><big>(</big><em>request</em>, <em>ckan_instance</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ckan_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ckan_url" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create &amp; launch a Ckan instance; return a URL at which
 it is accessible.</p>
 <p>Note this would only work for read-only access, as there is no
@@ -181,7 +186,7 @@ way to get an authentication key too..</p>
 
 <dl class="function">
 <dt id="ckan_api_client.tests.conftest.ckan_client_ll">
-<tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">ckan_client_ll</tt><big>(</big><em>request</em>, <em>ckan_env</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ckan_client_ll"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ckan_client_ll" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">ckan_client_ll</tt><big>(</big><em>request</em>, <em>ckan_instance</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ckan_client_ll"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ckan_client_ll" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -196,7 +201,7 @@ way to get an authentication key too..</p>
 
 <dl class="function">
 <dt id="ckan_api_client.tests.conftest.ckan_client_hl">
-<tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">ckan_client_hl</tt><big>(</big><em>request</em>, <em>ckan_env</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ckan_client_hl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ckan_client_hl" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">ckan_client_hl</tt><big>(</big><em>request</em>, <em>ckan_instance</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ckan_client_hl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ckan_client_hl" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -211,7 +216,7 @@ way to get an authentication key too..</p>
 
 <dl class="function">
 <dt id="ckan_api_client.tests.conftest.ckan_client_sync">
-<tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">ckan_client_sync</tt><big>(</big><em>request</em>, <em>ckan_env</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ckan_client_sync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ckan_client_sync" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">ckan_client_sync</tt><big>(</big><em>request</em>, <em>ckan_instance</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ckan_client_sync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ckan_client_sync" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -231,24 +236,12 @@ way to get an authentication key too..</p>
 <dt id="ckan_api_client.tests.conftest.CkanEnvironment">
 <em class="property">class </em><tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">CkanEnvironment</tt><big>(</big><em>venv_root</em>, <em>pgsql_admin_url</em>, <em>solr_url</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class providing functionality to manage a Ckan installation.</p>
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>venv_root</em>, <em>pgsql_admin_url</em>, <em>solr_url</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>venv_root</strong> &#8211; Root path to the virtualenv in which Ckan is installed</li>
-<li><strong>pgsql_admin_url</strong> &#8211; URL with administrative credentials to PostgreSQL</li>
-<li><strong>solr_url</strong> &#8211; URL to Solr index to be used</li>
+<p>This manages:</p>
+<ul class="simple">
+<li>the virtualenv</li>
+<li>ckan instance creation</li>
+<li>database and solr operations</li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="classmethod">
 <dt id="ckan_api_client.tests.conftest.CkanEnvironment.from_environment">
 <em class="property">classmethod </em><tt class="descname">from_environment</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.from_environment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.from_environment" title="Permalink to this definition">¶</a></dt>
@@ -266,69 +259,16 @@ Example: <tt class="docutils literal"><span class="pre">postgresql://postgres:pa
 </dd></dl>
 
 <dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.__del__">
-<tt class="descname">__del__</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.__del__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.__del__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call <a class="reference internal" href="#ckan_api_client.tests.conftest.CkanEnvironment.teardown" title="ckan_api_client.tests.conftest.CkanEnvironment.teardown"><tt class="xref py py-meth docutils literal"><span class="pre">teardown()</span></tt></a> on exit.</p>
-</dd></dl>
-
-<p><strong>Setup/teardown functions:</strong></p>
-<p>These functions are automatically called by <a class="reference internal" href="#ckan_api_client.tests.conftest.CkanEnvironment.__init__" title="ckan_api_client.tests.conftest.CkanEnvironment.__init__"><tt class="xref py py-meth docutils literal"><span class="pre">__init__()</span></tt></a>
-and <a class="reference internal" href="#ckan_api_client.tests.conftest.CkanEnvironment.__del__" title="ckan_api_client.tests.conftest.CkanEnvironment.__del__"><tt class="xref py py-meth docutils literal"><span class="pre">__del__()</span></tt></a> and shouldn&#8217;t be called manually.</p>
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.setup">
-<tt class="descname">setup</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.setup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called by <a class="reference internal" href="#ckan_api_client.tests.conftest.CkanEnvironment.__init__" title="ckan_api_client.tests.conftest.CkanEnvironment.__init__"><tt class="xref py py-meth docutils literal"><span class="pre">__init__()</span></tt></a> to setup things.</p>
-</dd></dl>
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.create_instance">
+<tt class="descname">create_instance</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.create_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.create_instance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.teardown">
-<tt class="descname">teardown</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.teardown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.teardown" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called by <a class="reference internal" href="#ckan_api_client.tests.conftest.CkanEnvironment.__del__" title="ckan_api_client.tests.conftest.CkanEnvironment.__del__"><tt class="xref py py-meth docutils literal"><span class="pre">__del__()</span></tt></a> to cleanup things.</p>
-<p>It will:</p>
-<ul class="simple">
-<li>drop PostgreSQL database</li>
-<li>drop PostgreSQL user</li>
-<li>flush solr index</li>
-<li>remove configuration file</li>
-<li>remove storage data (uploaded files)</li>
-</ul>
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.get_command">
+<tt class="descname">get_command</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.get_command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.get_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the full path of a command inside the virtualenv</p>
 </dd></dl>
 
-<p><strong>Configuration management:</strong></p>
-<p>Functions used to manage changes to Ckan configuration file.</p>
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.conf_get">
-<tt class="descname">conf_get</tt><big>(</big><em>section</em>, <em>option</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.conf_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.conf_get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a configuration option from the main Ckan configuration</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.conf_set">
-<tt class="descname">conf_set</tt><big>(</big><em>section</em>, <em>option</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.conf_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.conf_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set a configuration option in the main Ckan configuration</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.conf_del">
-<tt class="descname">conf_del</tt><big>(</big><em>section</em>, <em>option</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.conf_del"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.conf_del" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete a configuration option from the main Ckan configuration</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.conf_update">
-<tt class="descname">conf_update</tt><big>(</big><em>data</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.conf_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.conf_update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update main Ckan configuration.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>dict</em>) &#8211; dict of dicts, section/option/value</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<p><strong>Paster commands:</strong></p>
 <dl class="method">
 <dt id="ckan_api_client.tests.conftest.CkanEnvironment.run_paster">
 <tt class="descname">run_paster</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.run_paster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.run_paster" title="Permalink to this definition">¶</a></dt>
@@ -341,8 +281,187 @@ and <a class="reference internal" href="#ckan_api_client.tests.conftest.CkanEnvi
 </dd></dl>
 
 <dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.run_paster_with_conf">
-<tt class="descname">run_paster_with_conf</tt><big>(</big><em>command</em>, <em>*args</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.run_paster_with_conf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.run_paster_with_conf" title="Permalink to this definition">¶</a></dt>
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.get_postgres_admin_credentials">
+<tt class="descname">get_postgres_admin_credentials</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.get_postgres_admin_credentials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.get_postgres_admin_credentials" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.make_postgres_url">
+<tt class="descname">make_postgres_url</tt><big>(</big><em>user</em>, <em>password</em>, <em>host</em>, <em>port</em>, <em>database</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.make_postgres_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.make_postgres_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.get_postgres_admin_connection">
+<tt class="descname">get_postgres_admin_connection</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.get_postgres_admin_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.get_postgres_admin_connection" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">administrative connection to database</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">psycopg2.connect()</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.get_postgres_connection">
+<tt class="descname">get_postgres_connection</tt><big>(</big><em>username</em>, <em>password</em>, <em>database</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.get_postgres_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.get_postgres_connection" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">&#8220;user&#8221; connection to database</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">psycopg2.connect()</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.create_db_user">
+<tt class="descname">create_db_user</tt><big>(</big><em>username</em>, <em>password</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.create_db_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.create_db_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create PostgreSQL user, for use by Ckan</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.create_db">
+<tt class="descname">create_db</tt><big>(</big><em>name</em>, <em>owner</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.create_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.create_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create PostgreSQL database, for use by Ckan</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.drop_db_user">
+<tt class="descname">drop_db_user</tt><big>(</big><em>username</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.drop_db_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.drop_db_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete previously created PostgreSQL user, to cleanup
+after running tests.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.drop_db">
+<tt class="descname">drop_db</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.drop_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.drop_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete previously created PostgreSQL database, to cleanup
+after running tests.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.flush_solr_index">
+<tt class="descname">flush_solr_index</tt><big>(</big><em>solr_url=None</em>, <em>site_id=None</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.flush_solr_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.flush_solr_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Completely flush the configured Solr index.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">since Ckan supports sharing the same index between
+installations, we don&#8217;t actually delete <em>everything</em>
+from the index, but instead issued a delete on query:
+<tt class="docutils literal"><span class="pre">+site_id:&quot;&lt;ckan-site-id&gt;&quot;</span></tt></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.create_configuration_file">
+<tt class="descname">create_configuration_file</tt><big>(</big><em>file_name</em>, <em>extra=None</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.create_configuration_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.create_configuration_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a configuration file for Ckan.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">CkanConfFileWrapper associated to conf file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanEnvironment.teardown">
+<tt class="descname">teardown</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.teardown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.teardown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.tests.conftest.CkanInstance">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">CkanInstance</tt><big>(</big><em>virtualenv</em>, <em>conf</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for a Ckan instance.</p>
+<p>Based on:</p>
+<ul class="simple">
+<li>a virtualenv</li>
+<li>a Ckan configuration file</li>
+</ul>
+<dl class="attribute">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.venv_root">
+<tt class="descname">venv_root</tt><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.venv_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.venv_root" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.server_host">
+<tt class="descname">server_host</tt><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.server_host"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.server_host" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.server_port">
+<tt class="descname">server_port</tt><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.server_port"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.server_port" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.server_url">
+<tt class="descname">server_url</tt><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.server_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.server_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.configuration_file">
+<tt class="descname">configuration_file</tt><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.configuration_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.configuration_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.database_url">
+<tt class="descname">database_url</tt><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.database_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.database_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.database_name">
+<tt class="descname">database_name</tt><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.database_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.database_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.database_username">
+<tt class="descname">database_username</tt><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.database_username"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.database_username" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.database_password">
+<tt class="descname">database_password</tt><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.database_password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.database_password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.solr_url">
+<tt class="descname">solr_url</tt><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.solr_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.solr_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.site_id">
+<tt class="descname">site_id</tt><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.site_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.site_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.storage_path">
+<tt class="descname">storage_path</tt><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.storage_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.storage_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.run_paster">
+<tt class="descname">run_paster</tt><big>(</big><em>*a</em>, <em>**kw</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.run_paster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.run_paster" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.get_command">
+<tt class="descname">get_command</tt><big>(</big><em>*a</em>, <em>**kw</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.get_command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.get_command" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.run_paster_with_conf">
+<tt class="descname">run_paster_with_conf</tt><big>(</big><em>command</em>, <em>*args</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.run_paster_with_conf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.run_paster_with_conf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run a paster command in the virtualenv, adding &#8211;config=ckan.ini</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -364,161 +483,135 @@ and <a class="reference internal" href="#ckan_api_client.tests.conftest.CkanEnvi
 </dd></dl>
 
 <dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.serve">
-<tt class="descname">serve</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.serve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.serve" title="Permalink to this definition">¶</a></dt>
+<dt id="ckan_api_client.tests.conftest.CkanInstance.serve">
+<tt class="descname">serve</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.serve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.serve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the Ckan server, using <tt class="docutils literal"><span class="pre">paster</span> <span class="pre">serve</span></tt> command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#ckan_api_client.tests.conftest.CkanServerWrapper" title="ckan_api_client.tests.conftest.CkanServerWrapper"><tt class="xref py py-class docutils literal"><span class="pre">CkanServerWrapper</span></tt></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">CkanServerWrapper</span></tt></td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.paster_db_init">
-<tt class="descname">paster_db_init</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.paster_db_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.paster_db_init" title="Permalink to this definition">¶</a></dt>
+<dt id="ckan_api_client.tests.conftest.CkanInstance.get_postgres_connection">
+<tt class="descname">get_postgres_connection</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.get_postgres_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.get_postgres_connection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.paster_db_init">
+<tt class="descname">paster_db_init</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.paster_db_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.paster_db_init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize database, by calling paster command</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.paster_search_index_rebuild">
-<tt class="descname">paster_search_index_rebuild</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.paster_search_index_rebuild"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.paster_search_index_rebuild" title="Permalink to this definition">¶</a></dt>
+<dt id="ckan_api_client.tests.conftest.CkanInstance.paster_search_index_rebuild">
+<tt class="descname">paster_search_index_rebuild</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.paster_search_index_rebuild"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.paster_search_index_rebuild" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rebuild search index, by calling paster command</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.paster_user_add">
-<tt class="descname">paster_user_add</tt><big>(</big><em>name</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.paster_user_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.paster_user_add" title="Permalink to this definition">¶</a></dt>
+<dt id="ckan_api_client.tests.conftest.CkanInstance.paster_user_add">
+<tt class="descname">paster_user_add</tt><big>(</big><em>name</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.paster_user_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.paster_user_add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create Ckan user, by calling paster command</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.paster_user_remove">
-<tt class="descname">paster_user_remove</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.paster_user_remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.paster_user_remove" title="Permalink to this definition">¶</a></dt>
+<dt id="ckan_api_client.tests.conftest.CkanInstance.paster_user_remove">
+<tt class="descname">paster_user_remove</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.paster_user_remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.paster_user_remove" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove Ckan user, by calling paster command</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.paster_sysadmin_add">
-<tt class="descname">paster_sysadmin_add</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.paster_sysadmin_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.paster_sysadmin_add" title="Permalink to this definition">¶</a></dt>
+<dt id="ckan_api_client.tests.conftest.CkanInstance.paster_sysadmin_add">
+<tt class="descname">paster_sysadmin_add</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.paster_sysadmin_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.paster_sysadmin_add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grant sysadmin privileges to a Ckan user,
 by calling paster command.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.paster_sysadmin_remove">
-<tt class="descname">paster_sysadmin_remove</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.paster_sysadmin_remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.paster_sysadmin_remove" title="Permalink to this definition">¶</a></dt>
+<dt id="ckan_api_client.tests.conftest.CkanInstance.paster_sysadmin_remove">
+<tt class="descname">paster_sysadmin_remove</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.paster_sysadmin_remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.paster_sysadmin_remove" title="Permalink to this definition">¶</a></dt>
 <dd><p>Revoke sysadmin privileges from a Ckan user,
 by calling paster command.</p>
 </dd></dl>
 
-<p><strong>Other functions (mostly for internal use):</strong></p>
 <dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.get_conf_parser">
-<tt class="descname">get_conf_parser</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.get_conf_parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.get_conf_parser" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a RawConfigParser instance, associated with the main
-Ckan configuration file.</p>
+<dt id="ckan_api_client.tests.conftest.CkanInstance.get_sysadmin_api_key">
+<tt class="descname">get_sysadmin_api_key</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.get_sysadmin_api_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.get_sysadmin_api_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a sysadmin user (with random name / password)
+and return its API key.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.CkanInstance.teardown">
+<tt class="descname">teardown</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanInstance.teardown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanInstance.teardown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ckan_api_client.tests.conftest.ConfFileWrapper">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">ConfFileWrapper</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ConfFileWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ConfFileWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for Ckan configuration files, providing
+some additional functionality.</p>
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.ConfFileWrapper.get_conf_parser">
+<tt class="descname">get_conf_parser</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ConfFileWrapper.get_conf_parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ConfFileWrapper.get_conf_parser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a RawConfigParser instance, with configuration loaded
+from the wrapped configuration file.</p>
 <p>Not caching this as we want to reload any changes that should
 have occurred on the file..</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.get_postgres_admin_connection">
-<tt class="descname">get_postgres_admin_connection</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.get_postgres_admin_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.get_postgres_admin_connection" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dt id="ckan_api_client.tests.conftest.ConfFileWrapper.set">
+<tt class="descname">set</tt><big>(</big><em>section</em>, <em>option</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ConfFileWrapper.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ConfFileWrapper.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a configuration option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.ConfFileWrapper.get">
+<tt class="descname">get</tt><big>(</big><em>section</em>, <em>option</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ConfFileWrapper.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ConfFileWrapper.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a configuration option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.ConfFileWrapper.delete">
+<tt class="descname">delete</tt><big>(</big><em>section</em>, <em>option</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ConfFileWrapper.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ConfFileWrapper.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a configuration option</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ckan_api_client.tests.conftest.ConfFileWrapper.update">
+<tt class="descname">update</tt><big>(</big><em>data</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ConfFileWrapper.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ConfFileWrapper.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update configuration.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">administrative connection to database</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">psycopg2.connect()</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>dict</em>) &#8211; dict of dicts: <tt class="docutils literal"><span class="pre">{section:</span> <span class="pre">{option:</span> <span class="pre">value}}</span></tt></td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.get_postgres_connection">
-<tt class="descname">get_postgres_connection</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.get_postgres_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.get_postgres_connection" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">&#8220;user&#8221; connection to database</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">psycopg2.connect()</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.create_db_user">
-<tt class="descname">create_db_user</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.create_db_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.create_db_user" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create PostgreSQL user, for use by Ckan</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.create_db">
-<tt class="descname">create_db</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.create_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.create_db" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create PostgreSQL database, for use by Ckan</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.drop_db_user">
-<tt class="descname">drop_db_user</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.drop_db_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.drop_db_user" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete previously created PostgreSQL user, to cleanup
-after running tests.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.drop_db">
-<tt class="descname">drop_db</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.drop_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.drop_db" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete previously created PostgreSQL database, to cleanup
-after running tests.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.flush_solr_index">
-<tt class="descname">flush_solr_index</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.flush_solr_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.flush_solr_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Completely flush the configured Solr index.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">since Ckan supports sharing the same index between
-installations, we don&#8217;t actually delete <em>everything</em>
-from the index, but instead issued a delete on query:
-<tt class="docutils literal"><span class="pre">+site_id:&quot;&lt;ckan-site-id&gt;&quot;</span></tt></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanEnvironment.get_sysadmin_api_key">
-<tt class="descname">get_sysadmin_api_key</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanEnvironment.get_sysadmin_api_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanEnvironment.get_sysadmin_api_key" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a sysadmin user (with random name / password)
-and return its API key.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="ckan_api_client.tests.conftest.CkanServerWrapper">
-<em class="property">class </em><tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">CkanServerWrapper</tt><big>(</big><em>args</em>, <em>host</em>, <em>port</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanServerWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanServerWrapper" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
-<dt id="ckan_api_client.tests.conftest.CkanServerWrapper.url">
-<tt class="descname">url</tt><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanServerWrapper.url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanServerWrapper.url" title="Permalink to this definition">¶</a></dt>
+<dt id="ckan_api_client.tests.conftest.ProcessWrapper">
+<em class="property">class </em><tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">ProcessWrapper</tt><big>(</big><em>args</em>, <em>waitstart=None</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ProcessWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ProcessWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="ckan_api_client.tests.conftest.ProcessWrapper.start">
+<tt class="descname">start</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ProcessWrapper.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ProcessWrapper.start" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanServerWrapper.start">
-<tt class="descname">start</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanServerWrapper.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanServerWrapper.start" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ckan_api_client.tests.conftest.CkanServerWrapper.stop">
-<tt class="descname">stop</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#CkanServerWrapper.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.CkanServerWrapper.stop" title="Permalink to this definition">¶</a></dt>
+<dt id="ckan_api_client.tests.conftest.ProcessWrapper.stop">
+<tt class="descname">stop</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#ProcessWrapper.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.ProcessWrapper.stop" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -554,7 +647,8 @@ throw unhandled network exception</td>
 <dl class="function">
 <dt id="ckan_api_client.tests.conftest.discover_available_port">
 <tt class="descclassname">ckan_api_client.tests.conftest.</tt><tt class="descname">discover_available_port</tt><big>(</big><em>minport=5000</em>, <em>maxport=9000</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/tests/conftest.html#discover_available_port"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.tests.conftest.discover_available_port" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Find an available TCP port in the specified range</p>
+</dd></dl>
 
 </div>
 </div>
@@ -575,7 +669,7 @@ throw unhandled network exception</td>
   <hr/>
 
   <p>
-      &copy; Copyright 2014, Samuele Santi.
+      &copy; Copyright 2014, Trento RISE.
   </p>
 
   <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>

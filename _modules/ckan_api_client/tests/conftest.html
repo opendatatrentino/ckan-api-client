@@ -125,6 +125,7 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">urlparse</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
 
 <span class="kn">import</span> <span class="nn">psycopg2</span>
 <span class="kn">import</span> <span class="nn">psycopg2.extras</span>
@@ -134,17 +135,21 @@
 <span class="n">HERE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
 
 
-<span class="c">## Paster command to create users:</span>
+<span class="c"># Paster command to create users</span>
+<span class="c"># ------------------------------</span>
 <span class="c"># paster --plugin=ckan user --config=$VIRTUAL_ENV/etc/ckan/production.ini</span>
 <span class="c"># add admin password=admin email=admin@example.com api-key=my-api-key</span>
 
-<span class="c">## Paster command to initialize database</span>
+<span class="c"># Paster command to initialize database</span>
+<span class="c"># -------------------------------------</span>
 <span class="c"># paster --plugin=ckan db --config=$VIRTUAL_ENV/etc/ckan.ini init</span>
 
-<span class="c">## Paster command to rebuild search index</span>
+<span class="c"># Paster command to rebuild search index</span>
+<span class="c"># --------------------------------------</span>
 <span class="c"># paster --plugin=ckan search-index --config=$VIRTUAL_ENV/etc/ckan.ini rebuild</span>
 
-<span class="c">## Paster command to run server</span>
+<span class="c"># Paster command to run server</span>
+<span class="c"># ----------------------------</span>
 <span class="c"># paster --plugin=ckan serve $VIRTUAL_ENV/etc/ckan.ini</span>
 
 
@@ -197,18 +202,29 @@
 
 </div>
 <div class="viewcode-block" id="discover_available_port"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.discover_available_port">[docs]</a><span class="k">def</span> <span class="nf">discover_available_port</span><span class="p">(</span><span class="n">minport</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">maxport</span><span class="o">=</span><span class="mi">9000</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">portnum</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">minport</span><span class="p">,</span> <span class="n">maxport</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find an available TCP port in the specified range&quot;&quot;&quot;</span>
+    <span class="c"># We randomize port numbers in order to minimize the risk</span>
+    <span class="c"># of collisions when creating two instances at once.</span>
+    <span class="n">max_tries</span> <span class="o">=</span> <span class="n">maxport</span> <span class="o">-</span> <span class="n">minport</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">max_tries</span><span class="p">):</span>
+        <span class="n">portnum</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">minport</span><span class="p">,</span> <span class="n">maxport</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tcp_port</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">portnum</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">portnum</span>
-    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;No available port in range!&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;No available port found in the specified range&quot;</span><span class="p">)</span>
 
 </div>
 <div class="viewcode-block" id="CkanEnvironment"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment">[docs]</a><span class="k">class</span> <span class="nc">CkanEnvironment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class providing functionality to manage a Ckan installation.</span>
+
+<span class="sd">    This manages:</span>
+
+<span class="sd">    - the virtualenv</span>
+<span class="sd">    - ckan instance creation</span>
+<span class="sd">    - database and solr operations</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="CkanEnvironment.__init__"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">venv_root</span><span class="p">,</span> <span class="n">pgsql_admin_url</span><span class="p">,</span> <span class="n">solr_url</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">venv_root</span><span class="p">,</span> <span class="n">pgsql_admin_url</span><span class="p">,</span> <span class="n">solr_url</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param venv_root:</span>
 <span class="sd">            Root path to the virtualenv in which Ckan is installed</span>
@@ -219,13 +235,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">venv_root</span> <span class="o">=</span> <span class="n">venv_root</span>
-
-        <span class="c">## This will be generated temporarily</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">postgresql_admin_url</span> <span class="o">=</span> <span class="n">pgsql_admin_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">solr_url</span> <span class="o">=</span> <span class="n">solr_url</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
-</div>
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="CkanEnvironment.from_environment"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.from_environment">[docs]</a>    <span class="k">def</span> <span class="nf">from_environment</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -246,140 +258,85 @@
         <span class="n">solr_url</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;CKAN_SOLR&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">venv_root</span><span class="p">,</span> <span class="n">pgsql_admin_url</span><span class="p">,</span> <span class="n">solr_url</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="CkanEnvironment.get_conf_parser"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.get_conf_parser">[docs]</a>    <span class="k">def</span> <span class="nf">get_conf_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get a RawConfigParser instance, associated with the main</span>
-<span class="sd">        Ckan configuration file.</span>
+<div class="viewcode-block" id="CkanEnvironment.create_instance"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.create_instance">[docs]</a>    <span class="k">def</span> <span class="nf">create_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">instance_id</span> <span class="o">=</span> <span class="s">&#39;{0:06d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">999999</span><span class="p">))</span>
 
-<span class="sd">        Not caching this as we want to reload any changes that should</span>
-<span class="sd">        have occurred on the file..</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Get random port number</span>
+        <span class="n">server_host</span> <span class="o">=</span> <span class="s">&#39;127.0.0.1&#39;</span>
+        <span class="n">server_port</span> <span class="o">=</span> <span class="n">discover_available_port</span><span class="p">()</span>
 
-        <span class="n">cfp</span> <span class="o">=</span> <span class="n">RawConfigParser</span><span class="p">()</span>
-        <span class="n">cfp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf_file_path</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">cfp</span>
-</div>
-<div class="viewcode-block" id="CkanEnvironment.conf_set"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.conf_set">[docs]</a>    <span class="k">def</span> <span class="nf">conf_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set a configuration option in the main Ckan configuration&quot;&quot;&quot;</span>
-        <span class="n">conf_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_conf_parser</span><span class="p">()</span>
-        <span class="n">conf_parser</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="n">conf_parser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf_file_path</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="CkanEnvironment.conf_get"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.conf_get">[docs]</a>    <span class="k">def</span> <span class="nf">conf_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get a configuration option from the main Ckan configuration&quot;&quot;&quot;</span>
-        <span class="n">conf_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_conf_parser</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">conf_parser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="CkanEnvironment.conf_del"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.conf_del">[docs]</a>    <span class="k">def</span> <span class="nf">conf_del</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Delete a configuration option from the main Ckan configuration&quot;&quot;&quot;</span>
-        <span class="n">conf_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_conf_parser</span><span class="p">()</span>
-        <span class="n">conf_parser</span><span class="o">.</span><span class="n">remove_option</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
-        <span class="n">conf_parser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf_file_path</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="CkanEnvironment.conf_update"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.conf_update">[docs]</a>    <span class="k">def</span> <span class="nf">conf_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update main Ckan configuration.</span>
+        <span class="c"># Create postgresql user + database</span>
+        <span class="n">pg_credentials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_postgres_admin_credentials</span><span class="p">()</span>
+        <span class="n">pg_database</span> <span class="o">=</span> <span class="s">&#39;ckan_test_{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">instance_id</span><span class="p">)</span>
+        <span class="n">pg_user</span> <span class="o">=</span> <span class="s">&#39;ckan_user_{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">instance_id</span><span class="p">)</span>
+        <span class="n">pg_password</span> <span class="o">=</span> <span class="n">binascii</span><span class="o">.</span><span class="n">hexlify</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
 
-<span class="sd">        :param dict data: dict of dicts, section/option/value</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">conf_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_conf_parser</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">section</span><span class="p">,</span> <span class="n">sdata</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-            <span class="k">for</span> <span class="n">option</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">sdata</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-                <span class="n">conf_parser</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf_file_path</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-            <span class="n">conf_parser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="CkanEnvironment.get_postgres_admin_connection"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.get_postgres_admin_connection">[docs]</a>    <span class="k">def</span> <span class="nf">get_postgres_admin_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :return: administrative connection to database</span>
-<span class="sd">        :rtype: psycopg2.connect()</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-            <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_host</span><span class="p">,</span>
-            <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_port</span><span class="p">,</span>
-            <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_admin_user</span><span class="p">,</span>
-            <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_admin_password</span><span class="p">,</span>
-            <span class="n">database</span><span class="o">=</span><span class="s">&#39;postgres&#39;</span><span class="p">)</span>
-        <span class="n">conn</span><span class="o">.</span><span class="n">set_isolation_level</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">conn</span>
-</div>
-<div class="viewcode-block" id="CkanEnvironment.get_postgres_connection"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.get_postgres_connection">[docs]</a>    <span class="k">def</span> <span class="nf">get_postgres_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :return: &quot;user&quot; connection to database</span>
-<span class="sd">        :rtype: psycopg2.connect()</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-            <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_host</span><span class="p">,</span>
-            <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_port</span><span class="p">,</span>
-            <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_user</span><span class="p">,</span>
-            <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_password</span><span class="p">,</span>
-            <span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_db_name</span><span class="p">)</span>
-        <span class="n">conn</span><span class="o">.</span><span class="n">set_isolation_level</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">conn</span>
-</div>
-<div class="viewcode-block" id="CkanEnvironment.create_db_user"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.create_db_user">[docs]</a>    <span class="k">def</span> <span class="nf">create_db_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Create PostgreSQL user, for use by Ckan&quot;&quot;&quot;</span>
+        <span class="n">pg_credentials</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="s">&#39;database&#39;</span><span class="p">:</span> <span class="n">pg_database</span><span class="p">,</span>
+            <span class="s">&#39;user&#39;</span><span class="p">:</span> <span class="n">pg_user</span><span class="p">,</span>
+            <span class="s">&#39;password&#39;</span><span class="p">:</span> <span class="n">pg_password</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="n">sqlalchemy_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_postgres_url</span><span class="p">(</span><span class="o">**</span><span class="n">pg_credentials</span><span class="p">)</span>
 
-        <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_postgres_admin_connection</span><span class="p">()</span>
-        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
-<span class="s">        CREATE ROLE {0} LOGIN</span>
-<span class="s">        PASSWORD &#39;{1}&#39;</span>
-<span class="s">        NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;</span>
-<span class="s">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgresql_password</span><span class="p">))</span>
+        <span class="c"># Actually create database</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_db_user</span><span class="p">(</span><span class="n">pg_user</span><span class="p">,</span> <span class="n">pg_password</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_db</span><span class="p">(</span><span class="n">pg_database</span><span class="p">,</span> <span class="n">owner</span><span class="o">=</span><span class="n">pg_user</span><span class="p">)</span>
+
+        <span class="c"># Create site id (for Solr)</span>
+        <span class="n">site_id</span> <span class="o">=</span> <span class="s">&#39;ckan_test_{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">instance_id</span><span class="p">)</span>
+        <span class="n">solr_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solr_url</span>
+
+        <span class="c"># Flush the solr index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flush_solr_index</span><span class="p">(</span><span class="n">solr_url</span><span class="o">=</span><span class="n">solr_url</span><span class="p">,</span> <span class="n">site_id</span><span class="o">=</span><span class="n">site_id</span><span class="p">)</span>
+
+        <span class="c"># Storage path</span>
+        <span class="n">storage_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">venv_root</span><span class="p">,</span> <span class="s">&#39;var&#39;</span><span class="p">,</span> <span class="s">&#39;lib&#39;</span><span class="p">,</span> <span class="s">&#39;ckan-{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">instance_id</span><span class="p">))</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">storage_path</span><span class="p">)</span>
+
+        <span class="c"># Generate configuration file path</span>
+        <span class="n">conf_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">venv_root</span><span class="p">,</span> <span class="s">&#39;etc&#39;</span><span class="p">,</span> <span class="s">&#39;ckan&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">conf_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">conf_dir</span><span class="p">)</span>
+        <span class="n">conf_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">conf_dir</span><span class="p">,</span> <span class="s">&#39;ckan-{0}.ini&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">instance_id</span><span class="p">))</span>
+
+        <span class="c"># Prepare configuration</span>
+        <span class="n">extra_conf</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;server:main&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">&#39;host&#39;</span><span class="p">:</span> <span class="n">server_host</span><span class="p">,</span>
+                <span class="s">&#39;port&#39;</span><span class="p">:</span> <span class="n">server_port</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s">&#39;app:main&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">&#39;beaker.session.key&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_session_key</span><span class="p">(),</span>
+                <span class="s">&#39;app_instance_uuid&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_instance_uuid</span><span class="p">(),</span>
+                <span class="s">&#39;sqlalchemy.url&#39;</span><span class="p">:</span> <span class="n">sqlalchemy_url</span><span class="p">,</span>
+                <span class="s">&#39;ckan.site_id&#39;</span><span class="p">:</span> <span class="n">site_id</span><span class="p">,</span>
+                <span class="s">&#39;solr_url&#39;</span><span class="p">:</span> <span class="n">solr_url</span><span class="p">,</span>
+                <span class="s">&#39;ckan.storage_path&#39;</span><span class="p">:</span> <span class="n">storage_path</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c"># Write configuration file</span>
+        <span class="n">conf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_configuration_file</span><span class="p">(</span><span class="n">conf_file_path</span><span class="p">,</span> <span class="n">extra_conf</span><span class="p">)</span>
+
+        <span class="c"># Instantiate the new CkanInstance</span>
+        <span class="n">ckan_instance</span> <span class="o">=</span> <span class="n">CkanInstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf</span><span class="p">)</span>
+
+        <span class="c"># Init database using paster command</span>
+        <span class="n">ckan_instance</span><span class="o">.</span><span class="n">paster_db_init</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">ckan_instance</span>
 </div>
-<div class="viewcode-block" id="CkanEnvironment.create_db"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.create_db">[docs]</a>    <span class="k">def</span> <span class="nf">create_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Create PostgreSQL database, for use by Ckan&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_generate_session_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">binascii</span><span class="o">.</span><span class="n">hexlify</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
 
-        <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_postgres_admin_connection</span><span class="p">()</span>
-        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
-<span class="s">        CREATE DATABASE {0}</span>
-<span class="s">          WITH OWNER = {1}</span>
-<span class="s">               ENCODING = &#39;UTF8&#39;</span>
-<span class="s">               TABLESPACE = pg_default</span>
-<span class="s">               LC_COLLATE = &#39;en_US.UTF-8&#39;</span>
-<span class="s">               LC_CTYPE = &#39;en_US.UTF-8&#39;</span>
-<span class="s">               CONNECTION LIMIT = -1;</span>
-<span class="s">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_db_name</span><span class="p">,</span>
-                   <span class="bp">self</span><span class="o">.</span><span class="n">postgresql_user</span><span class="p">))</span>
-</div>
-<div class="viewcode-block" id="CkanEnvironment.drop_db_user"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.drop_db_user">[docs]</a>    <span class="k">def</span> <span class="nf">drop_db_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete previously created PostgreSQL user, to cleanup</span>
-<span class="sd">        after running tests.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_generate_instance_uuid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{{{0}}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
 
-        <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_postgres_admin_connection</span><span class="p">()</span>
-        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;DROP ROLE {0};&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_user</span><span class="p">))</span>
-</div>
-<div class="viewcode-block" id="CkanEnvironment.drop_db"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.drop_db">[docs]</a>    <span class="k">def</span> <span class="nf">drop_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete previously created PostgreSQL database, to cleanup</span>
-<span class="sd">        after running tests.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_postgres_admin_connection</span><span class="p">()</span>
-        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;DROP DATABASE {0};&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_db_name</span><span class="p">))</span>
-</div>
-<div class="viewcode-block" id="CkanEnvironment.flush_solr_index"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.flush_solr_index">[docs]</a>    <span class="k">def</span> <span class="nf">flush_solr_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Completely flush the configured Solr index.</span>
-
-<span class="sd">        .. note:: since Ckan supports sharing the same index between</span>
-<span class="sd">                  installations, we don&#39;t actually delete *everything*</span>
-<span class="sd">                  from the index, but instead issued a delete on query:</span>
-<span class="sd">                  ``+site_id:&quot;&lt;ckan-site-id&gt;&quot;``</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">s</span> <span class="o">=</span> <span class="n">solr</span><span class="o">.</span><span class="n">SolrConnection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solr_url</span><span class="p">)</span>
-        <span class="c">#query = &#39;*:*&#39;</span>
-        <span class="n">query</span> <span class="o">=</span> <span class="s">&#39;+site_id:&quot;{0}&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">site_id</span><span class="p">)</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">delete_query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">s</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">numFound</span> <span class="o">==</span> <span class="mi">0</span>
+<div class="viewcode-block" id="CkanEnvironment.get_command"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.get_command">[docs]</a>    <span class="k">def</span> <span class="nf">get_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the full path of a command inside the virtualenv&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">venv_root</span><span class="p">,</span> <span class="s">&#39;bin&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="CkanEnvironment.run_paster"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.run_paster">[docs]</a>    <span class="k">def</span> <span class="nf">run_paster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -392,11 +349,316 @@
 <span class="sd">            &lt;venv&gt;/bin/python &lt;venv&gt;/bin/paster --plugin=ckan [&lt;args&gt; ..]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">python</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">venv_root</span><span class="p">,</span> <span class="s">&#39;bin&#39;</span><span class="p">,</span> <span class="s">&#39;python&#39;</span><span class="p">)</span>
-        <span class="n">paster</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">venv_root</span><span class="p">,</span> <span class="s">&#39;bin&#39;</span><span class="p">,</span> <span class="s">&#39;paster&#39;</span><span class="p">)</span>
+        <span class="n">python</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_command</span><span class="p">(</span><span class="s">&#39;python&#39;</span><span class="p">)</span>
+        <span class="n">paster</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_command</span><span class="p">(</span><span class="s">&#39;paster&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">((</span><span class="n">python</span><span class="p">,</span> <span class="n">paster</span><span class="p">,</span> <span class="s">&#39;--plugin=ckan&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">args</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="CkanEnvironment.run_paster_with_conf"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.run_paster_with_conf">[docs]</a>    <span class="k">def</span> <span class="nf">run_paster_with_conf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="CkanEnvironment.get_postgres_admin_credentials"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.get_postgres_admin_credentials">[docs]</a>    <span class="k">def</span> <span class="nf">get_postgres_admin_credentials</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">parsed_pg_url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_admin_url</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">parsed_pg_url</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s">&#39;postgresql&#39;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">user</span><span class="o">=</span><span class="n">parsed_pg_url</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="n">parsed_pg_url</span><span class="o">.</span><span class="n">password</span><span class="p">,</span>
+            <span class="n">host</span><span class="o">=</span><span class="n">parsed_pg_url</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="n">parsed_pg_url</span><span class="o">.</span><span class="n">port</span> <span class="ow">or</span> <span class="mi">5432</span><span class="p">,</span>
+            <span class="n">database</span><span class="o">=</span><span class="s">&#39;postgres&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanEnvironment.make_postgres_url"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.make_postgres_url">[docs]</a>    <span class="k">def</span> <span class="nf">make_postgres_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlunparse</span><span class="p">((</span>
+            <span class="s">&#39;postgresql&#39;</span><span class="p">,</span>
+            <span class="s">&#39;{0}:{1}@{2}:{3}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">),</span>
+            <span class="n">database</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="CkanEnvironment.get_postgres_admin_connection"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.get_postgres_admin_connection">[docs]</a>    <span class="k">def</span> <span class="nf">get_postgres_admin_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: administrative connection to database</span>
+<span class="sd">        :rtype: psycopg2.connect()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">credentials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_postgres_admin_credentials</span><span class="p">()</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="o">**</span><span class="n">credentials</span><span class="p">)</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">set_isolation_level</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c"># So we can DROP stuff</span>
+        <span class="k">return</span> <span class="n">conn</span>
+</div>
+<div class="viewcode-block" id="CkanEnvironment.get_postgres_connection"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.get_postgres_connection">[docs]</a>    <span class="k">def</span> <span class="nf">get_postgres_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: &quot;user&quot; connection to database</span>
+<span class="sd">        :rtype: psycopg2.connect()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">credentials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_postgres_admin_credentials</span><span class="p">()</span>
+        <span class="n">credentials</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="s">&#39;user&#39;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+            <span class="s">&#39;password&#39;</span><span class="p">:</span> <span class="n">password</span><span class="p">,</span>
+            <span class="s">&#39;database&#39;</span><span class="p">:</span> <span class="n">database</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="o">**</span><span class="n">credentials</span><span class="p">)</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">set_isolation_level</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">conn</span>
+</div>
+<div class="viewcode-block" id="CkanEnvironment.create_db_user"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.create_db_user">[docs]</a>    <span class="k">def</span> <span class="nf">create_db_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create PostgreSQL user, for use by Ckan&quot;&quot;&quot;</span>
+
+        <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_postgres_admin_connection</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">        CREATE ROLE {0} LOGIN</span>
+<span class="s">        PASSWORD &#39;{1}&#39;</span>
+<span class="s">        NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;</span>
+<span class="s">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="CkanEnvironment.create_db"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.create_db">[docs]</a>    <span class="k">def</span> <span class="nf">create_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create PostgreSQL database, for use by Ckan&quot;&quot;&quot;</span>
+
+        <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_postgres_admin_connection</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">        CREATE DATABASE {0}</span>
+<span class="s">          WITH OWNER = {1}</span>
+<span class="s">               ENCODING = &#39;UTF8&#39;</span>
+<span class="s">               TABLESPACE = pg_default</span>
+<span class="s">               LC_COLLATE = &#39;en_US.UTF-8&#39;</span>
+<span class="s">               LC_CTYPE = &#39;en_US.UTF-8&#39;</span>
+<span class="s">               CONNECTION LIMIT = -1;</span>
+<span class="s">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">owner</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="CkanEnvironment.drop_db_user"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.drop_db_user">[docs]</a>    <span class="k">def</span> <span class="nf">drop_db_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete previously created PostgreSQL user, to cleanup</span>
+<span class="sd">        after running tests.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_postgres_admin_connection</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;DROP ROLE {0};&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">username</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="CkanEnvironment.drop_db"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.drop_db">[docs]</a>    <span class="k">def</span> <span class="nf">drop_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete previously created PostgreSQL database, to cleanup</span>
+<span class="sd">        after running tests.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_postgres_admin_connection</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;DROP DATABASE {0};&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="CkanEnvironment.flush_solr_index"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.flush_solr_index">[docs]</a>    <span class="k">def</span> <span class="nf">flush_solr_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solr_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">site_id</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Completely flush the configured Solr index.</span>
+
+<span class="sd">        .. note:: since Ckan supports sharing the same index between</span>
+<span class="sd">                  installations, we don&#39;t actually delete *everything*</span>
+<span class="sd">                  from the index, but instead issued a delete on query:</span>
+<span class="sd">                  ``+site_id:&quot;&lt;ckan-site-id&gt;&quot;``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">solr_url</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">solr_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solr_url</span>
+
+        <span class="k">if</span> <span class="n">site_id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="s">&#39;*:*&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="s">&#39;+site_id:&quot;{0}&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">site_id</span><span class="p">)</span>
+
+        <span class="n">s</span> <span class="o">=</span> <span class="n">solr</span><span class="o">.</span><span class="n">SolrConnection</span><span class="p">(</span><span class="n">solr_url</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">delete_query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">s</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">numFound</span> <span class="o">==</span> <span class="mi">0</span>
+</div>
+<div class="viewcode-block" id="CkanEnvironment.create_configuration_file"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.create_configuration_file">[docs]</a>    <span class="k">def</span> <span class="nf">create_configuration_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a configuration file for Ckan.</span>
+
+<span class="sd">        :return: CkanConfFileWrapper associated to conf file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Use paster to create the configuration file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_paster</span><span class="p">(</span><span class="s">&#39;make-config&#39;</span><span class="p">,</span> <span class="s">&#39;ckan&#39;</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+
+        <span class="c"># Prepare wrapper object, to allow changes..</span>
+        <span class="n">conf</span> <span class="o">=</span> <span class="n">ConfFileWrapper</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+        <span class="c"># Merge extra configuration</span>
+        <span class="k">if</span> <span class="n">extra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">conf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">conf</span>
+</div>
+<div class="viewcode-block" id="CkanEnvironment.teardown"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.teardown">[docs]</a>    <span class="k">def</span> <span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># self.drop_db()</span>
+        <span class="c"># self.drop_db_user()</span>
+        <span class="c"># self.flush_solr_index()</span>
+        <span class="c"># os.unlink(self.conf_file_path)</span>
+        <span class="c"># shutil.rmtree(self.storage_path)</span>
+        <span class="k">pass</span>
+</div>
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Call :py:meth:`teardown` on exit.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">teardown</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="ProcessWrapper"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ProcessWrapper">[docs]</a><span class="k">class</span> <span class="nc">ProcessWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">waitstart</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">waitstart</span> <span class="o">=</span> <span class="n">waitstart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="ProcessWrapper.start"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ProcessWrapper.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="c"># Wait for the server to come up</span>
+        <span class="c"># wait_net_service(self.host, self.port, timeout=20)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">waitstart</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">waitstart</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span>
+</div>
+<div class="viewcode-block" id="ProcessWrapper.stop"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ProcessWrapper.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span>  <span class="c"># nothing to do here..</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+</div>
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e_type</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="ConfFileWrapper"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ConfFileWrapper">[docs]</a><span class="k">class</span> <span class="nc">ConfFileWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper for Ckan configuration files, providing</span>
+<span class="sd">    some additional functionality.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+
+<div class="viewcode-block" id="ConfFileWrapper.get_conf_parser"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ConfFileWrapper.get_conf_parser">[docs]</a>    <span class="k">def</span> <span class="nf">get_conf_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a RawConfigParser instance, with configuration loaded</span>
+<span class="sd">        from the wrapped configuration file.</span>
+
+<span class="sd">        Not caching this as we want to reload any changes that should</span>
+<span class="sd">        have occurred on the file..</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cfp</span> <span class="o">=</span> <span class="n">RawConfigParser</span><span class="p">()</span>
+        <span class="n">cfp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cfp</span>
+</div>
+<div class="viewcode-block" id="ConfFileWrapper.set"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ConfFileWrapper.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set a configuration option&quot;&quot;&quot;</span>
+        <span class="n">conf_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_conf_parser</span><span class="p">()</span>
+        <span class="n">conf_parser</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">conf_parser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ConfFileWrapper.get"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ConfFileWrapper.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a configuration option&quot;&quot;&quot;</span>
+        <span class="n">conf_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_conf_parser</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">conf_parser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ConfFileWrapper.delete"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ConfFileWrapper.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Delete a configuration option&quot;&quot;&quot;</span>
+        <span class="n">conf_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_conf_parser</span><span class="p">()</span>
+        <span class="n">conf_parser</span><span class="o">.</span><span class="n">remove_option</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
+        <span class="n">conf_parser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ConfFileWrapper.update"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ConfFileWrapper.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update configuration.</span>
+
+<span class="sd">        :param dict data:</span>
+<span class="sd">            dict of dicts: ``{section: {option: value}}``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">conf_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_conf_parser</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">section</span><span class="p">,</span> <span class="n">sdata</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">option</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">sdata</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="n">conf_parser</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="n">conf_parser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="CkanInstance"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance">[docs]</a><span class="k">class</span> <span class="nc">CkanInstance</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper for a Ckan instance.</span>
+
+<span class="sd">    Based on:</span>
+
+<span class="sd">    - a virtualenv</span>
+<span class="sd">    - a Ckan configuration file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">virtualenv</span><span class="p">,</span> <span class="n">conf</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">virtualenv</span><span class="p">,</span> <span class="n">CkanEnvironment</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Expected CkanEnvironment, got {0!r}&#39;</span>
+                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">virtualenv</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">ConfFileWrapper</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Expected ConfFileWrapper, got {0!r}&#39;</span>
+                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">conf</span><span class="p">)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">virtualenv</span> <span class="o">=</span> <span class="n">virtualenv</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">conf</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CkanInstance.venv_root"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.venv_root">[docs]</a>    <span class="k">def</span> <span class="nf">venv_root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">virtualenv</span><span class="o">.</span><span class="n">venv_root</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CkanInstance.server_host"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.server_host">[docs]</a>    <span class="k">def</span> <span class="nf">server_host</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;server:main&#39;</span><span class="p">,</span> <span class="s">&#39;host&#39;</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CkanInstance.server_port"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.server_port">[docs]</a>    <span class="k">def</span> <span class="nf">server_port</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;server:main&#39;</span><span class="p">,</span> <span class="s">&#39;port&#39;</span><span class="p">))</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CkanInstance.server_url"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.server_url">[docs]</a>    <span class="k">def</span> <span class="nf">server_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;http://{0}:{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server_host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_port</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CkanInstance.configuration_file"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.configuration_file">[docs]</a>    <span class="k">def</span> <span class="nf">configuration_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">filename</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CkanInstance.database_url"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.database_url">[docs]</a>    <span class="k">def</span> <span class="nf">database_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;app:main&#39;</span><span class="p">,</span> <span class="s">&#39;sqlalchemy.url&#39;</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CkanInstance.database_name"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.database_name">[docs]</a>    <span class="k">def</span> <span class="nf">database_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">db_creds</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database_url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">db_creds</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CkanInstance.database_username"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.database_username">[docs]</a>    <span class="k">def</span> <span class="nf">database_username</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">db_creds</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database_url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">db_creds</span><span class="o">.</span><span class="n">username</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CkanInstance.database_password"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.database_password">[docs]</a>    <span class="k">def</span> <span class="nf">database_password</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">db_creds</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database_url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">db_creds</span><span class="o">.</span><span class="n">password</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CkanInstance.solr_url"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.solr_url">[docs]</a>    <span class="k">def</span> <span class="nf">solr_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;app:main&#39;</span><span class="p">,</span> <span class="s">&#39;solr_url&#39;</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CkanInstance.site_id"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.site_id">[docs]</a>    <span class="k">def</span> <span class="nf">site_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;app:main&#39;</span><span class="p">,</span> <span class="s">&#39;ckan.site_id&#39;</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CkanInstance.storage_path"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.storage_path">[docs]</a>    <span class="k">def</span> <span class="nf">storage_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;app:main&#39;</span><span class="p">,</span> <span class="s">&#39;ckan.storage_path&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanInstance.run_paster"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.run_paster">[docs]</a>    <span class="k">def</span> <span class="nf">run_paster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">virtualenv</span><span class="o">.</span><span class="n">run_paster</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanInstance.get_command"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.get_command">[docs]</a>    <span class="k">def</span> <span class="nf">get_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">virtualenv</span><span class="o">.</span><span class="n">get_command</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanInstance.run_paster_with_conf"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.run_paster_with_conf">[docs]</a>    <span class="k">def</span> <span class="nf">run_paster_with_conf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run a paster command in the virtualenv, adding --config=ckan.ini</span>
 
@@ -410,31 +672,38 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_paster</span><span class="p">(</span>
-            <span class="n">command</span><span class="p">,</span> <span class="s">&#39;--config={0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf_file_path</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">command</span><span class="p">,</span> <span class="s">&#39;--config={0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">configuration_file</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="CkanEnvironment.serve"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.serve">[docs]</a>    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CkanInstance.serve"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.serve">[docs]</a>    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Start the Ckan server, using ``paster serve`` command.</span>
 
 <span class="sd">        :rtype: :py:class:`CkanServerWrapper`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">python</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">venv_root</span><span class="p">,</span> <span class="s">&#39;bin&#39;</span><span class="p">,</span> <span class="s">&#39;python&#39;</span><span class="p">)</span>
-        <span class="n">paster</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">venv_root</span><span class="p">,</span> <span class="s">&#39;bin&#39;</span><span class="p">,</span> <span class="s">&#39;paster&#39;</span><span class="p">)</span>
+        <span class="n">python</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_command</span><span class="p">(</span><span class="s">&#39;python&#39;</span><span class="p">)</span>
+        <span class="n">paster</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_command</span><span class="p">(</span><span class="s">&#39;paster&#39;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">CkanServerWrapper</span><span class="p">([</span>
-            <span class="n">python</span><span class="p">,</span> <span class="n">paster</span><span class="p">,</span> <span class="s">&#39;serve&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf_file_path</span>
-        <span class="p">],</span> <span class="n">host</span><span class="o">=</span><span class="s">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">server_port</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ProcessWrapper</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">python</span><span class="p">,</span> <span class="n">paster</span><span class="p">,</span> <span class="s">&#39;serve&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">configuration_file</span><span class="p">],</span>
+            <span class="n">waitstart</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">wait_net_service</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">server_host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_port</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="CkanEnvironment.paster_db_init"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.paster_db_init">[docs]</a>    <span class="k">def</span> <span class="nf">paster_db_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CkanInstance.get_postgres_connection"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.get_postgres_connection">[docs]</a>    <span class="k">def</span> <span class="nf">get_postgres_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">db_creds</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database_url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">virtualenv</span><span class="o">.</span><span class="n">get_postgres_connection</span><span class="p">(</span>
+            <span class="n">db_creds</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">db_creds</span><span class="o">.</span><span class="n">password</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">database_name</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CkanInstance.paster_db_init"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.paster_db_init">[docs]</a>    <span class="k">def</span> <span class="nf">paster_db_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize database, by calling paster command&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_paster_with_conf</span><span class="p">(</span><span class="s">&#39;db&#39;</span><span class="p">,</span> <span class="s">&#39;init&#39;</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="CkanEnvironment.paster_search_index_rebuild"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.paster_search_index_rebuild">[docs]</a>    <span class="k">def</span> <span class="nf">paster_search_index_rebuild</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CkanInstance.paster_search_index_rebuild"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.paster_search_index_rebuild">[docs]</a>    <span class="k">def</span> <span class="nf">paster_search_index_rebuild</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Rebuild search index, by calling paster command&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_paster_with_conf</span><span class="p">(</span><span class="s">&#39;search-index&#39;</span><span class="p">,</span> <span class="s">&#39;rebuild&#39;</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="CkanEnvironment.paster_user_add"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.paster_user_add">[docs]</a>    <span class="k">def</span> <span class="nf">paster_user_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CkanInstance.paster_user_add"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.paster_user_add">[docs]</a>    <span class="k">def</span> <span class="nf">paster_user_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create Ckan user, by calling paster command&quot;&quot;&quot;</span>
 
         <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;{0}={1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
@@ -447,25 +716,25 @@
                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="CkanEnvironment.paster_user_remove"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.paster_user_remove">[docs]</a>    <span class="k">def</span> <span class="nf">paster_user_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="CkanInstance.paster_user_remove"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.paster_user_remove">[docs]</a>    <span class="k">def</span> <span class="nf">paster_user_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Remove Ckan user, by calling paster command&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_paster_with_conf</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="s">&#39;remove&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="CkanEnvironment.paster_sysadmin_add"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.paster_sysadmin_add">[docs]</a>    <span class="k">def</span> <span class="nf">paster_sysadmin_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="CkanInstance.paster_sysadmin_add"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.paster_sysadmin_add">[docs]</a>    <span class="k">def</span> <span class="nf">paster_sysadmin_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Grant sysadmin privileges to a Ckan user,</span>
 <span class="sd">        by calling paster command.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_paster_with_conf</span><span class="p">(</span><span class="s">&#39;sysadmin&#39;</span><span class="p">,</span> <span class="s">&#39;add&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="CkanEnvironment.paster_sysadmin_remove"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.paster_sysadmin_remove">[docs]</a>    <span class="k">def</span> <span class="nf">paster_sysadmin_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="CkanInstance.paster_sysadmin_remove"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.paster_sysadmin_remove">[docs]</a>    <span class="k">def</span> <span class="nf">paster_sysadmin_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Revoke sysadmin privileges from a Ckan user,</span>
 <span class="sd">        by calling paster command.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_paster_with_conf</span><span class="p">(</span><span class="s">&#39;sysadmin&#39;</span><span class="p">,</span> <span class="s">&#39;remove&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="CkanEnvironment.get_sysadmin_api_key"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.get_sysadmin_api_key">[docs]</a>    <span class="k">def</span> <span class="nf">get_sysadmin_api_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CkanInstance.get_sysadmin_api_key"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.get_sysadmin_api_key">[docs]</a>    <span class="k">def</span> <span class="nf">get_sysadmin_api_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a sysadmin user (with random name / password)</span>
 <span class="sd">        and return its API key.</span>
@@ -481,161 +750,54 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">paster_sysadmin_add</span><span class="p">(</span><span class="n">user_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">user_data</span><span class="p">[</span><span class="s">&#39;apikey&#39;</span><span class="p">]</span>
 </div>
-<div class="viewcode-block" id="CkanEnvironment.setup"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Called by :py:meth:`__init__` to setup things.&quot;&quot;&quot;</span>
-        <span class="c">## Prepare IDs &amp; names</span>
-        <span class="n">my_id</span> <span class="o">=</span> <span class="s">&#39;{0:06d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">))</span>
+<div class="viewcode-block" id="CkanInstance.teardown"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanInstance.teardown">[docs]</a>    <span class="k">def</span> <span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># Remove database / user</span>
+        <span class="n">db_creds</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database_url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">virtualenv</span><span class="o">.</span><span class="n">drop_db</span><span class="p">(</span><span class="n">db_creds</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">virtualenv</span><span class="o">.</span><span class="n">drop_db_user</span><span class="p">(</span><span class="n">db_creds</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
 
-        <span class="c">## Configuration file</span>
-        <span class="n">conf_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">venv_root</span><span class="p">,</span> <span class="s">&#39;etc&#39;</span><span class="p">,</span> <span class="s">&#39;ckan&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">conf_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">conf_dir</span><span class="p">,</span> <span class="s">&#39;ckan-{0}.ini&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">my_id</span><span class="p">))</span>
-        <span class="c">## Note: containing directory is created later</span>
+        <span class="c"># Flush the Solr index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">virtualenv</span><span class="o">.</span><span class="n">flush_solr_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solr_url</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">site_id</span><span class="p">)</span>
 
-        <span class="c">## Storage path</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">storage_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">venv_root</span><span class="p">,</span> <span class="s">&#39;var&#39;</span><span class="p">,</span> <span class="s">&#39;lib&#39;</span><span class="p">,</span> <span class="s">&#39;ckan-{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">my_id</span><span class="p">))</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage_path</span><span class="p">)</span>
-
-        <span class="c">## Port on which server will listen</span>
-        <span class="c">#self.server_port = self.get_ephemeral_port()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">server_port</span> <span class="o">=</span> <span class="n">discover_available_port</span><span class="p">()</span>
-
-        <span class="n">parsed_pg_url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_admin_url</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">parsed_pg_url</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s">&#39;postgresql&#39;</span>
-        <span class="n">credentials</span><span class="p">,</span> <span class="n">host</span> <span class="o">=</span> <span class="n">parsed_pg_url</span><span class="o">.</span><span class="n">netloc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;@&#39;</span><span class="p">)</span>
-        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">postgresql_admin_user</span><span class="p">,</span>
-         <span class="bp">self</span><span class="o">.</span><span class="n">postgresql_admin_password</span><span class="p">)</span> <span class="o">=</span> <span class="n">credentials</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="s">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">host</span><span class="p">:</span>
-            <span class="n">host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="n">host</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">port</span> <span class="o">=</span> <span class="mi">5432</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">postgresql_host</span> <span class="o">=</span> <span class="n">host</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">postgresql_port</span> <span class="o">=</span> <span class="n">port</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">postgresql_db_name</span> <span class="o">=</span> <span class="s">&#39;ckan_test_{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">my_id</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">postgresql_user</span> <span class="o">=</span> <span class="s">&#39;ckan_user_{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">my_id</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">postgresql_password</span> <span class="o">=</span> <span class="n">binascii</span><span class="o">.</span><span class="n">hexlify</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">site_id</span> <span class="o">=</span> <span class="s">&#39;ckan_test_{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">my_id</span><span class="p">)</span>
-
-        <span class="c">## Make sure the configuration directory is there</span>
-        <span class="n">conf_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf_file_path</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">conf_dir</span><span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">conf_dir</span><span class="p">)</span>
-
-        <span class="c">## Create a configuration file</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">run_paster</span><span class="p">(</span><span class="s">&#39;make-config&#39;</span><span class="p">,</span> <span class="s">&#39;ckan&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf_file_path</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">conf_update</span><span class="p">({</span>
-            <span class="s">&#39;server:main&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s">&#39;host&#39;</span><span class="p">:</span> <span class="s">&#39;0.0.0.0&#39;</span><span class="p">,</span>
-                <span class="s">&#39;port&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_port</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="s">&#39;app:main&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s">&#39;beaker.session.key&#39;</span><span class="p">:</span> <span class="s">&#39;beaker-session-key-here&#39;</span><span class="p">,</span>
-                <span class="s">&#39;app_instance_uuid&#39;</span><span class="p">:</span> <span class="s">&#39;{00001111-2222-3333-4444-555566667777}&#39;</span><span class="p">,</span>
-                <span class="s">&#39;sqlalchemy.url&#39;</span><span class="p">:</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlunparse</span><span class="p">((</span>
-                    <span class="s">&#39;postgresql&#39;</span><span class="p">,</span>
-                    <span class="s">&#39;{0}:{1}@{2}:{3}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">postgresql_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgresql_password</span><span class="p">,</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">postgresql_host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgresql_port</span><span class="p">),</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">postgresql_db_name</span><span class="p">,</span>
-                    <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span>
-                <span class="p">)),</span>
-                <span class="s">&#39;ckan.site_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">site_id</span><span class="p">,</span>
-                <span class="s">&#39;solr_url&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">solr_url</span><span class="p">,</span>
-                <span class="c">#&#39;ofs.impl&#39;: &#39;pairtree&#39;,</span>
-                <span class="c">#&#39;ofs.storage_dir&#39;: &#39;&#39;,</span>
-                <span class="s">&#39;ckan.storage_path&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_path</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">})</span>
-
-        <span class="c">## Create database</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">create_db_user</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">create_db</span><span class="p">()</span>
-
-        <span class="c">## Make sure the Solr index is clear</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">flush_solr_index</span><span class="p">()</span>
-
-        <span class="c">## Initialize database</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paster_db_init</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="CkanEnvironment.teardown"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.teardown">[docs]</a>    <span class="k">def</span> <span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Called by :py:meth:`__del__` to cleanup things.</span>
-
-<span class="sd">        It will:</span>
-
-<span class="sd">        - drop PostgreSQL database</span>
-<span class="sd">        - drop PostgreSQL user</span>
-<span class="sd">        - flush solr index</span>
-<span class="sd">        - remove configuration file</span>
-<span class="sd">        - remove storage data (uploaded files)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">drop_db</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">drop_db_user</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">flush_solr_index</span><span class="p">()</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf_file_path</span><span class="p">)</span>
+        <span class="c"># Remove all the storage stuff</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage_path</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="CkanEnvironment.__del__"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanEnvironment.__del__">[docs]</a>    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Call :py:meth:`teardown` on exit.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">teardown</span><span class="p">()</span>
+
+        <span class="c"># Delete the configuration file itself</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">configuration_file</span><span class="p">)</span>
 
 </div></div>
-<div class="viewcode-block" id="CkanServerWrapper"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanServerWrapper">[docs]</a><span class="k">class</span> <span class="nc">CkanServerWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
-
-    <span class="nd">@property</span>
-<div class="viewcode-block" id="CkanServerWrapper.url"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanServerWrapper.url">[docs]</a>    <span class="k">def</span> <span class="nf">url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s">&#39;http://{host}:{port}/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="CkanServerWrapper.start"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanServerWrapper.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
-
-        <span class="c">## Wait for the server to come up</span>
-        <span class="n">wait_net_service</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span>
-</div>
-<div class="viewcode-block" id="CkanServerWrapper.stop"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.CkanServerWrapper.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-</div>
-    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e_type</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-
-</div>
 <span class="nd">@pytest.fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&#39;session&#39;</span><span class="p">)</span>
-<div class="viewcode-block" id="ckan_env"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ckan_env">[docs]</a><span class="k">def</span> <span class="nf">ckan_env</span><span class="p">():</span>
+<div class="viewcode-block" id="ckan_env"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ckan_env">[docs]</a><span class="k">def</span> <span class="nf">ckan_env</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Example usage::</span>
 
 <span class="sd">        def test_example(ckan_env):</span>
+<span class="sd">            instance = ckan_env.create_instance()</span>
 
-<span class="sd">            with ckan_env.serve() as server:</span>
-<span class="sd">                ## Now make the client connect to ``server.url``</span>
+<span class="sd">            with instance.serve() as server:</span>
+<span class="sd">                # Now make the client connect to ``server.url``</span>
 
-<span class="sd">                ## If you need an API key:</span>
+<span class="sd">                # If you need an API key:</span>
 <span class="sd">                api_key = ckan_env.get_sysadmin_api_key()</span>
-<span class="sd">                pass</span>
 
 
 <span class="sd">    :return: A configured Ckan environment object, ready for use</span>
 <span class="sd">    :rtype: :py:class:`CkanEnvironment`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">CkanEnvironment</span><span class="o">.</span><span class="n">from_environment</span><span class="p">()</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">CkanEnvironment</span><span class="o">.</span><span class="n">from_environment</span><span class="p">()</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">addfinalizer</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">env</span><span class="o">.</span><span class="n">teardown</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">env</span>
 
 </div>
 <span class="nd">@pytest.fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&#39;module&#39;</span><span class="p">)</span>
-<div class="viewcode-block" id="ckan_url"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ckan_url">[docs]</a><span class="k">def</span> <span class="nf">ckan_url</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">):</span>
+<div class="viewcode-block" id="ckan_instance"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ckan_instance">[docs]</a><span class="k">def</span> <span class="nf">ckan_instance</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">):</span>
+    <span class="n">instance</span> <span class="o">=</span> <span class="n">ckan_env</span><span class="o">.</span><span class="n">create_instance</span><span class="p">()</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">addfinalizer</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">instance</span><span class="o">.</span><span class="n">teardown</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">instance</span>
+
+</div>
+<span class="nd">@pytest.fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&#39;module&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="ckan_url"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ckan_url">[docs]</a><span class="k">def</span> <span class="nf">ckan_url</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_instance</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create &amp; launch a Ckan instance; return a URL at which</span>
 <span class="sd">    it is accessible.</span>
@@ -648,13 +810,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c"># todo: pass user:apikey in the url? -&gt; but it needs to be stripped..</span>
 
-    <span class="n">server</span> <span class="o">=</span> <span class="n">ckan_env</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">ckan_instance</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">finalize</span><span class="p">():</span>
         <span class="n">server</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
     <span class="n">request</span><span class="o">.</span><span class="n">addfinalizer</span><span class="p">(</span><span class="n">finalize</span><span class="p">)</span>
 
-    <span class="n">base_url</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">url</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="n">ckan_instance</span><span class="o">.</span><span class="n">server_url</span>
 
     <span class="k">def</span> <span class="nf">get_ckan_url</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urljoin</span><span class="p">(</span><span class="n">base_url</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
@@ -676,13 +838,13 @@
     <span class="k">return</span> <span class="n">here</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">)</span>
 
 
-<span class="c">##------------------------------------------------------------</span>
-<span class="c">## Clients</span>
+<span class="c"># ------------------------------------------------------------</span>
+<span class="c"># Clients</span>
 </div>
-<span class="k">def</span> <span class="nf">_get_ckan_client</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">,</span> <span class="n">client_class</span><span class="p">):</span>
-    <span class="n">api_key</span> <span class="o">=</span> <span class="n">ckan_env</span><span class="o">.</span><span class="n">get_sysadmin_api_key</span><span class="p">()</span>
-    <span class="n">server</span> <span class="o">=</span> <span class="n">ckan_env</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
-    <span class="n">client</span> <span class="o">=</span> <span class="n">client_class</span><span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_get_ckan_client</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_instance</span><span class="p">,</span> <span class="n">client_class</span><span class="p">):</span>
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">ckan_instance</span><span class="o">.</span><span class="n">get_sysadmin_api_key</span><span class="p">()</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">ckan_instance</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">client_class</span><span class="p">(</span><span class="n">ckan_instance</span><span class="o">.</span><span class="n">server_url</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">finalize</span><span class="p">():</span>
         <span class="n">server</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
@@ -692,38 +854,38 @@
     <span class="k">return</span> <span class="n">client</span>
 
 
-<span class="nd">@pytest.fixture</span>
-<div class="viewcode-block" id="ckan_client_ll"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ckan_client_ll">[docs]</a><span class="k">def</span> <span class="nf">ckan_client_ll</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">):</span>
+<span class="nd">@pytest.fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&#39;module&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="ckan_client_ll"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ckan_client_ll">[docs]</a><span class="k">def</span> <span class="nf">ckan_client_ll</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_instance</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :return: A low-level client attached to a running Ckan</span>
 <span class="sd">    :rtype: :py:class:`ckan_api_client.low_level.CkanLowlevelClient`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">ckan_api_client.low_level</span> <span class="kn">import</span> <span class="n">CkanLowlevelClient</span>
-    <span class="k">return</span> <span class="n">_get_ckan_client</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">,</span> <span class="n">CkanLowlevelClient</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_get_ckan_client</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_instance</span><span class="p">,</span> <span class="n">CkanLowlevelClient</span><span class="p">)</span>
 
 </div>
-<span class="nd">@pytest.fixture</span>
-<div class="viewcode-block" id="ckan_client_hl"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ckan_client_hl">[docs]</a><span class="k">def</span> <span class="nf">ckan_client_hl</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">):</span>
+<span class="nd">@pytest.fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&#39;module&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="ckan_client_hl"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ckan_client_hl">[docs]</a><span class="k">def</span> <span class="nf">ckan_client_hl</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_instance</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :return: A high-level client attached to a running Ckan</span>
 <span class="sd">    :rtype: :py:class:`ckan_api_client.high_level.CkanHighlevelClient`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">ckan_api_client.high_level</span> <span class="kn">import</span> <span class="n">CkanHighlevelClient</span>
-    <span class="k">return</span> <span class="n">_get_ckan_client</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">,</span> <span class="n">CkanHighlevelClient</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_get_ckan_client</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_instance</span><span class="p">,</span> <span class="n">CkanHighlevelClient</span><span class="p">)</span>
 
 </div>
-<span class="nd">@pytest.fixture</span>
-<div class="viewcode-block" id="ckan_client_sync"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ckan_client_sync">[docs]</a><span class="k">def</span> <span class="nf">ckan_client_sync</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">):</span>
+<span class="nd">@pytest.fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&#39;module&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="ckan_client_sync"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ckan_client_sync">[docs]</a><span class="k">def</span> <span class="nf">ckan_client_sync</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_instance</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :return: A synchronization client attached to a running Ckan</span>
 <span class="sd">    :rtype: :py:class:`ckan_api_client.syncing.SynchronizationClient`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">ckan_api_client.syncing</span> <span class="kn">import</span> <span class="n">SynchronizationClient</span>
-    <span class="k">return</span> <span class="n">_get_ckan_client</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_env</span><span class="p">,</span> <span class="n">SynchronizationClient</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_get_ckan_client</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_instance</span><span class="p">,</span> <span class="n">SynchronizationClient</span><span class="p">)</span>
 
 
-<span class="c">##------------------------------------------------------------</span>
-<span class="c">## More utilities</span>
+<span class="c"># ------------------------------------------------------------</span>
+<span class="c"># More utilities</span>
 </div>
 <span class="k">def</span> <span class="nf">diff_eq</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">):</span>
     <span class="kn">from</span> <span class="nn">_pytest.assertion.util</span> <span class="kn">import</span> <span class="n">assertrepr_compare</span>
@@ -738,7 +900,7 @@
   <hr/>
 
   <p>
-      &copy; Copyright 2014, Samuele Santi.
+      &copy; Copyright 2014, Trento RISE.
   </p>
 
   <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>

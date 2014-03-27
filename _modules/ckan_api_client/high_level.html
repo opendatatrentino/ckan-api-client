@@ -130,9 +130,9 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_url</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">CkanLowlevelClient</span><span class="p">(</span><span class="n">base_url</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
 
-    <span class="c">##------------------------------------------------------------</span>
-    <span class="c">## Datasets management</span>
-    <span class="c">##------------------------------------------------------------</span>
+    <span class="c"># ------------------------------------------------------------</span>
+    <span class="c"># Datasets management</span>
+    <span class="c"># ------------------------------------------------------------</span>
 
 <div class="viewcode-block" id="CkanHighlevelClient.list_datasets"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.list_datasets">[docs]</a>    <span class="k">def</span> <span class="nf">list_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;:return: a list of dataset ids&quot;&quot;&quot;</span>
@@ -249,33 +249,33 @@
         <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Trying to update a dataset without an id&quot;</span><span class="p">)</span>
 
-        <span class="c">##------------------------------------------------------------</span>
-        <span class="c">## We need the original dataset to make sure</span>
-        <span class="c">## we are updating things correctly.</span>
+        <span class="c"># ------------------------------------------------------------</span>
+        <span class="c"># We need the original dataset to make sure</span>
+        <span class="c"># we are updating things correctly.</span>
 
         <span class="n">original_dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
         <span class="n">updates_dict</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
 
-        <span class="c">##------------------------------------------------------------</span>
-        <span class="c">## Process the Extras field</span>
+        <span class="c"># ------------------------------------------------------------</span>
+        <span class="c"># Process the Extras field</span>
 
-        <span class="c">## In order to remove an &quot;extras&quot; field, we need to</span>
-        <span class="c">## explicitly set its value to None</span>
+        <span class="c"># In order to remove an &quot;extras&quot; field, we need to</span>
+        <span class="c"># explicitly set its value to None</span>
 
-        <span class="c">## todo: we should track changes on the &quot;extras&quot; field in order</span>
-        <span class="c">##       to make sure we aren&#39;t accidentally removing fields</span>
-        <span class="c">##       that have been added in the meanwhile..</span>
+        <span class="c"># todo: we should track changes on the &quot;extras&quot; field in order</span>
+        <span class="c">#       to make sure we aren&#39;t accidentally removing fields</span>
+        <span class="c">#       that have been added in the meanwhile..</span>
 
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">original_dataset</span><span class="o">.</span><span class="n">extras</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">updates_dict</span><span class="p">[</span><span class="s">&#39;extras&#39;</span><span class="p">]:</span>
                 <span class="n">updates_dict</span><span class="p">[</span><span class="s">&#39;extras&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
 
-        <span class="c">##------------------------------------------------------------</span>
-        <span class="c">## Actually send HTTP request to update the dataset</span>
+        <span class="c"># ------------------------------------------------------------</span>
+        <span class="c"># Actually send HTTP request to update the dataset</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">put_dataset</span><span class="p">(</span><span class="n">updates_dict</span><span class="p">)</span>
         <span class="n">updated</span> <span class="o">=</span> <span class="n">CkanDataset</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-        <span class="c">## Make sure the returned dataset matches the desired state</span>
+        <span class="c"># Make sure the returned dataset matches the desired state</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">updated</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">OperationFailure</span><span class="p">(</span><span class="s">&quot;Updated dataset doesn&#39;t match&quot;</span><span class="p">)</span>
 
@@ -285,9 +285,9 @@
         <span class="sd">&quot;&quot;&quot;Delete a dataset, by id&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">delete_dataset</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
 
-    <span class="c">##------------------------------------------------------------</span>
-    <span class="c">## Organizations management</span>
-    <span class="c">##------------------------------------------------------------</span>
+    <span class="c"># ------------------------------------------------------------</span>
+    <span class="c"># Organizations management</span>
+    <span class="c"># ------------------------------------------------------------</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.list_organizations"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.list_organizations">[docs]</a>    <span class="k">def</span> <span class="nf">list_organizations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span>
@@ -416,7 +416,7 @@
         <span class="k">if</span> <span class="s">&#39;extras&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="s">&#39;extras&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_destupidize_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;extras&#39;</span><span class="p">])</span>
 
-        <span class="n">updated</span> <span class="o">=</span> <span class="n">CkanDataset</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">updated</span> <span class="o">=</span> <span class="n">CkanOrganization</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">updated</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">organization</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">OperationFailure</span><span class="p">(</span><span class="s">&quot;Updated organization doesn&#39;t match&quot;</span><span class="p">)</span>
@@ -426,9 +426,9 @@
 <div class="viewcode-block" id="CkanHighlevelClient.delete_organization"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.delete_organization">[docs]</a>    <span class="k">def</span> <span class="nf">delete_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">delete_organization</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
 
-    <span class="c">##------------------------------------------------------------</span>
-    <span class="c">## Groups management</span>
-    <span class="c">##------------------------------------------------------------</span>
+    <span class="c"># ------------------------------------------------------------</span>
+    <span class="c"># Groups management</span>
+    <span class="c"># ------------------------------------------------------------</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.list_groups"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.list_groups">[docs]</a>    <span class="k">def</span> <span class="nf">list_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span>
@@ -539,9 +539,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">delete_group</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
 
 
-<span class="c">##------------------------------------------------------------</span>
-<span class="c">## Utility functions</span>
-<span class="c">##------------------------------------------------------------</span>
+<span class="c"># ------------------------------------------------------------</span>
+<span class="c"># Utility functions</span>
+<span class="c"># ------------------------------------------------------------</span>
 </div></div>
 <span class="k">def</span> <span class="nf">_stupidize_dict</span><span class="p">(</span><span class="n">mydict</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Convert a dictionary to a list of ``{key: ..., value: ...}``&quot;&quot;&quot;</span>
@@ -564,7 +564,7 @@
   <hr/>
 
   <p>
-      &copy; Copyright 2014, Samuele Santi.
+      &copy; Copyright 2014, Trento RISE.
   </p>
 
   <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
