@@ -183,10 +183,10 @@ def generate_extras(amount):
     """
     Generate a dict with ``amount`` random key/value pairs.
     """
-    pairs = [(
-        'key-{0:03d}'.format(random.randint(0, 50)),
-        'value {0:03d}'.format(random.randint(0, 50)),
-        ) for _ in xrange(amount)]
+    pairs = [
+        ('key-{0:03d}'.format(random.randint(0, 50)),
+         'value {0:03d}'.format(random.randint(0, 50)))
+        for _ in xrange(amount)]
     return dict(pairs)
 
 

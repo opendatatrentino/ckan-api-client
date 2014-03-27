@@ -14,7 +14,7 @@ class CkanClient(object):
 
     def request(self, method, path, **kw):
         kw = copy.deepcopy(kw)
-        if not 'headers' in kw:
+        if 'headers' not in kw:
             kw['headers'] = CaseInsensitiveDict()
         elif not isinstance(kw['headers'], CaseInsensitiveDict):
             kw['headers'] = CaseInsensitiveDict(kw['headers'])
