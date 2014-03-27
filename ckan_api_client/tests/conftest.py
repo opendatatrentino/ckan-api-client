@@ -728,7 +728,7 @@ def data_dir():
 def _get_ckan_client(request, ckan_instance, client_class):
     api_key = ckan_instance.get_sysadmin_api_key()
     server = ckan_instance.serve()
-    client = client_class(server.url, api_key)
+    client = client_class(ckan_instance.server_url, api_key)
 
     def finalize():
         server.stop()
