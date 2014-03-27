@@ -26,7 +26,7 @@ if [ ! -e "${CKAN_VIRTUALENV}" ]; then
 
     ## Clone repository
     mkdir -p "${CKAN_VIRTUALENV}/src"
-    git clone "$REPO_URL" -b "$REPO_BRANCH" --depth=0 "${CKAN_VIRTUALENV}/src/ckan"
+    git clone "$REPO_URL" -b "$REPO_BRANCH" --depth=1 "${CKAN_VIRTUALENV}/src/ckan"
 
     ## Install ckan
     cd "${CKAN_VIRTUALENV}/src/ckan"
