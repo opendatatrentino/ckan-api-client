@@ -21,8 +21,8 @@ from ckan_api_client.objects import CkanDataset, CkanOrganization, CkanGroup
 from ckan_api_client.utils import IDMap, IDPair
 
 
-## Extras field containing id of the external source.
-## The id is simply source_name:
+# Extras field containing id of the external source.
+# The id is simply source_name:
 HARVEST_SOURCE_ID_FIELD = '_harvest_source'
 
 
@@ -56,22 +56,22 @@ class SynchronizationClient(object):
             (key, CkanOrganization(val))
             for key, val in data['organization'].iteritems())
 
-        ## Upsert groups and organizations
+        # Upsert groups and organizations
         groups_map = self._upsert_groups(groups)
         orgs_map = self._upsert_organizations(organizations)
 
-        ## Create list of datasets to be synced
+        # Create list of datasets to be synced
         source_datasets = {}
         for source_id, dataset_dict in data['dataset'].iteritems():
             _dataset_dict = copy.deepcopy(dataset_dict)
 
-            ## We need to make sure "source" datasets
-            ## don't have (otherwise misleading) ids
+            # We need to make sure "source" datasets
+            # don't have (otherwise misleading) ids
             _dataset_dict.pop('id', None)
 
-            ## We need to update groups and organizations,
-            ## to map their name from the source into a
-            ## ckan id
+            # We need to update groups and organizations,
+            # to map their name from the source into a
+            # ckan id
             _dataset_dict['groups'] = [
                 groups_map.to_ckan(grp_id)
                 for grp_id in _dataset_dict['groups']
@@ -81,37 +81,37 @@ class SynchronizationClient(object):
 
             dataset = CkanDataset(_dataset_dict)
 
-            ## We also want to add the "source id", used for further
-            ## synchronizations to find stuff
+            # We also want to add the "source id", used for further
+            # synchronizations to find stuff
             dataset.extras[HARVEST_SOURCE_ID_FIELD] = \
                 self._join_source_id(source_name, source_id)
 
             source_datasets[source_id] = dataset
 
-        ## Retrieve list of datasets from Ckan
+        # Retrieve list of datasets from Ckan
         ckan_datasets = self._find_datasets_by_source(source_name)
 
-        ## Compare collections to find differences
+        # Compare collections to find differences
         differences = self._compare_collections(
             ckan_datasets, source_datasets)
 
-        ##------------------------------------------------------------
-        ## We now need to create/update/delete datasets.
+        # ------------------------------------------------------------
+        # We now need to create/update/delete datasets.
 
-        ## todo: we need to make sure dataset names are not
-        ##       already used by another dataset. The only
-        ##       way is to randomize resource names and hope
-        ##       a 409 response indicates duplicate name..
+        # todo: we need to make sure dataset names are not
+        #       already used by another dataset. The only
+        #       way is to randomize resource names and hope
+        #       a 409 response indicates duplicate name..
 
-        ## We delete first, in order to (possibly) deallocate
-        ## some already-used names..
+        # We delete first, in order to (possibly) deallocate
+        # some already-used names..
         for source_id in differences['left']:
             ckan_id = ckan_datasets[source_id].id
             self._client.delete_dataset(ckan_id)
 
         def force_dataset_operation(operation, dataset, retry=5):
-            ## Maximum dataset name length is 100 characters
-            ## We trim it down to 80 just to be safe.
+            # Maximum dataset name length is 100 characters
+            # We trim it down to 80 just to be safe.
             _orig_name = dataset.name[:80]
             dataset.name = _orig_name
             while True:
@@ -129,19 +129,19 @@ class SynchronizationClient(object):
                 else:
                     return result
 
-        ## Create missing datasets
+        # Create missing datasets
         for source_id in differences['right']:
             dataset = source_datasets[source_id]
             force_dataset_operation(self._client.create_dataset, dataset)
 
-        ## Update outdated datasets
+        # Update outdated datasets
         for source_id in differences['differing']:
             dataset = source_datasets[source_id]
             dataset.id = ckan_datasets[source_id].id
             # self._client.update_dataset(dataset)
             force_dataset_operation(self._client.update_dataset, dataset)
 
-        ## Todo: double-check differences?
+        # Todo: double-check differences?
 
     # def _sync_datasets(self, source_name, datasets):
     #     """
@@ -180,7 +180,7 @@ class SynchronizationClient(object):
                 if e.status_code != 404:
                     raise
 
-                ## We need to create the group
+                # We need to create the group
                 group.id = None
                 group.state = 'active'
                 created_group = self._client.create_group(group)
@@ -188,12 +188,12 @@ class SynchronizationClient(object):
                                  ckan_id=created_group.id))
 
             else:
-                ## The group already exist. It might be logically
-                ## deleted, but we don't care -> just update and
-                ## make sure it is marked as active.
+                # The group already exist. It might be logically
+                # deleted, but we don't care -> just update and
+                # make sure it is marked as active.
 
-                ## todo: make sure we don't need to preserve users and stuff,
-                ##       otherwise we need to workaround that in hi-lev client
+                # todo: make sure we don't need to preserve users and stuff,
+                #       otherwise we need to workaround that in hi-lev client
 
                 group.id = ckan_group.id
                 group.state = 'active'
@@ -229,7 +229,7 @@ class SynchronizationClient(object):
                 if e.status_code != 404:
                     raise
 
-                ## We need to create the org
+                # We need to create the org
                 org.id = None
                 org.state = 'active'
                 created_org = self._client.create_organization(org)

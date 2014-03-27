@@ -14,9 +14,9 @@ class CkanHighlevelClient(object):
     def __init__(self, base_url, api_key=None):
         self._client = CkanLowlevelClient(base_url, api_key)
 
-    ##------------------------------------------------------------
-    ## Datasets management
-    ##------------------------------------------------------------
+    # ------------------------------------------------------------
+    # Datasets management
+    # ------------------------------------------------------------
 
     def list_datasets(self):
         """:return: a list of dataset ids"""
@@ -133,33 +133,33 @@ class CkanHighlevelClient(object):
         if dataset.id is None:
             raise ValueError("Trying to update a dataset without an id")
 
-        ##------------------------------------------------------------
-        ## We need the original dataset to make sure
-        ## we are updating things correctly.
+        # ------------------------------------------------------------
+        # We need the original dataset to make sure
+        # we are updating things correctly.
 
         original_dataset = self.get_dataset(dataset.id)
         updates_dict = dataset.serialize()
 
-        ##------------------------------------------------------------
-        ## Process the Extras field
+        # ------------------------------------------------------------
+        # Process the Extras field
 
-        ## In order to remove an "extras" field, we need to
-        ## explicitly set its value to None
+        # In order to remove an "extras" field, we need to
+        # explicitly set its value to None
 
-        ## todo: we should track changes on the "extras" field in order
-        ##       to make sure we aren't accidentally removing fields
-        ##       that have been added in the meanwhile..
+        # todo: we should track changes on the "extras" field in order
+        #       to make sure we aren't accidentally removing fields
+        #       that have been added in the meanwhile..
 
         for key in original_dataset.extras:
             if key not in updates_dict['extras']:
                 updates_dict['extras'][key] = None
 
-        ##------------------------------------------------------------
-        ## Actually send HTTP request to update the dataset
+        # ------------------------------------------------------------
+        # Actually send HTTP request to update the dataset
         data = self._client.put_dataset(updates_dict)
         updated = CkanDataset(data)
 
-        ## Make sure the returned dataset matches the desired state
+        # Make sure the returned dataset matches the desired state
         if not updated.is_equivalent(dataset):
             raise OperationFailure("Updated dataset doesn't match")
 
@@ -169,9 +169,9 @@ class CkanHighlevelClient(object):
         """Delete a dataset, by id"""
         self._client.delete_dataset(id)
 
-    ##------------------------------------------------------------
-    ## Organizations management
-    ##------------------------------------------------------------
+    # ------------------------------------------------------------
+    # Organizations management
+    # ------------------------------------------------------------
 
     def list_organizations(self):
         return [
@@ -310,9 +310,9 @@ class CkanHighlevelClient(object):
     def delete_organization(self, id):
         self._client.delete_organization(id)
 
-    ##------------------------------------------------------------
-    ## Groups management
-    ##------------------------------------------------------------
+    # ------------------------------------------------------------
+    # Groups management
+    # ------------------------------------------------------------
 
     def list_groups(self):
         return [
@@ -423,9 +423,9 @@ class CkanHighlevelClient(object):
         return self._client.delete_group(id)
 
 
-##------------------------------------------------------------
-## Utility functions
-##------------------------------------------------------------
+# ------------------------------------------------------------
+# Utility functions
+# ------------------------------------------------------------
 
 def _stupidize_dict(mydict):
     """Convert a dictionary to a list of ``{key: ..., value: ...}``"""

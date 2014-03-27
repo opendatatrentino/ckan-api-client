@@ -2,7 +2,9 @@
 
 import requests
 
-from .utils.http import check_response_ok, check_response_error
+from .utils.http import check_response_ok
+
+# todo: we should check all fixtures in here!
 
 
 def test_site_read(ckan_url):
@@ -13,7 +15,7 @@ def test_site_read(ckan_url):
     data = check_response_ok(response)
     assert data['result'] is True
 
-    ## Call to an invalid URL should return 404
+    # Call to an invalid URL should return 404
     response = requests.get(ckan_url('/api/3/action/site_read/something'))
 
     assert not response.ok

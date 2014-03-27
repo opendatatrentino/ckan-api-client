@@ -18,7 +18,7 @@ class CkanGroup(BaseObject):
     state = StringField(default='active')
     type = StringField(default='group')
 
-    ## Special fields
+    # Special fields
     extras = ExtrasField()
     groups = GroupsField()
     tags = ListField()

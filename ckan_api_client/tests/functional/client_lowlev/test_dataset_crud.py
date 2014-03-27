@@ -9,14 +9,13 @@ import copy
 import pytest
 
 from ckan_api_client.exceptions import HTTPError
-from ckan_api_client.tests.utils.diff import diff_mappings
 from ckan_api_client.tests.utils.generate import generate_dataset
 from ckan_api_client.tests.utils.strings import gen_random_id
 from ckan_api_client.tests.utils.validation import check_dataset
 
 
 def test_dataset_simple_crud(ckan_client_ll):
-    ## Let's try creating a dataset
+    # Let's try creating a dataset
 
     now = datetime.datetime.now()
     now_str = now.strftime('%F %T')
@@ -37,16 +36,16 @@ def test_dataset_simple_crud(ckan_client_ll):
     dataset = ckan_client_ll.post_dataset(_dataset)
     dataset_id = dataset['id']
 
-    ## Let's check dataset data first
+    # Let's check dataset data first
     for key, val in _dataset.iteritems():
         assert dataset[key] == val
 
-    ## Check that retrieved dataset is identical
+    # Check that retrieved dataset is identical
     dataset = ckan_client_ll.get_dataset(dataset_id)
     for key, val in _dataset.iteritems():
         assert dataset[key] == val
 
-    ## Check against data loss on update..
+    # Check against data loss on update..
     retrieved_dataset = dataset
     updates = {
         'author': 'Another Author',
@@ -56,14 +55,14 @@ def test_dataset_simple_crud(ckan_client_ll):
     new_dataset.update(updates)
     new_dataset['id'] = dataset_id
 
-    ## Get the updated dataset
+    # Get the updated dataset
     updated_dataset = ckan_client_ll.put_dataset(new_dataset)
     updated_dataset_2 = ckan_client_ll.get_dataset(dataset_id)
 
-    ## They should be equal!
+    # They should be equal!
     assert updated_dataset == updated_dataset_2
 
-    ## And the updated dataset shouldn't have data loss
+    # And the updated dataset shouldn't have data loss
     expected_dataset = copy.deepcopy(retrieved_dataset)
     expected_dataset.update(updates)
 
@@ -74,25 +73,25 @@ def test_dataset_simple_crud(ckan_client_ll):
 
     assert updated_dataset == expected_dataset
 
-    ## Delete the dataset
+    # Delete the dataset
     ckan_client_ll.delete_dataset(dataset_id)
 
 
 def test_dataset_delete(ckan_client_ll):
-    ## Create dataset
+    # Create dataset
     stage_1pre = generate_dataset()
     stage_1 = ckan_client_ll.post_dataset(stage_1pre)
     check_dataset(stage_1pre, stage_1)
     dataset_id = stage_1['id']
 
-    ## Make sure it is in the list
+    # Make sure it is in the list
     dataset_ids = ckan_client_ll.list_datasets()
     assert dataset_id in dataset_ids
 
-    ## Now delete the dataset
+    # Now delete the dataset
     ckan_client_ll.delete_dataset(dataset_id)
 
-    ## Anonymous users cannot see the dataset
+    # Anonymous users cannot see the dataset
     anon_client = ckan_client_ll.anonymous
     dataset_ids = anon_client.list_datasets()
     assert dataset_id not in dataset_ids
@@ -100,18 +99,18 @@ def test_dataset_delete(ckan_client_ll):
         anon_client.get_dataset(dataset_id)
     assert excinfo.value.status_code in (403, 404)  # :(
 
-    ## Administrators can still access deleted dataset
+    # Administrators can still access deleted dataset
     deleted_dataset = ckan_client_ll.get_dataset(dataset_id)
     assert deleted_dataset['state'] == 'deleted'
 
-    ## But it's still gone from the list
+    # But it's still gone from the list
     dataset_ids = ckan_client_ll.list_datasets()
     assert dataset_id not in dataset_ids
 
 
 @pytest.mark.xfail(run=False, reason='Uses functions from the hi-lev client')
 def test_updating_extras(request, ckan_client_ll):
-    ## First, create the dataset
+    # First, create the dataset
     # our_dataset = prepare_dataset(ckan_client_ll)
 
     our_dataset = generate_dataset()
@@ -125,8 +124,8 @@ def test_updating_extras(request, ckan_client_ll):
         assert updated_dataset == retrieved_dataset
         check_dataset(updated_dataset, expected)
 
-    ##------------------------------------------------------------
-    ## Update #1: add some extras
+    # ------------------------------------------------------------
+    # -- Update #1: add some extras
 
     extras_update = {'field-1': 'value-1', 'field-2': 'value-2'}
     expected_updated_dataset = copy.deepcopy(our_dataset)
@@ -136,8 +135,8 @@ def test_updating_extras(request, ckan_client_ll):
     })
     update_and_check({'extras': extras_update}, expected_updated_dataset)
 
-    ##------------------------------------------------------------
-    ## Update #1: change a field
+    # ------------------------------------------------------------
+    # -- Update #1: change a field
 
     extras_update = {'field-1': 'value-1-VERSION2'}
     expected_updated_dataset = copy.deepcopy(our_dataset)
@@ -147,8 +146,8 @@ def test_updating_extras(request, ckan_client_ll):
     })
     update_and_check({'extras': extras_update}, expected_updated_dataset)
 
-    ##------------------------------------------------------------
-    ## Update #3: change a field, add another
+    # ------------------------------------------------------------
+    # -- Update #3: change a field, add another
 
     extras_update = {'field-1': 'value-1-VERSION3', 'field-3': 'value-3'}
     expected_updated_dataset = copy.deepcopy(our_dataset)
@@ -159,8 +158,8 @@ def test_updating_extras(request, ckan_client_ll):
     })
     update_and_check({'extras': extras_update}, expected_updated_dataset)
 
-    ##------------------------------------------------------------
-    ## Update #4: delete a field
+    # ------------------------------------------------------------
+    # -- Update #4: delete a field
 
     extras_update = {'field-3': None}
     expected_updated_dataset = copy.deepcopy(our_dataset)
@@ -170,8 +169,8 @@ def test_updating_extras(request, ckan_client_ll):
     })
     update_and_check({'extras': extras_update}, expected_updated_dataset)
 
-    ##------------------------------------------------------------
-    ## Update #5: add + update + delete
+    # ------------------------------------------------------------
+    # -- Update #5: add + update + delete
 
     extras_update = {'field-1': 'NEW_VALUE', 'field-2': None,
                      'field-3': 'hello', 'field-4': 'world'}
@@ -195,7 +194,7 @@ def test_extras_bad_behavior(request, ckan_client_ll):
     request.addfinalizer(lambda: ckan_client_ll.delete_dataset(dataset_id))
     assert created['extras'] == {'a': 'aa', 'b': 'bb', 'c': 'cc'}
 
-    ## Update #1: omitting extras will.. flush it!
+    # -- Update #1: omitting extras will.. flush it!
     updated = ckan_client_ll.put_dataset({
         'id': dataset_id,
         'name': dataset['name'],
@@ -204,7 +203,7 @@ def test_extras_bad_behavior(request, ckan_client_ll):
     })
     assert updated['extras'] == {}
 
-    ## Update #2: re-add some extras
+    # -- Update #2: re-add some extras
     updated = ckan_client_ll.put_dataset({
         'id': dataset_id,
         'name': dataset['name'],
@@ -213,7 +212,7 @@ def test_extras_bad_behavior(request, ckan_client_ll):
     })
     assert updated['extras'] == {'a': 'aa', 'b': 'bb', 'c': 'cc'}
 
-    ## Update #3: partial extras will just update
+    # -- Update #3: partial extras will just update
     updated = ckan_client_ll.put_dataset({
         'id': dataset_id,
         'name': dataset['name'],
@@ -222,7 +221,7 @@ def test_extras_bad_behavior(request, ckan_client_ll):
     })
     assert updated['extras'] == {'a': 'UPDATED', 'b': 'bb', 'c': 'cc'}
 
-    ## Update #4: empty extras has no effect
+    # -- Update #4: empty extras has no effect
     updated = ckan_client_ll.put_dataset({
         'id': dataset_id,
         'name': dataset['name'],
@@ -231,7 +230,7 @@ def test_extras_bad_behavior(request, ckan_client_ll):
     })
     assert updated['extras'] == {'a': 'UPDATED', 'b': 'bb', 'c': 'cc'}
 
-    ## Update #5: this is fucked up, man..
+    # -- Update #5: this is fucked up, man..
     updated = ckan_client_ll.put_dataset({
         'id': dataset_id,
         'name': dataset['name'],
@@ -276,8 +275,8 @@ def test_updating_groups(request, ckan_client_ll):
     assert sorted(updated['groups']) \
         == sorted(dataset['groups'])  # WTF? -- should be empty
 
-    ## APPARENTLY, if we pass a subset of the datasets, the extra ones
-    ## will just get deleted.
+    # -- APPARENTLY, if we pass a subset of the datasets, the extra ones
+    # -- will just get deleted.
 
     # # Let's play around a bit..
     # new_groups = [x['id'] for x in dummy_groups[:3]]
@@ -305,18 +304,18 @@ def test_groups_bad_behavior(request, ckan_client_ll):
 
     OMITTED = object()
     GROUP_TEST_CASES = [
-        ## If we omit the key entirely, it will be flushed
+        # -- If we omit the key entirely, it will be flushed
         ([], OMITTED, []),
         ([1, 2, 3], OMITTED, []),
 
-        ## If we pass None, the API will fail with 500:
-        ## Error - <type 'exceptions.TypeError'>: object of type
-        ## 'NoneType' has no len()
+        # -- If we pass None, the API will fail with 500:
+        # -- Error - <type 'exceptions.TypeError'>: object of type
+        # -- 'NoneType' has no len()
         # ([1, 2, 3], None, []),
 
-        ## For other cases, it seems to work when passed IDs
-        ## Do **not** attempt passing objects, as behavior here
-        ## is more uncertain..
+        # -- For other cases, it seems to work when passed IDs
+        # -- Do **not** attempt passing objects, as behavior here
+        # -- is more uncertain..
         ([1, 2, 3], [], []),
         ([1], [1, 2, 3, 4], [1, 2, 3, 4]),
         ([1, 2, 3], [1, 2], [1, 2]),
@@ -324,7 +323,7 @@ def test_groups_bad_behavior(request, ckan_client_ll):
         ([1, 2], [1, 2, 3, 4], [1, 2, 3, 4]),
     ]
 
-    ## Create a bunch of groups
+    # -- Create a bunch of groups
     grp = []
     for x in xrange(5):
         code = gen_random_id()
@@ -360,7 +359,7 @@ def test_groups_bad_behavior(request, ckan_client_ll):
 
         dataset = _new_dataset(groups=state)
 
-        ## Intentionally using low-level put_dataset() here
+        # -- Intentionally using low-level put_dataset() here
         _data = {'id': dataset['id'], 'groups': update} \
             if update is not OMITTED else {'id': dataset['id']}
         upd = client.put_dataset(_data)

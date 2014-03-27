@@ -64,11 +64,11 @@ class CkanLowlevelClient(object):
         headers = kwargs.get('headers') or {}
         kwargs['headers'] = headers
 
-        ## Update headers for authorization
+        # Update headers for authorization
         if self.api_key is not None:
             headers['Authorization'] = self.api_key
 
-        ## Serialize data to json, if not already
+        # Serialize data to json, if not already
         if 'data' in kwargs:
             if not isinstance(kwargs['data'], basestring):
                 kwargs['data'] = json.dumps(kwargs['data'])
@@ -80,14 +80,14 @@ class CkanLowlevelClient(object):
         url = urlparse.urljoin(self.base_url, path)
         response = requests.request(method, url, **kwargs)
         if not response.ok:
-            ##------------------------------------------------------------
-            ## todo: attach message, if any available..
-            ##------------------------------------------------------------
-            ## todo: we should find a way to figure out how to attach
-            ##       original text message to the exception
-            ##       as it might be: json string, part of json object,
-            ##       part of html document
-            ##------------------------------------------------------------
+            # ------------------------------------------------------------
+            # todo: attach message, if any available..
+            # ------------------------------------------------------------
+            # todo: we should find a way to figure out how to attach
+            #       original text message to the exception
+            #       as it might be: json string, part of json object,
+            #       part of html document
+            # ------------------------------------------------------------
             raise HTTPError(
                 status_code=response.status_code,
                 message="Error while performing request",
@@ -119,9 +119,9 @@ class CkanLowlevelClient(object):
 
         raise ValueError("Unable to find message in JSON data")
 
-    ##============================================================
-    ## Validation helpers
-    ##============================================================
+    # ============================================================
+    # Validation helpers
+    # ============================================================
 
     def _validate_response_idlist(self, response, name='object'):
         if not isinstance(response, list):
@@ -149,9 +149,9 @@ class CkanLowlevelClient(object):
                 "Bad {0} list returned from the api (an element "
                 "is not a dict)".format(name))
 
-    ##============================================================
-    ## Datasets
-    ##============================================================
+    # ============================================================
+    # Datasets
+    # ============================================================
 
     def list_datasets(self):
         """Return a list of all dataset ids"""
@@ -236,14 +236,14 @@ class CkanLowlevelClient(object):
         with ign404:
             self.request('DELETE', path, data={'id': dataset_id})
 
-    ##============================================================
-    ## Groups
-    ##============================================================
+    # ============================================================
+    # Groups
+    # ============================================================
 
-    ##=====[!!]=========== IMPORTANT NOTE ===============[!!]=====
-    ## BEWARE! API v2 only considers actual groups, organizations
-    ## are not handled / returned by this one!
-    ##============================================================
+    # =====[!!]=========== IMPORTANT NOTE ===============[!!]=====
+    # BEWARE! API v2 only considers actual groups, organizations
+    # are not handled / returned by this one!
+    # ============================================================
 
     def list_groups(self):
         path = '/api/2/rest/group'
@@ -288,14 +288,14 @@ class CkanLowlevelClient(object):
         with ign404:
             self.request('POST', path, data={'id': group_id})
 
-    ##============================================================
-    ## Organizations
-    ##============================================================
+    # ============================================================
+    # Organizations
+    # ============================================================
 
-    ## --- [!!] NOTE ---------------------------------------------
-    ## We need to fallback to api v3 here, as v2 doesn't support
-    ## doing things with organizations..
-    ##------------------------------------------------------------
+    # --- [!!] NOTE ---------------------------------------------
+    # We need to fallback to api v3 here, as v2 doesn't support
+    # doing things with organizations..
+    # ------------------------------------------------------------
 
     def list_organizations(self):
         path = '/api/3/action/organization_list'
@@ -340,9 +340,9 @@ class CkanLowlevelClient(object):
         with ign404:
             self.request('POST', path, data={'id': id})
 
-    ##============================================================
-    ## Licenses
-    ##============================================================
+    # ============================================================
+    # Licenses
+    # ============================================================
 
     def list_licenses(self):
         path = '/api/2/rest/licenses'

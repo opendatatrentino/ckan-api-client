@@ -1,6 +1,6 @@
 from ckan_api_client.utils import WrappedList
 
-from .base import BaseObject, MAPPING_TYPES, SEQUENCE_TYPES
+from .base import BaseObject, MAPPING_TYPES
 from .fields import (StringField, GroupsField, ExtrasField, ListField,
                      BoolField)
 
@@ -28,21 +28,21 @@ class ResourcesField(ListField):
         ]
 
     def is_equivalent(self, instance, name, other, ignore_key=True):
-        ## We are now comparing two ResourcesList instances,
-        ## but we need to ignore all the key fields when comparing
-        ## resources
+        # We are now comparing two ResourcesList instances,
+        # but we need to ignore all the key fields when comparing
+        # resources
 
         our_value = getattr(instance, name)
         other_value = getattr(other, name)
         assert isinstance(our_value, ResourcesList)
         assert isinstance(other_value, ResourcesList)
 
-        ## Different length -- clearly two different things
+        # Different length -- clearly two different things
         if len(our_value) != len(other_value):
             return False
 
-        ## Compare resources one-by-one, by calling their "is_equivalent"
-        ## methods.
+        # Compare resources one-by-one, by calling their "is_equivalent"
+        # methods.
         for resource1, resource2 in zip(our_value, other_value):
             if not resource1.is_equivalent(resource2, ignore_key=ignore_key):
                 return False
@@ -79,7 +79,7 @@ class ResourcesList(WrappedList):
         try:
             item = self._check_item(item)
         except TypeError:
-            ## Invalid type -- cannot be contained
+            # Invalid type -- cannot be contained
             return False
         return super(ResourcesList, self).__contains__(item)
 
@@ -87,7 +87,7 @@ class ResourcesList(WrappedList):
 class CkanDataset(BaseObject):
     id = StringField(is_key=True)
 
-    ## Core fields
+    # Core fields
     name = StringField()
     title = StringField()
 
@@ -103,7 +103,7 @@ class CkanDataset(BaseObject):
     type = StringField(default='dataset')
     url = StringField()
 
-    ## Special fields
+    # Special fields
     extras = ExtrasField()
     groups = GroupsField()
     resources = ResourcesField()
@@ -125,8 +125,8 @@ class CkanResource(BaseObject):
     url_type = StringField()
 
     def __eq__(self, other):
-        ## To allow comparison with dict..
-        ## todo: move this in the BaseObject?
+        # To allow comparison with dict..
+        # todo: move this in the BaseObject?
         if isinstance(other, MAPPING_TYPES):
             return self == CkanResource(other)
         return super(CkanResource, self).__eq__(other)

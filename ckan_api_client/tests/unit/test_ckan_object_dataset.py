@@ -27,7 +27,7 @@ def test_ckandataset_creation():
     assert isinstance(dataset.resources, ResourcesList)
     assert len(dataset.resources) == 0
 
-    ## The order of groups doesn't matter..
+    # The order of groups doesn't matter..
     _serialized = dataset.serialize()
     assert sorted(_serialized.pop('groups')) == sorted(['one', 'two', 'three'])
 
@@ -57,40 +57,40 @@ def test_ckan_dataset_resources():
     })
     assert dataset.is_modified() is False
 
-    ## By asking for resources, a copy will be made,
-    ## but the two items should match..
+    # By asking for resources, a copy will be made,
+    # but the two items should match..
     assert isinstance(dataset.resources, ResourcesList)
     assert len(dataset.resources) == 0
     assert dataset.is_modified() is False
 
-    ## Resources can be passed as normal objects and
-    ## will be converted to CkanResource() objects.
+    # Resources can be passed as normal objects and
+    # will be converted to CkanResource() objects.
     dataset.resources = [
         {'name': 'resource-1'},
         {'name': 'resource-2'},
     ]
 
-    ## Make sure type conversions have been applied
+    # Make sure type conversions have been applied
     assert isinstance(dataset.resources, ResourcesList)
     for item in dataset.resources:
         assert isinstance(item, CkanResource)
 
-    ## Make sure dataset is marked as modified
+    # Make sure dataset is marked as modified
     assert dataset.is_modified() is True
 
-    ## We allow comparison to plain objects
+    # We allow comparison to plain objects
     assert dataset.resources == [
         {'name': 'resource-1'},
         {'name': 'resource-2'},
     ]
 
-    ## Or to the actual types used internally, of course
+    # Or to the actual types used internally, of course
     assert dataset.resources == ResourcesList([
         CkanResource({'name': 'resource-1'}),
         CkanResource({'name': 'resource-2'}),
     ])
 
-    ## Do some tests for object serialization
+    # Do some tests for object serialization
     serialized = dataset.serialize()
 
     assert isinstance(serialized['resources'], list)
@@ -102,7 +102,7 @@ def test_ckan_dataset_resources():
     assert isinstance(serialized['resources'][1], dict)
     assert serialized['resources'][1]['name'] == 'resource-2'
 
-    ## Serialized data must be json-serializable
+    # Serialized data must be json-serializable
     json.dumps(serialized)
 
 
@@ -125,8 +125,8 @@ def test_ckandataset_resources_update():
         {'name': 'resource-2'},
     ]
 
-    ## Getting should not affect is_modified(), although
-    ## it is manipulating things internally..
+    # Getting should not affect is_modified(), although
+    # it is manipulating things internally..
     assert dataset.is_modified() is False
 
     dataset.resources.append({'name': 'resource-3'})
@@ -165,8 +165,8 @@ def test_ckandataset_resources_update():
     ]
     _typecheck_resources(dataset.resources)
 
-    ## "Contains" test is successful as fields left to
-    ## default values just get ignored during comparison.
+    # "Contains" test is successful as fields left to
+    # default values just get ignored during comparison.
     assert {'name': 'Hello'} in dataset.resources
     assert {'name': 'WTF'} not in dataset.resources
 
@@ -196,9 +196,9 @@ def test_resources_list():
     _typecheck_resources(rl4)
 
 
-##------------------------------------------------------------
-## Create datasets in different ways, compare them
-##------------------------------------------------------------
+# ------------------------------------------------------------
+# Create datasets in different ways, compare them
+# ------------------------------------------------------------
 
 
 def _gen_ckandataset_update_extras_cases():
@@ -225,7 +225,7 @@ def _gen_ckandataset_update_extras_cases():
         ds.extras = {'KEY': 'VALUE'}
         return ds
 
-    ## We need to generate pairs
+    # We need to generate pairs
     functions = [(f.func_name, f) for f in [
         init_extras, set_extras, upd_extras, add_extras, repl_extras]]
 

@@ -18,7 +18,7 @@ class CkanOrganization(BaseObject):
     state = StringField(default='active')
     type = StringField(default='organization')
 
-    ## Special fields
+    # Special fields
     extras = ExtrasField()
     groups = GroupsField()
     tags = ListField()

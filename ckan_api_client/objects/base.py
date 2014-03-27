@@ -5,6 +5,8 @@ Classes to represent / validate Ckan objects.
 import warnings
 import collections
 
+__all__ = ['BaseField', 'BaseObject']
+
 
 NOTSET = object()
 MAPPING_TYPES = (dict, collections.Mapping)
@@ -36,7 +38,7 @@ class BaseField(object):
             using :py:meth:`is_equivalent`
         """
 
-        ## todo: refactor to use kwargs
+        # todo: refactor to use kwargs
 
         if default is not NOTSET:
             self.default = default
@@ -96,8 +98,8 @@ class BaseField(object):
         Delete the modified value for a field (logically
         restores the original one)
         """
-        ## We don't want an exception here, as we just restore
-        ## field to its initial value..
+        # We don't want an exception here, as we just restore
+        # field to its initial value..
         instance._updates.pop(name, None)
 
     def serialize(self, instance, name):
@@ -117,21 +119,21 @@ class BaseField(object):
     def is_equivalent(self, instance, name, other, ignore_key=True):
         if ignore_key and self.is_key:
 
-            ## If we want to ignore keys from comparison,
-            ## key comparison should always return True
-            ## for fields marked as keys.
+            # If we want to ignore keys from comparison,
+            # key comparison should always return True
+            # for fields marked as keys.
 
-            ##--------------------------------------------------
-            ## NOTE: This should not be needed, as this part
-            ## won't even be called in case it is a key **and**
-            ## ignore_key=True. Its main purpose is to be
-            ## used recursively by fields containing related
-            ## objects.
-            ##--------------------------------------------------
+            # --------------------------------------------------
+            # NOTE: This should not be needed, as this part
+            # won't even be called in case it is a key **and**
+            # ignore_key=True. Its main purpose is to be
+            # used recursively by fields containing related
+            # objects.
+            # --------------------------------------------------
 
             return True
 
-        ## Just perform simple comparison between values
+        # Just perform simple comparison between values
         return getattr(instance, name) == getattr(other, name)
 
     def __repr__(self):
@@ -157,12 +159,12 @@ class BaseObject(object):
             raise TypeError("Initial values must be a dict (or None). "
                             "Got {0!r} instead".format(type(values)))
 
-        ## Prepare variables to hold initial / updated values
+        # Prepare variables to hold initial / updated values
         self._values = {}
         self._updates = {}
 
-        ## Set initial field values, by calling set_initial()
-        ## on the fields themselves.
+        # Set initial field values, by calling set_initial()
+        # on the fields themselves.
         self.set_initial(values)
 
     @classmethod
@@ -248,17 +250,17 @@ class BaseObject(object):
         """
 
         if type(self) != type(other):
-            ## We want to make sure the objects are of the
-            ## exact same type, not of some sub-type.
+            # We want to make sure the objects are of the
+            # exact same type, not of some sub-type.
             return False
 
         for name, field in self.iter_fields():
-            ## Ignore key fields if we are required to
-            ## ignore keys.
+            # Ignore key fields if we are required to
+            # ignore keys.
             if ignore_key and field.is_key:
                 continue
 
-            ## Use the equivalency check for fields
+            # Use the equivalency check for fields
             if not field.is_equivalent(
                     self, name, other, ignore_key=ignore_key):
                 return False

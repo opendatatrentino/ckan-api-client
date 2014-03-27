@@ -5,8 +5,8 @@ def _check_obj(obj_class, obj1, obj2):
     _obj1 = obj_class.from_dict(obj1)
     _obj2 = obj_class.from_dict(obj2)
 
-    ## Check in the two ways to check the is_equivalent()
-    ## implementation..
+    # Check in the two ways to check the is_equivalent()
+    # implementation..
     assert _obj1.is_equivalent(_obj2)
     assert _obj2.is_equivalent(_obj1)
 

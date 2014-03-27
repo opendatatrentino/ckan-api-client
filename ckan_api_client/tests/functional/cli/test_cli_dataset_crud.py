@@ -1,7 +1,7 @@
 from ckan_api_client.high_level import CkanHighlevelClient
 
-import urlparse
-import requests
+# import urlparse
+# import requests
 
 
 def test_dataset_import_export(ckan_instance):

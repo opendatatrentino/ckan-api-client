@@ -59,17 +59,17 @@ def generate_datasets(groups, organizations, amount=20):
 def test_simple_harvesting(ckan_client_sync):
     client = ckan_client_sync
 
-    ##------------------------------------------------------------
-    ## Initial import of data
+    # ------------------------------------------------------------
+    # Initial import of data
 
     data = generate_data()
     assert len(data['dataset']) == 20
 
     client.sync('dummy-source', data)
-    ## todo: check current status
+    #  todo: check current status
 
-    ##------------------------------------------------------------
-    ## Add 20 new datasets
+    # ------------------------------------------------------------
+    #  Add 20 new datasets
 
     new_datasets = generate_datasets(
         groups=data['group'],
@@ -80,10 +80,10 @@ def test_simple_harvesting(ckan_client_sync):
     assert len(data['dataset']) == 40
 
     client.sync('dummy-source', data)
-    ## todo: check current status
+    #  todo: check current status
 
-    ##------------------------------------------------------------
-    ## Randomly remove 15 datasets, add 20
+    # ------------------------------------------------------------
+    #  Randomly remove 15 datasets, add 20
 
     todel = random.sample(data['dataset'].keys(), 15)
     for key in todel:
@@ -97,13 +97,13 @@ def test_simple_harvesting(ckan_client_sync):
     assert len(data['dataset']) == 45
 
     client.sync('dummy-source', data)
-    ## todo: check current status
+    #  todo: check current status
 
-    ##------------------------------------------------------------
-    ## Datasets: -25 +50 (should be 80 now..)
-    ## Organizations: +10
-    ## Groups: +20
-    ##------------------------------------------------------------
+    # ------------------------------------------------------------
+    #  Datasets: -25 +50 (should be 80 now..)
+    #  Organizations: +10
+    #  Groups: +20
+    # ------------------------------------------------------------
 
     todel = random.sample(data['dataset'].keys(), 25)
     for key in todel:
@@ -119,9 +119,9 @@ def test_simple_harvesting(ckan_client_sync):
     data['dataset'].update(new_datasets)
 
     client.sync('dummy-source', data)
-    ## todo: check current status
+    #  todo: check current status
 
-    ##------------------------------------------------------------
-    ## Now the tricky thing: we need to apply random
-    ## changes to objects and make sure they are updated
-    ## correctly..
+    # ------------------------------------------------------------
+    #  Now the tricky thing: we need to apply random
+    #  changes to objects and make sure they are updated
+    #  correctly..

@@ -23,9 +23,9 @@ def test_ckan_organization_creation():
     assert organization.title == 'My Organization'
     assert organization.description == 'My org description'
 
-    ## Make sure it can be json-serialized
+    # Make sure it can be json-serialized
     serialized = organization.serialize()
     json.dumps(serialized)
 
 
-## todo: write further tests
+# todo: write further tests

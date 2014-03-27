@@ -26,21 +26,21 @@ def test_organization_get_by_name(ckan_client_hl):
     assert created.is_equivalent(organization)
     organization_id = created.id
 
-    ## Try getting by id
+    # Try getting by id
     organization_1 = client.get_organization(organization_id)
     assert created == organization_1
 
-    ## Try getting by name
+    # Try getting by name
     organization_2 = client.get_organization_by_name(
         'example-organization-name')
     assert created == organization_2
 
-    ## Try getting by id, but passing name instead
+    # Try getting by id, but passing name instead
     with pytest.raises(HTTPError) as excinfo:
         client.get_organization('example-organization-name')
     assert excinfo.value.status_code == 404
 
-    ## Try getting by name, but passing id instead
+    # Try getting by name, but passing id instead
     with pytest.raises(HTTPError) as excinfo:
         client.get_organization_by_name(organization_id)
     assert excinfo.value.status_code == 404
@@ -49,12 +49,12 @@ def test_organization_get_by_name(ckan_client_hl):
 def test_organization_list(ckan_client_hl):
     client = ckan_client_hl
 
-    ## Create a bunch of organizations
+    # Create a bunch of organizations
     obj_dicts = [generate_organization() for _ in xrange(10)]
     objs = [CkanOrganization.from_dict(d) for d in obj_dicts]
     created_objs = [client.create_organization(o) for o in objs]
 
-    ## Make sure all the orgnaizations are in the list
+    # Make sure all the orgnaizations are in the list
     obj_ids = client.list_organizations()
     for obj in created_objs:
         assert obj.id is not None

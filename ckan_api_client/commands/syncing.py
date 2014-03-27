@@ -5,12 +5,8 @@ Commands to query CKan data
 import json
 import logging
 import os
-import sys
 import sqlite3
 
-from cliff.lister import Lister
-
-from ckan_api_client.objects import CkanDataset
 from ckan_api_client.syncing import SynchronizationClient
 from .base import CkanCommandBase
 
@@ -44,7 +40,7 @@ class ImportDirectory(CkanCommandBase):
             base_dir = os.path.join(source_dir, obj_type)
             for basename in os.listdir(base_dir):
                 if basename.startswith('.') or basename.endswith('~'):
-                    ## Skip hidden / backup files
+                    # Skip hidden / backup files
                     continue
                 filename = os.path.join(base_dir, basename)
                 with open(filename, 'rb') as f:
@@ -63,11 +59,11 @@ class ImportDirectory(CkanCommandBase):
             source_dir = os.getcwd()
         source_dir = os.path.abspath(source_dir)
 
-        ## Load data into a big dictionary
+        # Load data into a big dictionary
         self.log.info("Loading data")
         data = self._load_data(source_dir)
 
-        ## Run syncing and hope for the best!
+        # Run syncing and hope for the best!
         self.log.info("Synchronizing data")
         client.sync(source_name, data)
 

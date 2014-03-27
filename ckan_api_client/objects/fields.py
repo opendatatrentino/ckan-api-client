@@ -65,23 +65,23 @@ class MutableFieldMixin(object):
                 instance._values[name] = self.get_default()
             value = instance._values[name]
 
-            ## to be extra safe, make copy here, even on
-            ## default values, which might get shared..
+            # to be extra safe, make copy here, even on
+            # default values, which might get shared..
             instance._updates[name] = copy.deepcopy(
                 self.validate(instance, name, value))
 
         return instance._updates[name]
 
     def serialize(self, instance, name):
-        ## Copy to prevent unwanted mutation
+        # Copy to prevent unwanted mutation
         return copy.deepcopy(self.get(instance, name))
 
     def is_modified(self, instance, name):
         if name not in instance._updates:
             return False
 
-        ## Otherwise, compare values to check whether
-        ## field has been modified.
+        # Otherwise, compare values to check whether
+        # field has been modified.
 
         if name in instance._values:
             default = instance._values[name]

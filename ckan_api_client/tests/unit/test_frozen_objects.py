@@ -12,8 +12,8 @@ def test_frozendict():
     assert my_dict == my_frozen_dict
     assert isinstance(my_frozen_dict, FrozenDict)
 
-    ##----------------------------------------
-    ## We can mutate my_dict
+    # ----------------------------------------
+    # We can mutate my_dict
 
     my_dict['key'] = 'UPDATED-1'
     assert my_dict['key'] == 'UPDATED-1'
@@ -28,8 +28,8 @@ def test_frozendict():
     assert my_dict['key'] == 'UPDATED-2'
     assert my_frozen_dict['key'] == 'DEFAULT'
 
-    ##----------------------------------------
-    ## We cannot mutate my_frozen_dict
+    # ----------------------------------------
+    # We cannot mutate my_frozen_dict
 
     with pytest.raises(TypeError):
         my_frozen_dict['key'] = 'WROLD!!'

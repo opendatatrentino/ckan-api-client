@@ -15,7 +15,7 @@ class HarvestSource(Mapping):
     Provides dict-like access to harvest sources
     """
 
-    ## Default harvest source..
+    # Default harvest source..
     source_name = HARVEST_SOURCE_NAME
 
     def __init__(self, base_dir, day):
@@ -37,11 +37,11 @@ class HarvestSource(Mapping):
 
         folder = os.path.join(self.base_dir, self.day)
         for name in os.listdir(folder):
-            ## Skip hidden files
+            # Skip hidden files
             if name.startswith('.'):
                 continue
 
-            ## Skip non-directories
+            # Skip non-directories
             path = os.path.join(folder, name)
             if not os.path.isdir(path):
                 continue
@@ -82,11 +82,11 @@ class HarvestSourceCollection(Mapping):
 
         folder = os.path.join(self.source.base_dir, self.source.day, self.name)
         for name in os.listdir(folder):
-            ## Skip hidden files
+            # Skip hidden files
             if name.startswith('.'):
                 continue
 
-            ## Skip non-files
+            # Skip non-files
             path = os.path.join(folder, name)
             if not os.path.isfile(path):
                 continue

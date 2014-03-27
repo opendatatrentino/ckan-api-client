@@ -80,7 +80,7 @@ def test_ckan_dataset():
     assert dataset.is_modified()
     assert dataset.to_dict()['author'] == 'My author'
 
-    ## Create a new dataset
+    # Create a new dataset
     dataset = CkanDataset.from_dict(raw_data)
     assert not dataset.is_modified()
     del dataset.resources[2]  # delete 'resource-3'

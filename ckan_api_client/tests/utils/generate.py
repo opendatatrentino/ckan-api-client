@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-## Generate some dummy data, for testing purposes
+# Generate some dummy data, for testing purposes
 
 import json
 import random
@@ -99,8 +99,8 @@ def generate_dataset():
         # ------------------------------------------------------------
         # "id": random_id,
 
-        ## Name should be taken as a "suggestion": in case of naming conflict
-        ## with an existing dataset, it just be changed (todo: how?)
+        # Name should be taken as a "suggestion": in case of naming conflict
+        # with an existing dataset, it just be changed (todo: how?)
         "name": "dataset-{0}".format(random_id),
 
         "title": "Dataset {0}".format(random_id),
@@ -120,22 +120,22 @@ def generate_dataset():
 
         # "state": "active",  # automatic
 
-        ## Let's generate some tags
+        # Let's generate some tags
         "tags": generate_tags(random.randint(0, 10)),
 
-        ## Let's put some random stuff in here..
+        # Let's put some random stuff in here..
         "extras": generate_extras(random.randint(0, 30)),
 
-        ## Some dummy resources
+        # Some dummy resources
         "resources": resources,
 
-        ## Need to be randomized later, to match existing groups
+        # Need to be randomized later, to match existing groups
         "groups": [],
 
-        ## Need to be randomized later, to match existing orgs
+        # Need to be randomized later, to match existing orgs
         "owner_org": None,
 
-        ## WTF is this thing?
+        # WTF is this thing?
         "relationships": [],
     }
 

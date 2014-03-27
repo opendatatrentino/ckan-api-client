@@ -26,20 +26,20 @@ def test_dataset_get_by_name(ckan_client_hl):
     assert created.is_equivalent(dataset)
     dataset_id = created.id
 
-    ## Try getting by id
+    # Try getting by id
     dataset_1 = client.get_dataset(dataset_id)
     assert created == dataset_1
 
-    ## Try getting by name
+    # Try getting by name
     dataset_2 = client.get_dataset_by_name('example-dataset-name')
     assert created == dataset_2
 
-    ## Try getting by id, but passing name instead
+    # Try getting by id, but passing name instead
     with pytest.raises(HTTPError) as excinfo:
         client.get_dataset('example-dataset-name')
     assert excinfo.value.status_code == 404
 
-    ## Try getting by name, but passing id instead
+    # Try getting by name, but passing id instead
     with pytest.raises(HTTPError) as excinfo:
         client.get_dataset_by_name(dataset_id)
     assert excinfo.value.status_code == 404
@@ -49,7 +49,7 @@ def test_dataset_update_base_fields(ckan_client_hl):
     client = ckan_client_hl  # shortcut
     ckp = MutableCheckpoint()  # to check objects mutation
 
-    ## Create our dataset
+    # Create our dataset
     dataset_dict = generate_dataset()
     ckp.add(dataset_dict)
 
@@ -59,19 +59,19 @@ def test_dataset_update_base_fields(ckan_client_hl):
     dataset.license_id = 'cc-zero'
     created = client.create_dataset(dataset)
 
-    ## Store a copy of the original dataset
+    # Store a copy of the original dataset
     original_dataset = client.get_dataset(created.id)
     assert created.is_equivalent(original_dataset)
     ckp.add(original_dataset)
 
-    ## Update some base fields, send back & check
+    # Update some base fields, send back & check
     to_be_updated = copy.deepcopy(original_dataset)
     to_be_updated.author = 'NEW_AUTHOR'
     to_be_updated.author_email = 'NEW_AUTHOR_EMAIL'
     to_be_updated.license_id = 'cc-by-sa'
     assert to_be_updated.is_modified()
 
-    ## Update, get back, check
+    # Update, get back, check
     updated = client.update_dataset(to_be_updated)
     updated_2 = client.get_dataset(created.id)
 
@@ -87,7 +87,7 @@ def test_dataset_update_base_fields(ckan_client_hl):
     assert diffs['left'] == set()
     assert diffs['right'] == set()
 
-    ## Make sure dicts did not mutate
+    # Make sure dicts did not mutate
     ckp.check()
 
 
@@ -110,8 +110,8 @@ def test_dataset_update_extras(ckan_client_hl):
     stage_1pre = CkanDataset(ds_dict)
     stage_1 = client.create_dataset(stage_1pre)
 
-    ##--------------------------------------------------
-    ## Try adding a new record
+    # --------------------------------------------------
+    # Try adding a new record
 
     stage_1b = client.get_dataset(stage_1.id)
     stage_2pre = copy.deepcopy(stage_1b)
@@ -125,8 +125,8 @@ def test_dataset_update_extras(ckan_client_hl):
 
     del stage_1b, stage_2pre, stage_2, diffs
 
-    ##--------------------------------------------------
-    ## Try removing the custom field
+    # --------------------------------------------------
+    # Try removing the custom field
 
     stage_2pre = client.get_dataset(stage_1.id)
     del stage_2pre.extras['NEW_FIELD_NAME']
@@ -137,7 +137,7 @@ def test_dataset_update_extras(ckan_client_hl):
     stage_2b = client.get_dataset(stage_1.id)
     assert stage_2 == stage_2b
 
-    ## Make sure we brought it back to its original state
+    # Make sure we brought it back to its original state
     assert stage_1.is_equivalent(stage_2)
 
     del stage_2pre, stage_2
@@ -152,14 +152,14 @@ def test_dataset_delete(ckan_client_hl):
     created = client.create_dataset(dataset)
     assert created.is_equivalent(dataset)
 
-    ## Make sure it is in lists
+    # Make sure it is in lists
     assert created.id in client.list_datasets()
 
-    ## Delete it
+    # Delete it
     client.delete_dataset(created.id)
     assert created.id not in client.list_datasets()
 
-    ## Test that our workarounds work as expected..
+    # Test that our workarounds work as expected..
 
     with pytest.raises(HTTPError) as excinfo:
         client.get_dataset(created.id)

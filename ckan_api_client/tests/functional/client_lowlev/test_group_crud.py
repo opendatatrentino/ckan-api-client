@@ -38,11 +38,11 @@ def test_group_crud(ckan_client_ll):
     assert retrieved == updated
 
     # Delete
-    #------------------------------------------------------------
+    # ------------------------------------------------------------
     # Note: it's impossible to actually delete a group.
     #       The only hint it has been deleted is its "state"
     #       is set to "deleted".
-    #------------------------------------------------------------
+    # ------------------------------------------------------------
     client.delete_group(group_id)
 
     with pytest.raises(HTTPError) as excinfo:
@@ -60,52 +60,52 @@ def test_group_crud(ckan_client_ll):
     # assert retrieved['state'] == 'deleted'
 
 
-@pytest.mark.xfail(run=False, reason='Is using deprecated functions')
-def test_simple_group_crud(ckan_client):
-    ## Let's try creating a dataset
+# @pytest.mark.xfail(run=False, reason='Is using deprecated functions')
+# def test_simple_group_crud(ckan_client):
+#     # Let's try creating a dataset
 
-    _group = get_dummy_group(ckan_client)
+#     _group = get_dummy_group(ckan_client)
 
-    group = ckan_client.post_group(_group)
-    group_id = group['id']
+#     group = ckan_client.post_group(_group)
+#     group_id = group['id']
 
-    ## Let's check group data first..
-    for key, val in _group.iteritems():
-        assert group[key] == val
+#     ## Let's check group data first..
+#     for key, val in _group.iteritems():
+#         assert group[key] == val
 
-    ## Check that retrieved group is identical
-    group = ckan_client.get_group(group_id)
-    for key, val in _group.iteritems():
-        assert group[key] == val
+#     ## Check that retrieved group is identical
+#     group = ckan_client.get_group(group_id)
+#     for key, val in _group.iteritems():
+#         assert group[key] == val
 
-    ## Check against data loss on update..
-    retrieved_group = group
-    updates = {
-        'title': 'New group title',
-        'description': 'New group description',
-    }
-    new_group = copy.deepcopy(group)
-    new_group.update(updates)
-    new_group['id'] = group_id
+#     ## Check against data loss on update..
+#     retrieved_group = group
+#     updates = {
+#         'title': 'New group title',
+#         'description': 'New group description',
+#     }
+#     new_group = copy.deepcopy(group)
+#     new_group.update(updates)
+#     new_group['id'] = group_id
 
-    ## Get the updated group
-    updated_group = ckan_client.put_group(new_group)
-    updated_group_2 = ckan_client.get_group(group_id)
+#     ## Get the updated group
+#     updated_group = ckan_client.put_group(new_group)
+#     updated_group_2 = ckan_client.get_group(group_id)
 
-    ## They should be equal!
-    assert updated_group == updated_group_2
+#     ## They should be equal!
+#     assert updated_group == updated_group_2
 
-    ## And the updated group shouldn't have data loss
-    expected_group = copy.deepcopy(retrieved_group)
-    expected_group.update(updates)
+#     ## And the updated group shouldn't have data loss
+#     expected_group = copy.deepcopy(retrieved_group)
+#     expected_group.update(updates)
 
-    check_group(updated_group, expected_group)
+#     check_group(updated_group, expected_group)
 
-    # for f in GROUP_FIELDS['cruft']:
-    #     updated_group.pop(f, None)
-    #     expected_group.pop(f, None)
+#     # for f in GROUP_FIELDS['cruft']:
+#     #     updated_group.pop(f, None)
+#     #     expected_group.pop(f, None)
 
-    # assert updated_group == expected_group
+#     # assert updated_group == expected_group
 
-    ## Delete the group
-    ckan_client.delete_group(group_id)
+#     ## Delete the group
+#     ckan_client.delete_group(group_id)

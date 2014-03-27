@@ -1,9 +1,9 @@
 from collections import (namedtuple, Sequence, MutableSequence,
                          MutableMapping)
 
-## If we're using Python < 2.7, there is no OrderedDict in the
-## collections module, so we should fallback on using the one from
-## the ordereddict module.
+# If we're using Python < 2.7, there is no OrderedDict in the
+# collections module, so we should fallback on using the one from
+# the ordereddict module.
 try:
     from collections import OrderedDict
 except ImportError:
@@ -77,7 +77,7 @@ class IDMap(object):
         :raises ValueError:
             if one of the two ids is found in a mismatching pair
         """
-        ## Check both directions first..
+        # Check both directions first..
         if pair.source_id in self._source_to_ckan:
             if self._source_to_ckan[pair.source_id] != pair.ckan_id:
                 raise ValueError("Mismatching information")
@@ -98,7 +98,7 @@ class IDMap(object):
         :raises ValueError:
             if one of the two ids is found in a mismatching pair
         """
-        ## Check both directions first..
+        # Check both directions first..
         if pair.source_id in self._source_to_ckan:
             if self._source_to_ckan[pair.source_id] != pair.ckan_id:
                 raise ValueError("Mismatching information")
@@ -111,10 +111,10 @@ class IDMap(object):
         del self._ckan_to_source[pair.ckan_id]
 
 
-##------------------------------------------------------------
-## Frozen objects, mainly used while running tests,
-## to make sure certain objects are left untouched.
-##------------------------------------------------------------
+# ------------------------------------------------------------
+# Frozen objects, mainly used while running tests,
+# to make sure certain objects are left untouched.
+# ------------------------------------------------------------
 
 class FrozenDict(MutableMapping):
     """

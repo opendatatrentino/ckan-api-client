@@ -3,14 +3,11 @@ Commands to query CKan data
 """
 
 import json
-import logging
-import os
 import sys
 
 from cliff.lister import Lister
 
 from ckan_api_client.objects import CkanDataset
-from ckan_api_client.syncing import SynchronizationClient
 from .base import CkanCommandBase
 
 
@@ -94,11 +91,11 @@ class ImportDataset(CkanCommandBase):
         raw_data = self._read_file(parsed_args.filename)
         dataset_json = json.loads(raw_data)
 
-        ## Load dataset from file
+        # Load dataset from file
         dataset = CkanDataset(dataset_json)
 
-        ## todo: we need to check whether this dataset exists
-        ##       -> try getting and check..
+        # todo: we need to check whether this dataset exists
+        #       -> try getting and check..
         dataset.id = None
 
         dataset.owner_org = None  # todo: fill this

@@ -2,8 +2,7 @@
 
 import pytest
 
-from ckan_api_client.objects import (
-    BaseObject, BaseField, StringField, ListField, DictField)
+from ckan_api_client.objects import BaseObject, BaseField, StringField
 
 
 def test_simple_baseobject():
@@ -27,7 +26,7 @@ def test_simple_baseobject():
     with pytest.raises(AttributeError):
         obj1.doesnotexist
 
-    ## try changing first object
+    # try changing first object
     obj1.spam = 10
     obj1.eggs = 20
     with pytest.raises(AttributeError):
@@ -35,11 +34,11 @@ def test_simple_baseobject():
     assert obj1.spam == 10
     assert obj1.eggs == 20
 
-    ## Other object should be unaffected
+    # Other object should be unaffected
     assert obj2.spam == 100
     assert obj2.bacon == 50
 
-    ## restore original values
+    # restore original values
     del obj1.spam
     del obj1.eggs
     del obj1.bacon
@@ -112,7 +111,7 @@ def test_object_comparison_type():
 
 
 def test_object_comparison_with_key_field():
-    ## Now with "key" fields
+    # Now with "key" fields
     class MyObject2(BaseObject):
         id = StringField(is_key=True)
         field1 = StringField()
