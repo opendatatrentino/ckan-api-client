@@ -3,6 +3,7 @@ Tests to check that Ckan behaves correctly on an empty database.
 """
 
 import cgi
+import urlparse
 
 import pytest
 import requests
@@ -53,10 +54,19 @@ def test_site_read(ckan_url):
     data = check_response_ok(response)
     assert data['result'] is True
 
-    ## Call to an invalid URL should return 404
+    # Call to an invalid URL should return 404
     response = requests.get(ckan_url('/api/3/action/site_read/something'))
     assert not response.ok
     assert response.status_code == 404
+
+
+def test_site_read_from_instance(ckan_instance):
+    with ckan_instance.serve():
+        api_url = urlparse.urljoin(ckan_instance.server_url,
+                                   '/api/3/action/site_read')
+        response = requests.get(api_url)
+        data = check_response_ok(response)
+        assert data['result'] is True
 
 
 def test_invalid_method_name(ckan_url):
@@ -86,7 +96,7 @@ def test_package_list(ckan_url):
     data = check_response_ok(response)
     assert data['result'] == []
 
-    ## Right now, invalid arguments are just ignored..
+    #  Right now, invalid arguments are just ignored..
     api_url = ckan_url('/api/3/action/package_list?invalid=hello')
     response = requests.get(api_url)
     data = check_response_ok(response)
@@ -185,8 +195,8 @@ def test_related_list(ckan_url):
 
 @pytest.mark.xfail
 def test_related_list_id_non_existing(ckan_url):
-    ## related_list?id=invalid
-    ## With an invalid id, should return 404 (but wouldn't!)
+    #  related_list?id=invalid
+    #  With an invalid id, should return 404 (but wouldn't!)
     api_url = ckan_url('/api/3/action/related_list?id=invalid')
     response = requests.get(api_url)
     check_response_error(response, 404)
