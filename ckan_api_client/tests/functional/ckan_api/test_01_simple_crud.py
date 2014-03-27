@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
-##-----------------------------------------------------------------------------
-## Note: all the places in which an undesired behavior is going on are marked
-## as ``FIXME:``, to mark a pending upstream fix.
-##-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+#  Note: all the places in which an undesired behavior is going on are marked
+#  as ``FIXME:``, to mark a pending upstream fix.
+# -----------------------------------------------------------------------------
 
 import cgi
-# import copy
-import random
 
 import pytest
 
@@ -30,13 +28,13 @@ DUMMY_PACKAGES['package_with_metadata'] = {
     'notes': 'Just a bunch of notes',
     'url': 'http://example.com/dataset/package-with-metadata',
     'state': 'active',
-    #'type': 'dataset',
+    # 'type': 'dataset',
 
-    #'resources': [],
-    #'tags': [],
-    #'extras': [{'key': 'Fuck', 'value': 'This!'}],
-    #'groups': [],
-    #'owner_org': ['dummy-org'],
+    # 'resources': [],
+    # 'tags': [],
+    # 'extras': [{'key': 'Fuck', 'value': 'This!'}],
+    # 'groups': [],
+    # 'owner_org': ['dummy-org'],
 }
 DUMMY_PACKAGES['package_with_extras'] = {
     'name': 'package-with-extras',
@@ -71,15 +69,9 @@ DUMMY_PACKAGES['package_with_tags'] = {
 }
 
 
-def get_sysadmin_api_key(ckan_env):
-    """Create a sysadmin user, return its API key"""
-
-    user_name = 'api_test_{0:06d}'.format(random.randint(0, 10**6))
-    user_data = ckan_env.paster_user_add(user_name, **{
-        'password': 'password',
-        'email': '{0}@example.com'.format(user_name)})
-    ckan_env.paster_sysadmin_add(user_name)
-    return user_data['apikey']
+def get_sysadmin_api_key(instance):
+    # DEPRECATED: kept for compatibility
+    return instance.get_sysadmin_api_key()
 
 
 def check_response(response, code=200, success=True):
@@ -127,32 +119,32 @@ def check_dataset(expected, actual):
     if 'id' in expected:
         assert actual['id'] == expected['id']
 
-    ## Make sure everything is ok
+    # Make sure everything is ok
     for key, value in expected.iteritems():
         if key == 'tags':
             check_dataset_tags(expected[key], actual[key])
 
         elif key == 'extras':
-            ## todo: we should check that, for example, we don't have
-            ##       duplicate keys...
+            # todo: we should check that, for example, we don't have
+            #       duplicate keys...
             assert sorted(actual[key]) == sorted(value)
 
         elif key == 'resources':
             check_dataset_resources(expected[key], actual[key])
 
         else:
-            ## This key is not to be handled in a special way
+            # This key is not to be handled in a special way
             assert actual[key] == expected[key]
 
 
 def check_dataset_resources(expected, actual):
-    ## We need to check only the fields specified in the
-    ## "expected" object. But we need to reorder resources
-    ## in a dictionary to compare..
+    # We need to check only the fields specified in the
+    # "expected" object. But we need to reorder resources
+    # in a dictionary to compare..
     assert len(actual) == len(expected)
 
-    ## We group them by name as the id is generated, so we can't
-    ## expect one..
+    # We group them by name as the id is generated, so we can't
+    # expect one..
     expected_resources = dict((r['name'], r) for r in expected)
     assert len(expected) == len(expected_resources)
 
@@ -168,7 +160,7 @@ def check_dataset_resources(expected, actual):
 
 
 def check_dataset_tags(expected, actual):
-    ## Tags have a lot of extra fields, we only care about some of them..
+    # Tags have a lot of extra fields, we only care about some of them..
     expected_tags = sorted(x['name'] for x in expected)
     actual_tags = sorted(x['name'] for x in actual)
     assert actual_tags == expected_tags
@@ -179,19 +171,18 @@ def dummy_package(request):
     return DUMMY_PACKAGES[request.param]
 
 
-## Actual test functions
-##------------------------------------------------------------
+#  Actual test functions
+# ------------------------------------------------------------
 
 
-def test_simple_package_crud(ckan_env):
-    API_KEY = get_sysadmin_api_key(ckan_env)
+def test_simple_package_crud(ckan_instance):
+    API_KEY = ckan_instance.get_sysadmin_api_key()
 
-    with ckan_env.serve() as server:
-        client = CkanClient(server.url, api_key=API_KEY)
-        anon_client = CkanClient(server.url)
+    with ckan_instance.serve():
+        client = CkanClient(ckan_instance.server_url, api_key=API_KEY)
+        anon_client = CkanClient(ckan_instance.server_url)
 
         # Create a dataset
-        # url = urlparse.urljoin(server.url, '/api/3/action/package_create')
         data = {
             'name': 'my-first-dataset',
             'title': 'My First Dataset',
@@ -214,22 +205,23 @@ def test_simple_package_crud(ckan_env):
         assert 'result' in data
         assert data['result']['id'] == dataset_id
 
-        ## Delete the dataset
-        ##------------------------------------------------------------
+        # Delete the dataset
+        # ------------------------------------------------------------
 
         response = client.post('/api/3/action/package_delete',
                                data={'id': dataset_id})
         check_response(response)
 
-        ## Make sure the package has been actually deleted
-        ##------------------------------------------------------------
+        # Make sure the package has been actually deleted
+        # ------------------------------------------------------------
 
         # Anonymous users should get a 404
         response = anon_client.get('/api/3/action/package_show?id={0}'
                                    .format(dataset_id))
 
-        ## FIXME: Dammit, this is returning 403 -> should return 404!!
-        #data = check_response(response, code=404, success=False)
+        # FIXME: Dammit, this is returning 403 -> should return 404!!
+
+        # data = check_response(response, code=404, success=False)
         data = check_response(response, code=403, success=False)
 
         # An this should also be gone form the list
@@ -252,20 +244,20 @@ def test_simple_package_crud(ckan_env):
         assert dataset_id not in data['result']
 
 
-def test_package_creation(ckan_env, dummy_package):
+def test_package_creation(ckan_instance, dummy_package):
     """
     Create a dataset, retrieve it and check
     """
 
-    API_KEY = get_sysadmin_api_key(ckan_env)
+    API_KEY = ckan_instance.get_sysadmin_api_key()
 
-    with ckan_env.serve() as server:
-        client = CkanClient(server.url, api_key=API_KEY)
+    with ckan_instance.serve():
+        client = CkanClient(ckan_instance.server_url, api_key=API_KEY)
         response = client.post(
             '/api/3/action/package_create', data=dummy_package)
         assert response.ok
 
-        ## although this should be 201 CREATED or 303 FOUND
+        # although this should be 201 CREATED or 303 FOUND
         assert response.status_code == 200
 
         data = response.json()
@@ -281,27 +273,20 @@ def test_package_creation(ckan_env, dummy_package):
         assert 'result' in data
         assert data['result']['id'] == dataset_id
 
-        ## Check that keys match
+        # Check that keys match
         for key in dummy_package:
             if key in ('tags',):
                 continue
             assert data['result'][key] == dummy_package[key]
 
-        ## Check that tags match
+        # Check that tags match
         if 'tags' in dummy_package:
             expected_tags = sorted(x['name'] for x in dummy_package['tags'])
             actual_tags = sorted(x['name'] for x in data['result']['tags'])
             assert actual_tags == expected_tags
 
-        # # Delete the dataset
-        # # url = urlparse.urljoin(server.url, '/api/3/action/package_delete')
-        # # response = json_request('post', url, API_KEY, {'id': dataset_id})
-        # response = client.post('/api/3/action/package_delete',
-        #                        data={'id': dataset_id})
-        # assert response.ok
 
-
-def test_real_case_scenario(ckan_env):
+def test_real_case_scenario(ckan_instance):
     """
     "Real case" scenario:
 
@@ -331,12 +316,12 @@ def test_real_case_scenario(ckan_env):
         }
     }
 
-    API_KEY = get_sysadmin_api_key(ckan_env)
+    API_KEY = ckan_instance.get_sysadmin_api_key()
 
-    with ckan_env.serve() as server:
-        client = CkanClient(server.url, api_key=API_KEY)
+    with ckan_instance.serve():
+        client = CkanClient(ckan_instance.server_url, api_key=API_KEY)
 
-        ## Create our organization
+        # Create our organization
         response = client.post('/api/3/action/organization_create', data={
             'name': 'my-organization',
             'title': 'My organization',
@@ -347,7 +332,7 @@ def test_real_case_scenario(ckan_env):
         assert data['success'] is True
         organization_id = data['result']['id']
 
-        ## Get the organization back
+        # Get the organization back
         response = client.get('/api/3/action/organization_show?id={0}'
                               .format(organization_id))
         assert response.ok
@@ -365,12 +350,12 @@ def test_real_case_scenario(ckan_env):
             :return: The created dataset object
             """
 
-            ## Create dataset
+            # Create dataset
             response = client.post('/api/3/action/package_create', data=data)
             data = check_response(response)
             dataset_id = data['result']['id']
 
-            ## Get the dataset back and check
+            # Get the dataset back and check
             response = client.get('/api/3/action/package_show?id={0}'
                                   .format(dataset_id))
             data = check_response(response)
@@ -378,8 +363,8 @@ def test_real_case_scenario(ckan_env):
 
             return data['result']
 
-        ## Create a dataset
-        ##------------------------------------------------------------
+        # Create a dataset
+        # ------------------------------------------------------------
 
         dataset_obj = {
             'name': 'dataset-1',
@@ -397,19 +382,19 @@ def test_real_case_scenario(ckan_env):
         dataset = create_dataset(dataset_obj)
         dataset_id = dataset['id']
 
-        ## Now we should try updating
-        ##------------------------------------------------------------
-        ## Note: apparently there is no way to update just *some*
-        ##       metadata: we have to send the whole object again..
-        ## todo: check whether we should pass even resources / tags
-        ##       / extras too...
+        # Now we should try updating
+        # ------------------------------------------------------------
+        # Note: apparently there is no way to update just *some*
+        #       metadata: we have to send the whole object again..
+        # todo: check whether we should pass even resources / tags
+        #       / extras too...
 
-        ## Note: we need some better way to check what's going on;
-        ## we need to determine / make sure *which* fields should be sent
-        ## back during the update, which have no effect, which are ignored,
-        ## etc.
-        ## Also, we need to make sure on how exactly the "extra" field
-        ## works..
+        # Note: we need some better way to check what's going on;
+        # we need to determine / make sure *which* fields should be sent
+        # back during the update, which have no effect, which are ignored,
+        # etc.
+        # Also, we need to make sure on how exactly the "extra" field
+        # works..
 
         dataset_obj['title'] = 'First dataset'
         dataset_obj['notes'] = 'Updated notes here!'
@@ -421,18 +406,18 @@ def test_real_case_scenario(ckan_env):
         updated_dataset = data['result']
         check_dataset(dataset_obj, updated_dataset)
 
-        ## Now get it from the API
+        # Now get it from the API
         response = client.get(
             '/api/3/action/dataset_show?id={0}'.format(dataset_id))
         data = check_response(response)
         updated_dataset = data['result']
         check_dataset(dataset_obj, updated_dataset)
 
-        ## Just to be extra safe..
+        # Just to be extra safe..
         assert updated_dataset['title'] == 'First dataset'
         assert updated_dataset['notes'] == 'Updated notes here!'
         assert updated_dataset['url'] == 'http://example.com/dataset-1'
         assert updated_dataset['license_id'] == 'cc-zero'
 
-        ## Ok, now we should try updating extras too..
-        ##------------------------------------------------------------
+        # Ok, now we should try updating extras too..
+        # ------------------------------------------------------------
