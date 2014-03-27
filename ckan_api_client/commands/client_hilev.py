@@ -61,7 +61,7 @@ class IterDatasets(CkanCommandBase, Lister):
 
 
 class GetDataset(CkanCommandBase):
-    """Import a dataset from JSON file"""
+    """Print a dataset as JSON"""
 
     def get_parser(self, prog_name):
         parser = super(GetDataset, self).get_parser(prog_name)
@@ -79,27 +79,33 @@ class ImportDataset(CkanCommandBase):
 
     def get_parser(self, prog_name):
         parser = super(ImportDataset, self).get_parser(prog_name)
-        parser.add_argument('--filename')
+        parser.add_argument('--filename', '-f',
+                            help='JSON file from which to read')
         return parser
+
+    def _read_file(self, filename):
+        if filename is None or filename == '-':
+            return sys.stdin.read()
+        with open(filename, 'rb') as f:
+            return f.read()
 
     def take_action(self, parsed_args):
         client = self._get_client(parsed_args)
+        raw_data = self._read_file(parsed_args.filename)
+        dataset_json = json.loads(raw_data)
 
-        if parsed_args.filename is None or parsed_args.filename == '-':
-            dataset_json = json.load(sys.stdin)
-        else:
-            with open(parsed_args.filename, 'rb') as fp:
-                dataset_json = json.load(fp)
-
+        ## Load dataset from file
         dataset = CkanDataset(dataset_json)
-        # self.app.stdout.write(json.dumps(dataset.serialize()))
 
         ## todo: we need to check whether this dataset exists
         ##       -> try getting and check..
         dataset.id = None
+
         dataset.owner_org = None  # todo: fill this
         dataset.groups = []  # todo: fill this
+
         for resource in dataset.resources:
             resource.id = None
+
         created = client.create_dataset(dataset)
         self.app.stdout.write(json.dumps(created.serialize()))
