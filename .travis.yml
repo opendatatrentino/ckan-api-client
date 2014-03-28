@@ -26,3 +26,4 @@ matrix:
   allow_failures:
     ## Ckan 2.1 is very buggy -- expecting failures there..
     - env: REPO_URL=https://github.com/ckan/ckan REPO_BRANCH=ckan-2.1
+    - env: REPO_URL=https://github.com/ckan/ckan REPO_BRANCH=master
