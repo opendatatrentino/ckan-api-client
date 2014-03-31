@@ -113,15 +113,15 @@ class CkanDataset(BaseObject):
 class CkanResource(BaseObject):
     id = StringField(is_key=True)
 
-    description = StringField()
-    format = StringField()
+    description = StringField(default='')
+    format = StringField(default='')
     mimetype = StringField()
     mimetype_inner = StringField()
-    name = StringField()
+    name = StringField(default='')
     # position = IntegerField()  # Ignore, as it is generated
-    resource_type = StringField()
+    resource_type = StringField(default='')
     size = StringField()
-    url = StringField()
+    url = StringField(default='')
     url_type = StringField()
 
     def __eq__(self, other):
