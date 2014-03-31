@@ -143,6 +143,52 @@ def test_dataset_update_extras(ckan_client_hl):
     del stage_2pre, stage_2
 
 
+def test_dataset_update_resources(ckan_client_hl):
+    client = ckan_client_hl  # shortcut
+
+    ds_dict = generate_dataset()
+    ds_dict['resources'] = [
+        {'name': 'example-csv-1',
+         'url': 'http://example.com/dataset-1.csv',
+         'format': 'CSV'},
+        {'name': 'example-json-1',
+         'url': 'http://example.com/dataset-1.json',
+         'format': 'JSON'},
+    ]
+    stage_1pre = CkanDataset(ds_dict)
+    stage_1 = client.create_dataset(stage_1pre)
+
+    # --------------------------------------------------
+    # Try adding a new resource
+
+    stage_2pre = client.get_dataset(stage_1.id)
+    stage_2pre.resources.append({
+        'name': 'example-csv-2',
+        'url': 'http://example.com/dataset-2.csv',
+        'format': 'CSV'})
+
+    assert len(stage_2pre.resources) == 3
+    assert len(stage_2pre.serialize()['resources']) == 3
+
+    stage_2 = client.update_dataset(stage_2pre)
+    assert len(stage_2.resources) == 3
+    assert len(stage_2.serialize()['resources']) == 3
+
+    # --------------------------------------------------
+    # Try prepending adding a new resource
+
+    stage_3pre = client.get_dataset(stage_1.id)
+    stage_3pre.resources.insert(0, {
+        'url': 'http://example.com/dataset-2.json'})
+
+    assert len(stage_3pre.resources) == 4
+    assert len(stage_3pre.serialize()['resources']) == 4
+
+    stage_3 = client.update_dataset(stage_3pre)
+    assert len(stage_3.resources) == 4
+    assert len(stage_3.serialize()['resources']) == 4
+
+
 def test_dataset_delete(ckan_client_hl):
     client = ckan_client_hl
 
