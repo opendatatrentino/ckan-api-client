@@ -110,7 +110,7 @@ def generate_dataset():
         "maintainer_email": "maintainer-{0}@example.com".format(random_id),
         "maintainer": "Maintainer {0}".format(random_id),
 
-        "author_email": "author-{0}@example.com",
+        "author_email": "author-{0}@example.com".format(random_id),
         "author": "Author {0}".format(random_id),
 
         "license_id": license_id,
