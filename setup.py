@@ -75,7 +75,7 @@ setup(
     test_suite='ckan_api_client.tests',
     classifiers=[
         "License :: OSI Approved :: BSD License",
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 2.7",
     ],
     package_data={'': ['README.md', 'LICENSE']},
