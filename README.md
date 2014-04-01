@@ -2,9 +2,9 @@
 
 Improved Python client for the [Ckan](http://ckan.org) API.
 
-[![Build Status](https://travis-ci.org/rshk/ckan-api-client.png?branch=master)](https://travis-ci.org/rshk/ckan-api-client) Master branch
+[![Build Status](https://travis-ci.org/opendatatrentino/ckan-api-client.png?branch=master)](https://travis-ci.org/opendatatrentino/ckan-api-client) Master branch
 
-[![Build Status](https://travis-ci.org/rshk/ckan-api-client.png?branch=develop)](https://travis-ci.org/rshk/ckan-api-client) Development branch
+[![Build Status](https://travis-ci.org/opendatatrentino/ckan-api-client.png?branch=develop)](https://travis-ci.org/opendatatrentino/ckan-api-client) Development branch
 
 This package provides:
 
@@ -26,7 +26,7 @@ sure problems are discovered earlier.
 
 ## Documentation
 
-Documentation is hosted on GitHub pages here: https://rshk.github.io/ckan-api-client/
+Documentation is hosted on GitHub pages here: https://opendatatrentino.github.io/ckan-api-client/
 
 
 ## Running tests

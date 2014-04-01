@@ -17,13 +17,13 @@ tests_require = [
     'pytest-cov',
     'pytest-pep8',
 
-    ## The next two are required in order to install
-    ## Ckan in a separate environment.
+    # The next two are required in order to install
+    # Ckan in a separate environment.
     'psycopg2',
     'solrpy',
 ]
 
-## Shorten names
+# Shorten names
 _cch = 'ckan_api_client.commands.client_hilev'
 _ccs = 'ckan_api_client.commands.syncing'
 
