@@ -45,6 +45,9 @@ class SynchronizationClient(object):
         """
         Synchronize data from a source into Ckan.
 
+        - datasets are matched by _harvest_source
+        - groups and organizations are matched by name
+
         :param source_name: string identifying the source
         :param data: data to be synchronized
         """
@@ -52,6 +55,7 @@ class SynchronizationClient(object):
         groups = dict(
             (key, CkanGroup(val))
             for key, val in data['group'].iteritems())
+
         organizations = dict(
             (key, CkanOrganization(val))
             for key, val in data['organization'].iteritems())
@@ -99,9 +103,9 @@ class SynchronizationClient(object):
         # We now need to create/update/delete datasets.
 
         # todo: we need to make sure dataset names are not
-        #       already used by another dataset. The only
-        #       way is to randomize resource names and hope
-        #       a 409 response indicates duplicate name..
+        # already used by another dataset. The only
+        # way is to randomize resource names and hope
+        # a 409 response indicates duplicate name..
 
         # We delete first, in order to (possibly) deallocate
         # some already-used names..
@@ -112,6 +116,11 @@ class SynchronizationClient(object):
         def force_dataset_operation(operation, dataset, retry=5):
             # Maximum dataset name length is 100 characters
             # We trim it down to 80 just to be safe.
+
+            # Note: we generally want to preserve the original name
+            #       and there should *never* be problems with that
+            #       when updating..
+
             _orig_name = dataset.name[:80]
             dataset.name = _orig_name
             while True:
@@ -138,21 +147,8 @@ class SynchronizationClient(object):
         for source_id in differences['differing']:
             dataset = source_datasets[source_id]
             dataset.id = ckan_datasets[source_id].id
-            # self._client.update_dataset(dataset)
-            force_dataset_operation(self._client.update_dataset, dataset)
-
-        # Todo: double-check differences?
-
-    # def _sync_datasets(self, source_name, datasets):
-    #     """
-    #     Synchronize datasets into Ckan.
-
-    #     :param source_name:
-    #         Name of the data source
-    #     :param datasets:
-    #         Dictionary mapping ``source_id: CkanDataset()``
-    #     """
-    #     pass
+            self._client.update_dataset(dataset)  # should never fail
+            # force_dataset_operation(self._client.update_dataset, dataset)
 
     def _upsert_groups(self, groups):
         """
@@ -193,7 +189,7 @@ class SynchronizationClient(object):
                 # make sure it is marked as active.
 
                 # todo: make sure we don't need to preserve users and stuff,
-                #       otherwise we need to workaround that in hi-lev client
+                # otherwise we need to workaround that in hi-lev client
 
                 group.id = ckan_group.id
                 group.state = 'active'
