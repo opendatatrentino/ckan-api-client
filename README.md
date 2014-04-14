@@ -64,7 +64,6 @@ or
 
 ```
 make -f scripts/tests.mk run-tests \
-CKAN_VIRTUALENV=$VIRTUAL_ENV \
 CKAN_POSTGRES_ADMIN=postgresql://localhost/postgres \
 CKAN_SOLR=http://127.0.0.1:8983/solr \
 CKAN_ENV_NAME=ckan-master \
