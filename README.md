@@ -29,7 +29,28 @@ sure problems are discovered earlier.
 Documentation is hosted on GitHub pages here: https://opendatatrentino.github.io/ckan-api-client/
 
 
-## Running tests
+## Running tests (new way)
+
+We use gnu make to better automate things:
+
+```
+make -f scripts/tests.mk run-tests
+```
+
+or
+
+```
+make -f scripts/tests.mk run-tests \
+CKAN_POSTGRES_ADMIN=postgresql://localhost/postgres \
+CKAN_SOLR=http://127.0.0.1:8983/solr \
+CKAN_ENV_NAME=ckan-master \
+REPO_URL=https://github.com/ckan/ckan \
+REPO_BRANCH=master \
+PYTHON=/usr/bin/python2.7
+```
+
+
+## Running tests (old way)
 
 You'll need:
 
@@ -52,28 +73,7 @@ python ./simple_api_testing/run_tests.py
 easier to remember :))
 
 
-## Running tests -- new way
-
-We use gnu make to better automate things:
-
-```
-make -f scripts/tests.mk run-tests
-```
-
-or
-
-```
-make -f scripts/tests.mk run-tests \
-CKAN_POSTGRES_ADMIN=postgresql://localhost/postgres \
-CKAN_SOLR=http://127.0.0.1:8983/solr \
-CKAN_ENV_NAME=ckan-master \
-REPO_URL=https://github.com/ckan/ckan \
-REPO_BRANCH=master \
-PYTHON=/usr/bin/python2.7
-```
-
-
-### Debugging
+## Debugging
 
 To compare objects from the debugger, use functions from pytest::
 
