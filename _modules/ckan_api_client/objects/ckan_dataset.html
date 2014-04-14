@@ -229,15 +229,15 @@
 <div class="viewcode-block" id="CkanResource"><a class="viewcode-back" href="../../../modules/objects.html#ckan_api_client.objects.ckan_dataset.CkanResource">[docs]</a><span class="k">class</span> <span class="nc">CkanResource</span><span class="p">(</span><span class="n">BaseObject</span><span class="p">):</span>
     <span class="nb">id</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">is_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-    <span class="n">description</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
-    <span class="n">format</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">format</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
     <span class="n">mimetype</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
     <span class="n">mimetype_inner</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
     <span class="c"># position = IntegerField()  # Ignore, as it is generated</span>
-    <span class="n">resource_type</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">resource_type</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
     <span class="n">url_type</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>

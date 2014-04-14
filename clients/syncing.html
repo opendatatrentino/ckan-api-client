@@ -142,6 +142,10 @@ collections of datasets into a Ckan instance.</p>
 <dt id="ckan_api_client.syncing.SynchronizationClient.sync">
 <tt class="descname">sync</tt><big>(</big><em>source_name</em>, <em>data</em><big>)</big><a class="reference internal" href="../_modules/ckan_api_client/syncing.html#SynchronizationClient.sync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ckan_api_client.syncing.SynchronizationClient.sync" title="Permalink to this definition">¶</a></dt>
 <dd><p>Synchronize data from a source into Ckan.</p>
+<ul class="simple">
+<li>datasets are matched by _harvest_source</li>
+<li>groups and organizations are matched by name</li>
+</ul>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
