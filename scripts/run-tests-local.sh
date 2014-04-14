@@ -1,30 +1,37 @@
 #!/bin/bash
 
-## ----- Configuration ---------------------------------------
+## Script to run tests for Ckan API client
+
+set -e  # Fail fast
+HERE="$( readlink -f $( dirname "$BASH_SOURCE" ) )"
+CKAN_ENVS_DIR="$( readlink -f "${HERE}/../.ckan-envs/" )"
+LOCAL_SETTINGS_FILE="$( readlink -f "${HERE}/.local-settings/" )"
+
+## ----- Default Configuration -------------------------------
 REPO_URL=https://github.com/ckan/ckan
 REPO_BRANCH=master
 PYTHON=/usr/bin/python2.7
 CKAN_POSTGRES_ADMIN=postgresql://postgres:postgrespass@database.local/
 CKAN_SOLR=http://database.local:8983/solr/ckan-2.0
+CKAN_VIRTUALENV="${CKAN_ENVS_DIR}/ckan-master"
 ##------------------------------------------------------------
 
-set -e  # Fail fast
-
-HERE="$( readlink -f $( dirname "$BASH_SOURCE" ) )"
-TMPDIR="$( readlink -f "${HERE}/../tmp/" )"
-mkdir -p "$TMPDIR"
-
-CKAN_VIRTUALENV="${TMPDIR}/venv"
+if [ -e "$LOCAL_SETTINGS_FILE" ]; then
+    source "$LOCAL_SETTINGS_FILE"
+fi
 
 ## --- Create virtualenv if it doesn't exist
 if [ ! -e "${CKAN_VIRTUALENV}" ]; then
     ORIG_DIR="$( pwd )"
 
+    mkdir -p "$CKAN_VIRTUALENV"
+
     ## Install ckan there
-    echo "Creating virtualhost and installing ckan.."
+    echo "Creating virtualenv using $( "$PYTHON" --version ) from ${PYTHON}"
     virtualenv -p "$PYTHON" "$CKAN_VIRTUALENV"
 
     ## Clone repository
+    echo "Installing ckan from ${REPO_URL} (branch: ${REPO_BRANCH})"
     mkdir -p "${CKAN_VIRTUALENV}/src"
     git clone "$REPO_URL" -b "$REPO_BRANCH" --depth=1 "${CKAN_VIRTUALENV}/src/ckan"
 
