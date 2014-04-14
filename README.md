@@ -2,9 +2,12 @@
 
 Improved Python client for the [Ckan](http://ckan.org) API.
 
-[![Build Status](https://travis-ci.org/opendatatrentino/ckan-api-client.png?branch=master)](https://travis-ci.org/opendatatrentino/ckan-api-client) Master branch
+**Build status:**
 
-[![Build Status](https://travis-ci.org/opendatatrentino/ckan-api-client.png?branch=develop)](https://travis-ci.org/opendatatrentino/ckan-api-client) Development branch
+| Branch | Status |
+| ------ | ------ |
+| master | [![Build Status](https://travis-ci.org/opendatatrentino/ckan-api-client.svg?branch=master)](https://travis-ci.org/opendatatrentino/ckan-api-client) |
+| develop | [![Build Status](https://travis-ci.org/opendatatrentino/ckan-api-client.svg?branch=develop)](https://travis-ci.org/opendatatrentino/ckan-api-client) |
 
 This package provides:
 
