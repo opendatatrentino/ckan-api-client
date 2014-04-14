@@ -313,6 +313,12 @@ class CkanLowlevelClient(object):
         response = self.request('GET', path)
         data = response.json()['result']
         self._validate_response_dict(data)
+
+        # API v3 returns the whole objects here, but we just
+        # want the ids..
+        if 'groups' in data:
+            data['groups'] = [g['id'] for g in data['groups']]
+
         return data
 
     def post_organization(self, organization):
