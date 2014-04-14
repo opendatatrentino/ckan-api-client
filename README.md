@@ -49,6 +49,9 @@ REPO_BRANCH=master \
 PYTHON=/usr/bin/python2.7
 ```
 
+This will automatically create a suitable environment in ``./ckan-envs/``,
+install the selected Ckan branch and run tests using that instance.
+
 
 ## Running tests (old way)
 
