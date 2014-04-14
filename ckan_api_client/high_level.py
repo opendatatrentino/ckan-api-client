@@ -312,20 +312,22 @@ class CkanHighlevelClient(object):
 
     # ------------------------------------------------------------
     # Groups management
+    # The list from the API is at /api/2/rest/group and it will
+    # correctly return group ids.
     # ------------------------------------------------------------
 
     def list_groups(self):
-        return [
-            self.get_group_by_name(name).id
-            for name in self.list_group_names()
-        ]
-
-    def list_group_names(self):
         return self._client.list_groups()
 
+    def list_group_names(self):
+        return [
+            self.get_group(id).name
+            for id in self.list_groups()
+        ]
+
     def iter_groups(self):
-        for name in self.list_group_names():
-            yield self.get_group_by_name(name)
+        for id in self.list_groups():
+            yield self.get_group(id)
 
     def get_group(self, id, allow_deleted=False):
         """
