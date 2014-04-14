@@ -12,3 +12,4 @@
 /.coverage
 
 flycheck_*.py
+.ckan-envs
