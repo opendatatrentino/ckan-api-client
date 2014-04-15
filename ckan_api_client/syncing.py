@@ -147,8 +147,8 @@ class SynchronizationClient(object):
         for source_id in differences['differing']:
             dataset = source_datasets[source_id]
             dataset.id = ckan_datasets[source_id].id
-            self._client.update_dataset(dataset)  # should never fail
-            # force_dataset_operation(self._client.update_dataset, dataset)
+            dataset.name = ckan_datasets[source_id].name  # preserve names
+            self._client.update_dataset(dataset)  # should never fail!
 
     def _upsert_groups(self, groups):
         """
@@ -233,11 +233,14 @@ class SynchronizationClient(object):
                                  ckan_id=created_org.id))
 
             else:
-                org.id = ckan_org.id
-                org.state = 'active'
-                updated_org = self._client.update_organization(org)
+                # We only want to update if state != 'active'
+                if org.state != 'active':
+                    org.id = ckan_org.id
+                    org.state = 'active'
+                    updated_org = self._client.update_organization(org)
+                    assert updated_org.id == org.id
                 idmap.add(IDPair(source_id=org.name,
-                                 ckan_id=updated_org.id))
+                                 ckan_id=ckan_org.id))
 
         return idmap
 
