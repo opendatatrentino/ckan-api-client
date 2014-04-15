@@ -231,7 +231,8 @@ class CkanLowlevelClient(object):
         """
 
         ign404 = SuppressExceptionIf(
-            lambda e: ignore_404 and (e.status_code == 404))
+            lambda e: ignore_404 and (isinstance(e, HTTPError)
+                                      and e.status_code == 404))
         path = '/api/2/rest/dataset/{0}'.format(dataset_id)
         with ign404:
             self.request('DELETE', path, data={'id': dataset_id})
@@ -280,7 +281,8 @@ class CkanLowlevelClient(object):
 
     def delete_group(self, group_id, ignore_404=True):
         ign404 = SuppressExceptionIf(
-            lambda e: ignore_404 and (e.status_code == 404))
+            lambda e: ignore_404 and (isinstance(e, HTTPError)
+                                      and e.status_code == 404))
         path = '/api/2/rest/group/{0}'.format(group_id)
         with ign404:
             self.request('DELETE', path)
@@ -338,7 +340,8 @@ class CkanLowlevelClient(object):
 
     def delete_organization(self, id, ignore_404=True):
         ign404 = SuppressExceptionIf(
-            lambda e: ignore_404 and (e.status_code == 404))
+            lambda e: ignore_404 and (isinstance(e, HTTPError)
+                                      and e.status_code == 404))
         path = '/api/3/action/organization_delete'
         with ign404:
             self.request('PUT', path, data={'id': id})
