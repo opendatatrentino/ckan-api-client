@@ -29,7 +29,13 @@ sure problems are discovered earlier.
 
 ## Documentation
 
-Documentation is hosted on GitHub pages here: https://opendatatrentino.github.io/ckan-api-client/
+Documentation is available on Read The Docs:
+
+http://ckan-api-client.readthedocs.org
+
+a copy is currently available on GitHub pages:
+
+https://opendatatrentino.github.io/ckan-api-client/
 
 
 ## Running tests (new way)
