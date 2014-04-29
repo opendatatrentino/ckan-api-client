@@ -13,6 +13,7 @@ Strategy:
 """
 
 import copy
+import logging
 import random
 
 from ckan_api_client.exceptions import HTTPError
@@ -24,6 +25,9 @@ from ckan_api_client.utils import IDMap, IDPair
 # Extras field containing id of the external source.
 # The id is simply source_name:
 HARVEST_SOURCE_ID_FIELD = '_harvest_source'
+
+
+logger = logging.getLogger(__name__)
 
 
 class SynchronizationClient(object):
@@ -111,6 +115,7 @@ class SynchronizationClient(object):
         # some already-used names..
         for source_id in differences['left']:
             ckan_id = ckan_datasets[source_id].id
+            logger.info('Deleting dataset {0}'.format(ckan_id))
             self._client.delete_dataset(ckan_id)
 
         def force_dataset_operation(operation, dataset, retry=5):
@@ -123,6 +128,7 @@ class SynchronizationClient(object):
 
             _orig_name = dataset.name[:80]
             dataset.name = _orig_name
+
             while True:
                 try:
                     result = operation(dataset)
@@ -135,16 +141,20 @@ class SynchronizationClient(object):
                     dataset.name = '{0}-{1:06d}'.format(
                         _orig_name,
                         random.randint(0, 999999))
+                    logger.debug('Got 409: trying to rename dataset to {0}'
+                                 .format(dataset.name))
                 else:
                     return result
 
         # Create missing datasets
         for source_id in differences['right']:
+            logger.info('Creating dataset {0}'.format(source_id))
             dataset = source_datasets[source_id]
             force_dataset_operation(self._client.create_dataset, dataset)
 
         # Update outdated datasets
         for source_id in differences['differing']:
+            logger.info('Updating dataset {0}'.format(source_id))
             dataset = source_datasets[source_id]
             dataset.id = ckan_datasets[source_id].id
             dataset.name = ckan_datasets[source_id].name  # preserve names
