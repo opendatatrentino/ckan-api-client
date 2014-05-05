@@ -9,7 +9,7 @@ import pytest
 from ckan_api_client.exceptions import HTTPError
 from ckan_api_client.high_level import CkanHighlevelClient
 from ckan_api_client.syncing import SynchronizationClient
-from ckan_api_client.objects import CkanGroup
+from ckan_api_client.objects import CkanGroup, CkanOrganization
 
 
 SAMPLE_DATA = {
@@ -210,3 +210,48 @@ def test_merge_groups(ckan_client_arguments):
     assert client.get_group_by_name('tmg-2').title == 'TMG 2.2'
     assert client.get_group_by_name('tmg-3').title == 'TMG 3.1'
     assert client.get_group_by_name('tmg-4').title == 'TMG 4.2'
+
+
+def test_merge_organizations(ckan_client_arguments):
+    args = ckan_client_arguments
+    client = CkanHighlevelClient(*args[0], **args[1])
+    sync_client = SynchronizationClient(*args[0], **args[1])
+
+    # Create a couple initial organizations
+    # ------------------------------------------------------------
+
+    client.create_organization(CkanOrganization(
+        {'name': 'tmo-1', 'title': 'TMO 1'}))
+    client.create_organization(CkanOrganization(
+        {'name': 'tmo-2', 'title': 'TMO 2'}))
+
+    # Test merging with "create" strategy
+    # ------------------------------------------------------------
+
+    data = {'organization': {
+        'tmo-2': {'name': 'tmo-2', 'title': 'TMO 2.1'},
+        'tmo-3': {'name': 'tmo-3', 'title': 'TMO 3.1'},
+    }, 'group': {}, 'dataset': {}}
+
+    sync_client._conf['organization_merge_strategy'] = 'create'
+    sync_client.sync('test_merge_organizations', data)
+
+    assert client.get_organization_by_name('tmo-1').title == 'TMO 1'
+    assert client.get_organization_by_name('tmo-2').title == 'TMO 2'
+    assert client.get_organization_by_name('tmo-3').title == 'TMO 3.1'
+
+    # Test merging with "update" strategy
+    # ------------------------------------------------------------
+
+    data = {'organization': {
+        'tmo-2': {'name': 'tmo-2', 'title': 'TMO 2.2'},
+        'tmo-4': {'name': 'tmo-4', 'title': 'TMO 4.2'},
+    }, 'group': {}, 'dataset': {}}
+
+    sync_client._conf['organization_merge_strategy'] = 'update'
+    sync_client.sync('test_merge_organizations', data)
+
+    assert client.get_organization_by_name('tmo-1').title == 'TMO 1'
+    assert client.get_organization_by_name('tmo-2').title == 'TMO 2.2'
+    assert client.get_organization_by_name('tmo-3').title == 'TMO 3.1'
+    assert client.get_organization_by_name('tmo-4').title == 'TMO 4.2'

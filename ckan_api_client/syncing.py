@@ -343,14 +343,14 @@ class SynchronizationClient(object):
                     # the group.
                     org.state = 'active'
                     org.id = ckan_org.id
-                    updated_org = self._client.update_org(org)
+                    updated_org = self._client.update_organization(org)
                     org_id = updated_org.id
 
                 elif org.state != 'active':
                     # We only want to update the **original** org to set it
                     # as active, but preserving original values.
                     ckan_org.state = 'active'
-                    updated_org = self._client.update_org(ckan_org)
+                    updated_org = self._client.update_organization(ckan_org)
                     org_id = updated_org.id
 
                 idmap.add(IDPair(source_id=org_name,
