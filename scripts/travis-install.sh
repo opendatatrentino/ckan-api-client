@@ -49,7 +49,7 @@ EOF
 echo "Downloading and installing Ckan (in ${VIRTUAL_ENV})"
 mkdir -p ${VIRTUAL_ENV}/src
 mkdir -p ${VIRTUAL_ENV}/etc/ckan
-git clone "$REPO_URL" -b "$REPO_BRANCH" --depth=0 "$VIRTUAL_ENV"/src/ckan
+git clone "$REPO_URL" -b "$REPO_BRANCH" --depth=1 "$VIRTUAL_ENV"/src/ckan
 
 sudo cp "$VIRTUAL_ENV"/src/ckan/ckan/config/solr/schema-2.0.xml /etc/solr/conf/schema.xml
 sudo service jetty start
