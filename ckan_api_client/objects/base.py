@@ -283,3 +283,6 @@ class BaseObject(object):
             if field.is_modified(self, name):
                 return True
         return False
+
+    def __repr__(self):
+        return u'{0}({1})'.format(self.__class__.__name__, self.serialize())
