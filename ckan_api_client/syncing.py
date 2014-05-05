@@ -274,11 +274,24 @@ class SynchronizationClient(object):
                 # todo: make sure we don't need to preserve users and stuff,
                 # otherwise we need to workaround that in hi-lev client
 
-                group.id = ckan_group.id
-                group.state = 'active'
-                updated_group = self._client.update_group(group)
-                idmap.add(IDPair(source_id=group.name,
-                                 ckan_id=updated_group.id))
+                group_id = ckan_group.id
+
+                if self._conf['group_merge_strategy'] == 'update':
+                    # If merge strategy is 'update', we should update
+                    # the group.
+                    group.state = 'active'
+                    group.id = ckan_group.id
+                    updated_group = self._client.update_group(group)
+                    group_id = updated_group.id
+
+                elif group.state != 'active':
+                    # We only want to update the **original** group to set it
+                    # as active, but preserving original values.
+                    ckan_group.state = 'active'
+                    updated_group = self._client.update_group(ckan_group)
+                    group_id = updated_group.id
+
+                idmap.add(IDPair(source_id=group.name, ckan_id=group_id))
 
         return idmap
 

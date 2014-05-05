@@ -143,7 +143,7 @@ def test_merge_strategies(ckan_client_arguments):
     # ============================================================
 
     org1_id = client.get_organization_by_name('org-1').id
-    org2_id = client.get_organization_by_name('org-1').id
+    org2_id = client.get_organization_by_name('org-2').id
 
     dataset = client.get_dataset_by_name('dataset-2')
     assert dataset.owner_org == org1_id
@@ -167,3 +167,46 @@ def test_merge_strategies(ckan_client_arguments):
     sync_client.sync('test_merge', data)
     dataset = client.get_dataset_by_name('dataset-2')
     assert dataset.owner_org == org2_id
+
+
+def test_merge_groups(ckan_client_arguments):
+    args = ckan_client_arguments
+    client = CkanHighlevelClient(*args[0], **args[1])
+    sync_client = SynchronizationClient(*args[0], **args[1])
+
+    # Create a couple initial groups
+    # ------------------------------------------------------------
+
+    client.create_group(CkanGroup({'name': 'tmg-1', 'title': 'TMG 1'}))
+    client.create_group(CkanGroup({'name': 'tmg-2', 'title': 'TMG 2'}))
+
+    # Test merging with "create" strategy
+    # ------------------------------------------------------------
+
+    data = {'group': {
+        'tmg-2': {'name': 'tmg-2', 'title': 'TMG 2.1'},
+        'tmg-3': {'name': 'tmg-3', 'title': 'TMG 3.1'},
+    }, 'organization': {}, 'dataset': {}}
+
+    sync_client._conf['group_merge_strategy'] = 'create'
+    sync_client.sync('test_merge_groups', data)
+
+    assert client.get_group_by_name('tmg-1').title == 'TMG 1'
+    assert client.get_group_by_name('tmg-2').title == 'TMG 2'
+    assert client.get_group_by_name('tmg-3').title == 'TMG 3.1'
+
+    # Test merging with "update" strategy
+    # ------------------------------------------------------------
+
+    data = {'group': {
+        'tmg-2': {'name': 'tmg-2', 'title': 'TMG 2.2'},
+        'tmg-4': {'name': 'tmg-4', 'title': 'TMG 4.2'},
+    }, 'organization': {}, 'dataset': {}}
+
+    sync_client._conf['group_merge_strategy'] = 'update'
+    sync_client.sync('test_merge_groups', data)
+
+    assert client.get_group_by_name('tmg-1').title == 'TMG 1'
+    assert client.get_group_by_name('tmg-2').title == 'TMG 2.2'
+    assert client.get_group_by_name('tmg-3').title == 'TMG 3.1'
+    assert client.get_group_by_name('tmg-4').title == 'TMG 4.2'
