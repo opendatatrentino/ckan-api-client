@@ -739,6 +739,25 @@ def _get_ckan_client(request, ckan_instance, client_class):
 
 
 @pytest.fixture(scope='module')
+def ckan_client_arguments(request, ckan_instance):
+    """
+    Return arguments to be used to instantiate a new ckan client
+    attached to a running ckan instance.
+    """
+
+    api_key = ckan_instance.get_sysadmin_api_key()
+    server = ckan_instance.serve()
+    args = ((ckan_instance.server_url, api_key), {})
+
+    def finalize():
+        server.stop()
+    request.addfinalizer(finalize)
+
+    server.start()
+    return args
+
+
+@pytest.fixture(scope='module')
 def ckan_client_ll(request, ckan_instance):
     """
     :return: A low-level client attached to a running Ckan
