@@ -248,6 +248,9 @@ class SynchronizationClient(object):
                 raise TypeError("Expected CkanGroup, got {0!r}"
                                 .format(type(group)))
 
+            if group.name is None:
+                group.name = group_name
+
             if group.name != group_name:
                 raise ValueError("Mismatching group name!")
 
@@ -310,6 +313,9 @@ class SynchronizationClient(object):
                 raise TypeError("Expected CkanOrganization, got {0!r}"
                                 .format(type(org)))
 
+            if org.name is None:
+                org.name = org_name
+
             if org.name != org_name:
                 raise ValueError("Mismatching org name!")
 
@@ -330,13 +336,25 @@ class SynchronizationClient(object):
 
             else:
                 # We only want to update if state != 'active'
-                if org.state != 'active':
-                    org.id = ckan_org.id
+                org_id = ckan_org.id
+
+                if self._conf['organization_merge_strategy'] == 'update':
+                    # If merge strategy is 'update', we should update
+                    # the group.
                     org.state = 'active'
-                    updated_org = self._client.update_organization(org)
-                    assert updated_org.id == org.id
-                idmap.add(IDPair(source_id=org.name,
-                                 ckan_id=ckan_org.id))
+                    org.id = ckan_org.id
+                    updated_org = self._client.update_org(org)
+                    org_id = updated_org.id
+
+                elif org.state != 'active':
+                    # We only want to update the **original** org to set it
+                    # as active, but preserving original values.
+                    ckan_org.state = 'active'
+                    updated_org = self._client.update_org(ckan_org)
+                    org_id = updated_org.id
+
+                idmap.add(IDPair(source_id=org_name,
+                                 ckan_id=org_id))
 
         return idmap
 
