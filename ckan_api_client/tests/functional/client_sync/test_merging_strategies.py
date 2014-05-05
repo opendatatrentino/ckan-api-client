@@ -97,3 +97,43 @@ def test_merge_strategies(ckan_client_arguments):
     dataset = client.get_dataset_by_name('dummy-dataset-one')
     assert dataset.name == 'dummy-dataset-one'
     assert dataset.title == 'Dataset #1.2'
+
+    # Prepare for merging groups
+    # ============================================================
+
+    grp1_id = client.get_group_by_name('grp-1').id
+    grp2_id = client.get_group_by_name('grp-2').id
+    # grp3_id = client.get_group_by_name('grp-3').id
+
+    # Merge groups with 'replace' strategy
+    # ------------------------------------------------------------
+
+    dataset = client.get_dataset_by_name('dataset-2')
+    assert dataset.groups == set([grp1_id, grp2_id])
+
+    sync_client._conf['dataset_group_merge_strategy'] = 'replace'
+    data['dataset']['dataset-2']['groups'] = ['grp-1']
+
+    sync_client.sync('test_merge', data)
+    dataset = client.get_dataset_by_name('dataset-2')
+    assert dataset.groups == set([grp1_id])
+
+    # Merge groups with 'add' strategy
+    # ------------------------------------------------------------
+
+    sync_client._conf['dataset_group_merge_strategy'] = 'add'
+    data['dataset']['dataset-2']['groups'] = ['grp-2']
+
+    sync_client.sync('test_merge', data)
+    dataset = client.get_dataset_by_name('dataset-2')
+    assert dataset.groups == set([grp1_id, grp2_id])
+
+    # Merge groups with 'preserve' strategy
+    # ------------------------------------------------------------
+
+    sync_client._conf['dataset_group_merge_strategy'] = 'preserve'
+    data['dataset']['dataset-2']['groups'] = ['grp-3']
+
+    sync_client.sync('test_merge', data)
+    dataset = client.get_dataset_by_name('dataset-2')
+    assert dataset.groups == set([grp1_id, grp2_id])
