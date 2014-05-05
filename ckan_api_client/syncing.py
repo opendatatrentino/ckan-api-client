@@ -42,8 +42,43 @@ class SynchronizationClient(object):
     - apply changes
     """
 
-    def __init__(self, base_url, api_key=None):
+    def __init__(self, base_url, api_key=None, **kw):
+        """
+        :param base_url:
+            Base URL of the Ckan instance, passed to high-level client
+        :param api_key:
+            API key to be used, passed to high-level client
+        :param organization_merge_strategy:
+            One of:
+            - 'create' (default) if the organization doesn't exist, create it.
+              Otherwise, leave it alone.
+            - 'update' if the organization doesn't exist, create it.
+              Otherwise, update with new values.
+        :param group_merge_strategy:
+            One of:
+            - 'create' (default) if the group doesn't exist, create it.
+              Otherwise, leave it alone.
+            - 'update' if the group doesn't exist, create it.
+              Otherwise, update with new values.
+        :param dataset_preserve_names:
+            if True (the default) will preserve old names of existing datasets
+        :param dataset_preserve_organization:
+            if True (the default) will preserve old organizations of existing
+            datasets.
+        :param dataset_group_merge_strategy:
+            - 'add' add groups, keep old ones (default)
+            - 'replace' replace all existing groups
+            - 'preserve' leave groups alone
+        """
         self._client = CkanHighlevelClient(base_url, api_key)
+        self._conf = {
+            'organization_merge_strategy': 'create',
+            'group_merge_strategy': 'create',
+            'dataset_preserve_names': True,
+            'dataset_preserve_organization': True,
+            'dataset_group_merge_strategy': 'add',
+        }
+        self._conf.update(kw)
 
     def sync(self, source_name, data):
         """
@@ -155,10 +190,48 @@ class SynchronizationClient(object):
         # Update outdated datasets
         for source_id in differences['differing']:
             logger.info('Updating dataset {0}'.format(source_id))
-            dataset = source_datasets[source_id]
-            dataset.id = ckan_datasets[source_id].id
-            dataset.name = ckan_datasets[source_id].name  # preserve names
+            # dataset = source_datasets[source_id]
+            old_dataset = ckan_datasets[source_id]
+            new_dataset = source_datasets[source_id]
+            dataset = self._merge_datasets(old_dataset, new_dataset)
+            dataset.id = old_dataset.id  # Mandatory!
             self._client.update_dataset(dataset)  # should never fail!
+
+    def _merge_datasets(self, old, new):
+        # Preserve dataset names
+        if self._conf['dataset_preserve_names']:
+            new.name = old.name
+
+        # Merge groups according to configured strategy
+        _strategy = self._conf['dataset_group_merge_strategy']
+        if _strategy == 'add':
+            # We want to preserve the order!
+            groups = list(old.groups)
+            for g in new.groups:
+                if g not in groups:
+                    groups.append(g)
+            new.groups = groups
+
+        elif _strategy == 'replace':
+            # Do nothing, we just want the new groups to replace
+            # the old ones -- no need to merge
+            pass
+
+        elif _strategy == 'preserve':
+            # Simply discard the new groups, keep the old ones
+            new.groups = old.groups
+
+        else:
+            # Invalid value! Shouldn't this have been catched
+            # before?
+            pass
+
+        # What should we do with owner organization?
+        if self._conf['dataset_preserve_organization']:
+            if old.owner_org:
+                new.owner_org = old.owner_org
+
+        return new
 
     def _upsert_groups(self, groups):
         """
