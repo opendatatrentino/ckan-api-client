@@ -9,6 +9,7 @@ import pytest
 from ckan_api_client.exceptions import HTTPError
 from ckan_api_client.high_level import CkanHighlevelClient
 from ckan_api_client.syncing import SynchronizationClient
+from ckan_api_client.objects import CkanGroup
 
 
 SAMPLE_DATA = {
@@ -137,3 +138,32 @@ def test_merge_strategies(ckan_client_arguments):
     sync_client.sync('test_merge', data)
     dataset = client.get_dataset_by_name('dataset-2')
     assert dataset.groups == set([grp1_id, grp2_id])
+
+    # Prepare for merging Organizations
+    # ============================================================
+
+    org1_id = client.get_organization_by_name('org-1').id
+    org2_id = client.get_organization_by_name('org-1').id
+
+    dataset = client.get_dataset_by_name('dataset-2')
+    assert dataset.owner_org == org1_id
+
+    # Update preserving organization
+    # ------------------------------------------------------------
+
+    sync_client._conf['dataset_preserve_organization'] = True
+    data['dataset']['dataset-2']['owner_org'] = ['org-2']
+
+    sync_client.sync('test_merge', data)
+    dataset = client.get_dataset_by_name('dataset-2')
+    assert dataset.owner_org == org1_id
+
+    # Update *not* preserving organization
+    # ------------------------------------------------------------
+
+    sync_client._conf['dataset_preserve_organization'] = False
+    data['dataset']['dataset-2']['owner_org'] = ['org-2']
+
+    sync_client.sync('test_merge', data)
+    dataset = client.get_dataset_by_name('dataset-2')
+    assert dataset.owner_org == org2_id
