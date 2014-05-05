@@ -134,7 +134,13 @@ class BaseField(object):
             return True
 
         # Just perform simple comparison between values
-        return getattr(instance, name) == getattr(other, name)
+        myvalue = getattr(instance, name)
+        othervalue = getattr(other, name)
+        if myvalue is None:
+            myvalue = self.get_default()
+        if othervalue is None:
+            othervalue = self.get_default()
+        return myvalue == othervalue
 
     def __repr__(self):
         myname = self.__class__.__name__

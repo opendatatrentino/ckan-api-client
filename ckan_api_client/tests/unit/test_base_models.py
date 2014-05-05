@@ -134,6 +134,23 @@ def test_object_comparison_with_key_field():
     assert obj2.is_equivalent(obj1)
 
 
+def test_object_comparison_with_default_vs_none():
+    """
+    Default value of a field should compare equal to ``None``
+    for nullable fields.
+    """
+
+    class MyObject(BaseObject):
+        field1 = StringField(default='')
+        field2 = StringField(default='something')
+        field3 = StringField(default='')
+
+    obj1 = MyObject({'field1': 'val1', 'field2': None})
+    obj2 = MyObject({'field1': 'val1', 'field3': ''})
+
+    assert obj1.is_equivalent(obj2)
+
+
 def test_object_invalid_init():
     class MyObject(BaseObject):
         field1 = StringField()

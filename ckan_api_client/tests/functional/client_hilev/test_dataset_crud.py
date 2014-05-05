@@ -179,7 +179,8 @@ def test_dataset_update_resources(ckan_client_hl):
 
     stage_3pre = client.get_dataset(stage_1.id)
     stage_3pre.resources.insert(0, {
-        'url': 'http://example.com/dataset-2.json'})
+        'url': 'http://example.com/dataset-2.json',
+        'format': 'JSON'})
 
     assert len(stage_3pre.resources) == 4
     assert len(stage_3pre.serialize()['resources']) == 4

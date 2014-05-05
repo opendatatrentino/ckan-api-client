@@ -168,7 +168,8 @@ def test_ckandataset_resources_update():
     # "Contains" test is successful as fields left to
     # default values just get ignored during comparison.
     assert {'name': 'Hello'} in dataset.resources
-    assert {'name': 'WTF'} not in dataset.resources
+    # assert {'name': 'WTF'} not in dataset.resources
+    assert {'name': 'WTF, seriously'} not in dataset.resources
 
 
 def test_resources_list():
