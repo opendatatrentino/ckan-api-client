@@ -4,6 +4,9 @@ Test different dataset merging strategies
 
 import copy
 
+import pytest
+
+from ckan_api_client.exceptions import HTTPError
 from ckan_api_client.high_level import CkanHighlevelClient
 from ckan_api_client.syncing import SynchronizationClient
 
@@ -60,4 +63,37 @@ def test_merge_strategies(ckan_client_arguments):
     assert client.get_organization_by_name('org-1').title == 'Organization #1'  # noqa
     assert client.get_group_by_name('grp-1').title == 'Group #1'  # noqa
 
-    # Now we can try changing groups/orgs/stuff a bit..
+    # Make sure we preserve names if told so
+    # ------------------------------------------------------------
+
+    sync_client._conf['dataset_preserve_names'] = True
+    data['dataset']['dataset-1']['name'] = 'dummy-dataset-one'
+    data['dataset']['dataset-1']['title'] = 'Dataset #1.1'
+    sync_client.sync('test_merge', data)
+
+    dataset = client.get_dataset_by_name('dataset-1')
+    assert dataset.name == 'dataset-1'
+    assert dataset.title == 'Dataset #1.1'
+
+    # Make sure we update names if told so
+    # ------------------------------------------------------------
+
+    sync_client._conf['dataset_preserve_names'] = False
+    data['dataset']['dataset-1']['name'] = 'dummy-dataset-one'
+    data['dataset']['dataset-1']['title'] = 'Dataset #1.2'
+    sync_client.sync('test_merge', data)
+
+    with pytest.raises(HTTPError) as excinfo:
+        # It got renamed!
+        client.get_dataset_by_name('dataset-1')
+    assert excinfo.value.status_code == 404
+
+    # Get using the old id
+    dataset = client.get_dataset(dataset.id)
+    assert dataset.name == 'dummy-dataset-one'
+    assert dataset.title == 'Dataset #1.2'
+
+    # Get using the new name
+    dataset = client.get_dataset_by_name('dummy-dataset-one')
+    assert dataset.name == 'dummy-dataset-one'
+    assert dataset.title == 'Dataset #1.2'
