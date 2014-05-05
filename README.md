@@ -9,7 +9,7 @@ Improved Python client for the [Ckan](http://ckan.org) API.
 | master | [![Build Status](https://travis-ci.org/opendatatrentino/ckan-api-client.svg?branch=master)](https://travis-ci.org/opendatatrentino/ckan-api-client) |
 | develop | [![Build Status](https://travis-ci.org/opendatatrentino/ckan-api-client.svg?branch=develop)](https://travis-ci.org/opendatatrentino/ckan-api-client) |
 
-![Ckan API client logo](misc/ckan-api-client-logo.png)
+![Ckan API client logo](misc/ckan-api-client-logo-small.png)
 
 This package provides:
 
