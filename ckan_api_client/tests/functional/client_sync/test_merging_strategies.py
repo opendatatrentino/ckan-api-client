@@ -152,7 +152,7 @@ def test_merge_strategies(ckan_client_arguments):
     # ------------------------------------------------------------
 
     sync_client._conf['dataset_preserve_organization'] = True
-    data['dataset']['dataset-2']['owner_org'] = ['org-2']
+    data['dataset']['dataset-2']['owner_org'] = 'org-2'
 
     sync_client.sync('test_merge', data)
     dataset = client.get_dataset_by_name('dataset-2')
@@ -162,7 +162,7 @@ def test_merge_strategies(ckan_client_arguments):
     # ------------------------------------------------------------
 
     sync_client._conf['dataset_preserve_organization'] = False
-    data['dataset']['dataset-2']['owner_org'] = ['org-2']
+    data['dataset']['dataset-2']['owner_org'] = 'org-2'
 
     sync_client.sync('test_merge', data)
     dataset = client.get_dataset_by_name('dataset-2')
