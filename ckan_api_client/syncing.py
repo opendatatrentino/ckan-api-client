@@ -1,17 +1,3 @@
-"""
-Synchronization client.
-
-
-Strategy:
-
-- upsert organizations, get ``{source_id: ckan_id}`` map
-- upsert groups, get ``{source_id: ckan_id}`` map
-- create collection of CkanDatasets from original dicts
-- calculate differences between desired and actual state
-- perform syncrhonization
-- double-check differences
-"""
-
 import copy
 import logging
 import random
@@ -35,36 +21,59 @@ class SynchronizationClient(object):
     Synchronization client, providing functionality for importing
     collections of datasets into a Ckan instance.
 
-    Strategy:
+    Synchronization acts as follows:
 
-    - find all "own" datasets from Ckan
-    - figure out which datasets need insertion/update/deletion
-    - apply changes
+    - Snsure all the required organizations/groups are there;
+      create a map between "source" ids and Ckan ids.
+      Optionally update existing organizations/groups with
+      new details.
+
+    - Find all the Ckan datasets matching the ``source_name``
+
+    - Determine which datasets...
+
+      - ...need to be created
+      - ...need to be updated
+      - ...need to be deleted
+
+    - First, delete datasets to be deleted in order to free up names
+
+    - Then, create datasets that need to be created
+
+    - Lastly, update datasets using the configured merge strategy
+      (see constructor arguments).
     """
 
     def __init__(self, base_url, api_key=None, **kw):
         """
         :param base_url:
             Base URL of the Ckan instance, passed to high-level client
+
         :param api_key:
             API key to be used, passed to high-level client
-        :param organization_merge_strategy:
-            One of:
+
+        :param organization_merge_strategy: One of:
+
             - 'create' (default) if the organization doesn't exist, create it.
               Otherwise, leave it alone.
             - 'update' if the organization doesn't exist, create it.
               Otherwise, update with new values.
-        :param group_merge_strategy:
-            One of:
+
+        :param group_merge_strategy: One of:
+
             - 'create' (default) if the group doesn't exist, create it.
               Otherwise, leave it alone.
             - 'update' if the group doesn't exist, create it.
               Otherwise, update with new values.
+
         :param dataset_preserve_names:
-            if True (the default) will preserve old names of existing datasets
+            if ``True`` (the default) will preserve old names of existing
+            datasets
+
         :param dataset_preserve_organization:
-            if True (the default) will preserve old organizations of existing
-            datasets.
+            if ``True`` (the default) will preserve old organizations of
+            existing datasets.
+
         :param dataset_group_merge_strategy:
             - 'add' add groups, keep old ones (default)
             - 'replace' replace all existing groups
@@ -87,8 +96,13 @@ class SynchronizationClient(object):
         - datasets are matched by _harvest_source
         - groups and organizations are matched by name
 
-        :param source_name: string identifying the source
-        :param data: data to be synchronized
+        :param source_name:
+            String identifying the source of the data. Used to build
+            ids that will be used in further synchronizations.
+        :param data:
+            Data to be synchronized. Should be a dict (or dict-like)
+            with top level keys coresponding to the object type,
+            mapping to dictionaries of ``{'id': <object>}``.
         """
 
         groups = dict(

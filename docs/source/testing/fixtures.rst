@@ -18,6 +18,8 @@ Fixture functions
 
 .. autofunction:: data_dir
 
+.. autofunction:: ckan_client_arguments
+
 .. autofunction:: ckan_client_ll
 
 .. autofunction:: ckan_client_hl
