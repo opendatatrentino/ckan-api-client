@@ -214,3 +214,46 @@ def test_dataset_delete(ckan_client_hl):
 
     retrieved = client.get_dataset(created.id, allow_deleted=True)
     assert retrieved.state == 'deleted'
+
+
+def test_dataset_wipe(ckan_client_hl):
+    client = ckan_client_hl
+
+    # ------------------------------------------------------------
+    # Now delete normally and try inserting another
+    # one with the same name. Should fail with 409
+
+    dataset = CkanDataset(generate_dataset())
+    dataset.name = 'dataset-to-delete'
+
+    created = client.create_dataset(dataset)
+    assert created.is_equivalent(dataset)
+
+    client.delete_dataset(created.id)
+
+    new_dataset = CkanDataset(generate_dataset())
+    new_dataset.name = 'dataset-to-delete'
+
+    with pytest.raises(HTTPError) as excinfo:
+        client.create_dataset(new_dataset)
+    assert excinfo.value.status_code == 409
+
+    del dataset, created, new_dataset, excinfo
+
+    # ------------------------------------------------------------
+    # Now let's try updating + deleting
+
+    dataset = CkanDataset(generate_dataset())
+    dataset.name = 'dataset-to-delete-2'
+
+    created = client.create_dataset(dataset)
+    assert created.is_equivalent(dataset)
+
+    client.wipe_dataset(created.id)
+
+    new_dataset = CkanDataset(generate_dataset())
+    new_dataset.name = 'dataset-to-delete-2'
+
+    # Should not fail anymore
+    created = client.create_dataset(new_dataset)
+    assert created.name == 'dataset-to-delete-2'

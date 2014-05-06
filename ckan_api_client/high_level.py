@@ -1,3 +1,6 @@
+import random
+import string
+
 from .objects import CkanDataset, CkanOrganization, CkanGroup
 from .low_level import CkanLowlevelClient
 from .exceptions import OperationFailure, HTTPError
@@ -168,6 +171,15 @@ class CkanHighlevelClient(object):
     def delete_dataset(self, id):
         """Delete a dataset, by id"""
         self._client.delete_dataset(id)
+
+    def wipe_dataset(self, id):
+        """Actually delete a dataset, by renaming it first"""
+        dataset = self.get_dataset(id)
+        chars = string.ascii_lowercase + string.digits
+        dataset.name = 'deleted-{0}'.format(''.join(
+            random.choice(chars) for i in xrange(10)))
+        self.update_dataset(dataset)
+        self.delete_dataset(id)
 
     # ------------------------------------------------------------
     # Organizations management
