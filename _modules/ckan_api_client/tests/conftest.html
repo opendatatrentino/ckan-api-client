@@ -855,6 +855,25 @@
 
 
 <span class="nd">@pytest.fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">ckan_client_arguments</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_instance</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return arguments to be used to instantiate a new ckan client</span>
+<span class="sd">    attached to a running ckan instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">ckan_instance</span><span class="o">.</span><span class="n">get_sysadmin_api_key</span><span class="p">()</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">ckan_instance</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">((</span><span class="n">ckan_instance</span><span class="o">.</span><span class="n">server_url</span><span class="p">,</span> <span class="n">api_key</span><span class="p">),</span> <span class="p">{})</span>
+
+    <span class="k">def</span> <span class="nf">finalize</span><span class="p">():</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">addfinalizer</span><span class="p">(</span><span class="n">finalize</span><span class="p">)</span>
+
+    <span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">args</span>
+
+
+<span class="nd">@pytest.fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&#39;module&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="ckan_client_ll"><a class="viewcode-back" href="../../../testing/fixtures.html#ckan_api_client.tests.conftest.ckan_client_ll">[docs]</a><span class="k">def</span> <span class="nf">ckan_client_ll</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">ckan_instance</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :return: A low-level client attached to a running Ckan</span>

@@ -347,7 +347,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">ign404</span> <span class="o">=</span> <span class="n">SuppressExceptionIf</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">ignore_404</span> <span class="ow">and</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">))</span>
+            <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">ignore_404</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">HTTPError</span><span class="p">)</span>
+                                      <span class="ow">and</span> <span class="n">e</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">))</span>
         <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/dataset/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">ign404</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;DELETE&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="n">dataset_id</span><span class="p">})</span>
@@ -396,7 +397,8 @@
 </div>
 <div class="viewcode-block" id="CkanLowlevelClient.delete_group"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.delete_group">[docs]</a>    <span class="k">def</span> <span class="nf">delete_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_id</span><span class="p">,</span> <span class="n">ignore_404</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="n">ign404</span> <span class="o">=</span> <span class="n">SuppressExceptionIf</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">ignore_404</span> <span class="ow">and</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">))</span>
+            <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">ignore_404</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">HTTPError</span><span class="p">)</span>
+                                      <span class="ow">and</span> <span class="n">e</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">))</span>
         <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/2/rest/group/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">group_id</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">ign404</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;DELETE&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
@@ -429,6 +431,12 @@
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s">&#39;result&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_response_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="c"># API v3 returns the whole objects here, but we just</span>
+        <span class="c"># want the ids..</span>
+        <span class="k">if</span> <span class="s">&#39;groups&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s">&#39;groups&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;groups&#39;</span><span class="p">]]</span>
+
         <span class="k">return</span> <span class="n">data</span>
 </div>
 <div class="viewcode-block" id="CkanLowlevelClient.post_organization"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.post_organization">[docs]</a>    <span class="k">def</span> <span class="nf">post_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization</span><span class="p">):</span>
@@ -448,7 +456,8 @@
 </div>
 <div class="viewcode-block" id="CkanLowlevelClient.delete_organization"><a class="viewcode-back" href="../../clients/low-level.html#ckan_api_client.low_level.CkanLowlevelClient.delete_organization">[docs]</a>    <span class="k">def</span> <span class="nf">delete_organization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">ignore_404</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="n">ign404</span> <span class="o">=</span> <span class="n">SuppressExceptionIf</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">ignore_404</span> <span class="ow">and</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">))</span>
+            <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">ignore_404</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">HTTPError</span><span class="p">)</span>
+                                      <span class="ow">and</span> <span class="n">e</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">))</span>
         <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/api/3/action/organization_delete&#39;</span>
         <span class="k">with</span> <span class="n">ign404</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;PUT&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="nb">id</span><span class="p">})</span>

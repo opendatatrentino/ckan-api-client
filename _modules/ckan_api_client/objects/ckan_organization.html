@@ -125,11 +125,11 @@
     <span class="nb">id</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">is_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
-    <span class="n">title</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
     <span class="n">approval_status</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;approved&#39;</span><span class="p">)</span>
-    <span class="n">description</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
     <span class="c"># image_display_url = StringField()</span>
-    <span class="n">image_url</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">image_url</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
     <span class="n">is_organization</span> <span class="o">=</span> <span class="n">BoolField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     <span class="n">state</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;active&#39;</span><span class="p">)</span>
     <span class="nb">type</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;organization&#39;</span><span class="p">)</span>

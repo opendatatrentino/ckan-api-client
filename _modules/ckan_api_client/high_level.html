@@ -428,20 +428,22 @@
 
     <span class="c"># ------------------------------------------------------------</span>
     <span class="c"># Groups management</span>
+    <span class="c"># The list from the API is at /api/2/rest/group and it will</span>
+    <span class="c"># correctly return group ids.</span>
     <span class="c"># ------------------------------------------------------------</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.list_groups"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.list_groups">[docs]</a>    <span class="k">def</span> <span class="nf">list_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">get_group_by_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
-            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_group_names</span><span class="p">()</span>
-        <span class="p">]</span>
-</div>
-<div class="viewcode-block" id="CkanHighlevelClient.list_group_names"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.list_group_names">[docs]</a>    <span class="k">def</span> <span class="nf">list_group_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">list_groups</span><span class="p">()</span>
 </div>
+<div class="viewcode-block" id="CkanHighlevelClient.list_group_names"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.list_group_names">[docs]</a>    <span class="k">def</span> <span class="nf">list_group_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_groups</span><span class="p">()</span>
+        <span class="p">]</span>
+</div>
 <div class="viewcode-block" id="CkanHighlevelClient.iter_groups"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.iter_groups">[docs]</a>    <span class="k">def</span> <span class="nf">iter_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_group_names</span><span class="p">():</span>
-            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group_by_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_groups</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="CkanHighlevelClient.get_group"><a class="viewcode-back" href="../../clients/high-level.html#ckan_api_client.high_level.CkanHighlevelClient.get_group">[docs]</a>    <span class="k">def</span> <span class="nf">get_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">allow_deleted</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

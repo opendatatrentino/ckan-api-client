@@ -129,6 +129,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">random</span>
 
 <span class="kn">from</span> <span class="nn">ckan_api_client.exceptions</span> <span class="kn">import</span> <span class="n">HTTPError</span>
@@ -140,6 +141,9 @@
 <span class="c"># Extras field containing id of the external source.</span>
 <span class="c"># The id is simply source_name:</span>
 <span class="n">HARVEST_SOURCE_ID_FIELD</span> <span class="o">=</span> <span class="s">&#39;_harvest_source&#39;</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="SynchronizationClient"><a class="viewcode-back" href="../../clients/syncing.html#ckan_api_client.syncing.SynchronizationClient">[docs]</a><span class="k">class</span> <span class="nc">SynchronizationClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -154,8 +158,43 @@
 <span class="sd">    - apply changes</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_url</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_url</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param base_url:</span>
+<span class="sd">            Base URL of the Ckan instance, passed to high-level client</span>
+<span class="sd">        :param api_key:</span>
+<span class="sd">            API key to be used, passed to high-level client</span>
+<span class="sd">        :param organization_merge_strategy:</span>
+<span class="sd">            One of:</span>
+<span class="sd">            - &#39;create&#39; (default) if the organization doesn&#39;t exist, create it.</span>
+<span class="sd">              Otherwise, leave it alone.</span>
+<span class="sd">            - &#39;update&#39; if the organization doesn&#39;t exist, create it.</span>
+<span class="sd">              Otherwise, update with new values.</span>
+<span class="sd">        :param group_merge_strategy:</span>
+<span class="sd">            One of:</span>
+<span class="sd">            - &#39;create&#39; (default) if the group doesn&#39;t exist, create it.</span>
+<span class="sd">              Otherwise, leave it alone.</span>
+<span class="sd">            - &#39;update&#39; if the group doesn&#39;t exist, create it.</span>
+<span class="sd">              Otherwise, update with new values.</span>
+<span class="sd">        :param dataset_preserve_names:</span>
+<span class="sd">            if True (the default) will preserve old names of existing datasets</span>
+<span class="sd">        :param dataset_preserve_organization:</span>
+<span class="sd">            if True (the default) will preserve old organizations of existing</span>
+<span class="sd">            datasets.</span>
+<span class="sd">        :param dataset_group_merge_strategy:</span>
+<span class="sd">            - &#39;add&#39; add groups, keep old ones (default)</span>
+<span class="sd">            - &#39;replace&#39; replace all existing groups</span>
+<span class="sd">            - &#39;preserve&#39; leave groups alone</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">CkanHighlevelClient</span><span class="p">(</span><span class="n">base_url</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conf</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;organization_merge_strategy&#39;</span><span class="p">:</span> <span class="s">&#39;create&#39;</span><span class="p">,</span>
+            <span class="s">&#39;group_merge_strategy&#39;</span><span class="p">:</span> <span class="s">&#39;create&#39;</span><span class="p">,</span>
+            <span class="s">&#39;dataset_preserve_names&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+            <span class="s">&#39;dataset_preserve_organization&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+            <span class="s">&#39;dataset_group_merge_strategy&#39;</span><span class="p">:</span> <span class="s">&#39;add&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SynchronizationClient.sync"><a class="viewcode-back" href="../../clients/syncing.html#ckan_api_client.syncing.SynchronizationClient.sync">[docs]</a>    <span class="k">def</span> <span class="nf">sync</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -227,6 +266,7 @@
         <span class="c"># some already-used names..</span>
         <span class="k">for</span> <span class="n">source_id</span> <span class="ow">in</span> <span class="n">differences</span><span class="p">[</span><span class="s">&#39;left&#39;</span><span class="p">]:</span>
             <span class="n">ckan_id</span> <span class="o">=</span> <span class="n">ckan_datasets</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Deleting dataset {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ckan_id</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">delete_dataset</span><span class="p">(</span><span class="n">ckan_id</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">force_dataset_operation</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">retry</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
@@ -239,6 +279,7 @@
 
             <span class="n">_orig_name</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">80</span><span class="p">]</span>
             <span class="n">dataset</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">_orig_name</span>
+
             <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">result</span> <span class="o">=</span> <span class="n">operation</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
@@ -251,21 +292,63 @@
                     <span class="n">dataset</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;{0}-{1:06d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                         <span class="n">_orig_name</span><span class="p">,</span>
                         <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">999999</span><span class="p">))</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Got 409: trying to rename dataset to {0}&#39;</span>
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">result</span>
 
         <span class="c"># Create missing datasets</span>
         <span class="k">for</span> <span class="n">source_id</span> <span class="ow">in</span> <span class="n">differences</span><span class="p">[</span><span class="s">&#39;right&#39;</span><span class="p">]:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Creating dataset {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">source_id</span><span class="p">))</span>
             <span class="n">dataset</span> <span class="o">=</span> <span class="n">source_datasets</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span>
             <span class="n">force_dataset_operation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
 
         <span class="c"># Update outdated datasets</span>
         <span class="k">for</span> <span class="n">source_id</span> <span class="ow">in</span> <span class="n">differences</span><span class="p">[</span><span class="s">&#39;differing&#39;</span><span class="p">]:</span>
-            <span class="n">dataset</span> <span class="o">=</span> <span class="n">source_datasets</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span>
-            <span class="n">dataset</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">ckan_datasets</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>  <span class="c"># should never fail</span>
-            <span class="c"># force_dataset_operation(self._client.update_dataset, dataset)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Updating dataset {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">source_id</span><span class="p">))</span>
+            <span class="c"># dataset = source_datasets[source_id]</span>
+            <span class="n">old_dataset</span> <span class="o">=</span> <span class="n">ckan_datasets</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span>
+            <span class="n">new_dataset</span> <span class="o">=</span> <span class="n">source_datasets</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_datasets</span><span class="p">(</span><span class="n">old_dataset</span><span class="p">,</span> <span class="n">new_dataset</span><span class="p">)</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">old_dataset</span><span class="o">.</span><span class="n">id</span>  <span class="c"># Mandatory!</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>  <span class="c"># should never fail!</span>
 </div>
+    <span class="k">def</span> <span class="nf">_merge_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="c"># Preserve dataset names</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conf</span><span class="p">[</span><span class="s">&#39;dataset_preserve_names&#39;</span><span class="p">]:</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">old</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="c"># Merge groups according to configured strategy</span>
+        <span class="n">_strategy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conf</span><span class="p">[</span><span class="s">&#39;dataset_group_merge_strategy&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">_strategy</span> <span class="o">==</span> <span class="s">&#39;add&#39;</span><span class="p">:</span>
+            <span class="c"># We want to preserve the order!</span>
+            <span class="n">groups</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">old</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">new</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">g</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+                    <span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="n">groups</span>
+
+        <span class="k">elif</span> <span class="n">_strategy</span> <span class="o">==</span> <span class="s">&#39;replace&#39;</span><span class="p">:</span>
+            <span class="c"># Do nothing, we just want the new groups to replace</span>
+            <span class="c"># the old ones -- no need to merge</span>
+            <span class="k">pass</span>
+
+        <span class="k">elif</span> <span class="n">_strategy</span> <span class="o">==</span> <span class="s">&#39;preserve&#39;</span><span class="p">:</span>
+            <span class="c"># Simply discard the new groups, keep the old ones</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="n">old</span><span class="o">.</span><span class="n">groups</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Invalid value! Shouldn&#39;t this have been catched</span>
+            <span class="c"># before?</span>
+            <span class="k">pass</span>
+
+        <span class="c"># What should we do with owner organization?</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conf</span><span class="p">[</span><span class="s">&#39;dataset_preserve_organization&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">old</span><span class="o">.</span><span class="n">owner_org</span><span class="p">:</span>
+                <span class="n">new</span><span class="o">.</span><span class="n">owner_org</span> <span class="o">=</span> <span class="n">old</span><span class="o">.</span><span class="n">owner_org</span>
+
+        <span class="k">return</span> <span class="n">new</span>
+
     <span class="k">def</span> <span class="nf">_upsert_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param groups:</span>
@@ -280,6 +363,9 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">CkanGroup</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Expected CkanGroup, got {0!r}&quot;</span>
                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">group</span><span class="p">)))</span>
+
+            <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">group</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">group_name</span>
 
             <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">group_name</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Mismatching group name!&quot;</span><span class="p">)</span>
@@ -307,11 +393,24 @@
                 <span class="c"># todo: make sure we don&#39;t need to preserve users and stuff,</span>
                 <span class="c"># otherwise we need to workaround that in hi-lev client</span>
 
-                <span class="n">group</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">ckan_group</span><span class="o">.</span><span class="n">id</span>
-                <span class="n">group</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;active&#39;</span>
-                <span class="n">updated_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
-                <span class="n">idmap</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">IDPair</span><span class="p">(</span><span class="n">source_id</span><span class="o">=</span><span class="n">group</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                                 <span class="n">ckan_id</span><span class="o">=</span><span class="n">updated_group</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+                <span class="n">group_id</span> <span class="o">=</span> <span class="n">ckan_group</span><span class="o">.</span><span class="n">id</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conf</span><span class="p">[</span><span class="s">&#39;group_merge_strategy&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;update&#39;</span><span class="p">:</span>
+                    <span class="c"># If merge strategy is &#39;update&#39;, we should update</span>
+                    <span class="c"># the group.</span>
+                    <span class="n">group</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;active&#39;</span>
+                    <span class="n">group</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">ckan_group</span><span class="o">.</span><span class="n">id</span>
+                    <span class="n">updated_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+                    <span class="n">group_id</span> <span class="o">=</span> <span class="n">updated_group</span><span class="o">.</span><span class="n">id</span>
+
+                <span class="k">elif</span> <span class="n">group</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="s">&#39;active&#39;</span><span class="p">:</span>
+                    <span class="c"># We only want to update the **original** group to set it</span>
+                    <span class="c"># as active, but preserving original values.</span>
+                    <span class="n">ckan_group</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;active&#39;</span>
+                    <span class="n">updated_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_group</span><span class="p">(</span><span class="n">ckan_group</span><span class="p">)</span>
+                    <span class="n">group_id</span> <span class="o">=</span> <span class="n">updated_group</span><span class="o">.</span><span class="n">id</span>
+
+                <span class="n">idmap</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">IDPair</span><span class="p">(</span><span class="n">source_id</span><span class="o">=</span><span class="n">group</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">ckan_id</span><span class="o">=</span><span class="n">group_id</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">idmap</span>
 
@@ -329,6 +428,9 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">CkanOrganization</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Expected CkanOrganization, got {0!r}&quot;</span>
                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">org</span><span class="p">)))</span>
+
+            <span class="k">if</span> <span class="n">org</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">org</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">org_name</span>
 
             <span class="k">if</span> <span class="n">org</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">org_name</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Mismatching org name!&quot;</span><span class="p">)</span>
@@ -349,11 +451,26 @@
                                  <span class="n">ckan_id</span><span class="o">=</span><span class="n">created_org</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">org</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">ckan_org</span><span class="o">.</span><span class="n">id</span>
-                <span class="n">org</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;active&#39;</span>
-                <span class="n">updated_org</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_organization</span><span class="p">(</span><span class="n">org</span><span class="p">)</span>
-                <span class="n">idmap</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">IDPair</span><span class="p">(</span><span class="n">source_id</span><span class="o">=</span><span class="n">org</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                                 <span class="n">ckan_id</span><span class="o">=</span><span class="n">updated_org</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+                <span class="c"># We only want to update if state != &#39;active&#39;</span>
+                <span class="n">org_id</span> <span class="o">=</span> <span class="n">ckan_org</span><span class="o">.</span><span class="n">id</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conf</span><span class="p">[</span><span class="s">&#39;organization_merge_strategy&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;update&#39;</span><span class="p">:</span>
+                    <span class="c"># If merge strategy is &#39;update&#39;, we should update</span>
+                    <span class="c"># the group.</span>
+                    <span class="n">org</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;active&#39;</span>
+                    <span class="n">org</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">ckan_org</span><span class="o">.</span><span class="n">id</span>
+                    <span class="n">updated_org</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_organization</span><span class="p">(</span><span class="n">org</span><span class="p">)</span>
+                    <span class="n">org_id</span> <span class="o">=</span> <span class="n">updated_org</span><span class="o">.</span><span class="n">id</span>
+
+                <span class="k">elif</span> <span class="n">org</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="s">&#39;active&#39;</span><span class="p">:</span>
+                    <span class="c"># We only want to update the **original** org to set it</span>
+                    <span class="c"># as active, but preserving original values.</span>
+                    <span class="n">ckan_org</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;active&#39;</span>
+                    <span class="n">updated_org</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_organization</span><span class="p">(</span><span class="n">ckan_org</span><span class="p">)</span>
+                    <span class="n">org_id</span> <span class="o">=</span> <span class="n">updated_org</span><span class="o">.</span><span class="n">id</span>
+
+                <span class="n">idmap</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">IDPair</span><span class="p">(</span><span class="n">source_id</span><span class="o">=</span><span class="n">org_name</span><span class="p">,</span>
+                                 <span class="n">ckan_id</span><span class="o">=</span><span class="n">org_id</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">idmap</span>
 
