@@ -2,7 +2,7 @@ import sys
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
-version = '0.1-alpha'
+version = '0.1-beta'
 
 install_requires = [
     "requests",  # For performing HTTP requests
