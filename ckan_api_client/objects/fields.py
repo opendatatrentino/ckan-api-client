@@ -136,3 +136,23 @@ class GroupsField(SetField):
 class ExtrasField(DictField):
     def validate(self, instance, name, value):
         return super(ExtrasField, self).validate(instance, name, value)
+
+    def is_equivalent(self, instance, name, other, ignore_key=True):
+        # Equivalency check for extras is tricky:
+        # we want to compare equal a missing key with one set to None
+        # as they are trated equally by Ckan..
+
+        if ignore_key and self.is_key:
+            return True
+
+        def _remove_null(dct):
+            return dict((k, v) for k, v in dct.iteritems() if v is not None)
+
+        # Just perform simple comparison between values
+        myvalue = getattr(instance, name)
+        othervalue = getattr(other, name)
+        if myvalue is None:
+            myvalue = self.get_default()
+        if othervalue is None:
+            othervalue = self.get_default()
+        return _remove_null(myvalue) == _remove_null(othervalue)
