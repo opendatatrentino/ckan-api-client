@@ -108,6 +108,7 @@ class CkanDataset(BaseObject):
     groups = GroupsField()
     resources = ResourcesField()
     # relationships = ListField()
+    tags = ListField()
 
 
 class CkanResource(BaseObject):
