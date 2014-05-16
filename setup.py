@@ -1,3 +1,4 @@
+import os
 import sys
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
@@ -42,6 +43,10 @@ entry_points = {
 }
 
 
+with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as fp:
+    long_description = fp.read()
+
+
 class PyTest(TestCommand):
     def finalize_options(self):
         TestCommand.finalize_options(self)
@@ -68,15 +73,26 @@ setup(
     license='BSD License',
     author='Samuele Santi',
     author_email='s.santi@trentorise.eu',
-    description='',
-    long_description='',
+    description='Client for the Ckan API',
+    long_description=long_description,
     install_requires=install_requires,
     tests_require=tests_require,
     test_suite='ckan_api_client.tests',
     classifiers=[
         "License :: OSI Approved :: BSD License",
-        "Development Status :: 3 - Alpha",
+
+        # "Development Status :: 1 - Planning",
+        # "Development Status :: 2 - Pre-Alpha",
+        # "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
+        # "Development Status :: 5 - Production/Stable",
+        # "Development Status :: 6 - Mature",
+        # "Development Status :: 7 - Inactive",
+
+        "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
+
+        "Intended Audience :: Developers",
     ],
     package_data={'': ['README.md', 'LICENSE']},
     cmdclass={'test': PyTest},
