@@ -38,4 +38,61 @@ Example usage
 
 .. code-block:: python
 
-    from ckan_api_client.high_level import CkanHighlevelClient
+    >>> from ckan_api_client.high_level import CkanHighlevelClient
+    >>> from ckan_api_client.objects import CkanDataset
+
+We don't have datasets yet on our clean instance:
+
+.. code-block:: python
+
+    >>> client.list_datasets()
+    []
+
+Let's create a new dataset:
+
+.. code-block:: python
+
+    >>> new_dataset = client.create_dataset({
+    ...     'name': 'example-dataset',
+    ...     'title': 'My example dataset'})
+
+    >>> new_dataset
+    CkanDataset({'maintainer': u'', 'name': u'example-dataset', 'author': u'', 'author_email': u'', 'title': 'My example dataset', 'notes': u'', 'owner_org': None, 'private': False, 'maintainer_email': u'', 'url': u'', 'state': u'active', 'extras': {}, 'groups': [], 'license_id': u'', 'type': u'dataset', 'id': u'dfe41b34-5114-47be-8d94-759f942938fc', 'resources': []})
+
+    >>> client.list_datasets()
+    [u'dfe41b34-5114-47be-8d94-759f942938fc']
+
+Now, let's change its title:
+
+.. code-block:: python
+
+    >>> new_dataset.title = 'NEW TITLE'
+
+    >>> client.update_dataset(new_dataset)
+    CkanDataset({'maintainer': u'', 'name': u'example-dataset', 'author': u'', 'author_email': u'', 'title': 'NEW TITLE', 'notes': u'', 'owner_org': None, 'private': False, 'maintainer_email': u'', 'url': u'', 'state': u'active', 'extras': {}, 'groups': [], 'license_id': u'', 'type': u'dataset', 'id': u'dfe41b34-5114-47be-8d94-759f942938fc', 'resources': []})
+
+Get it back:
+
+.. code-block:: python
+
+    >>> client.get_dataset('dfe41b34-5114-47be-8d94-759f942938fc')
+    (same result as above)
+
+Delete it:
+
+.. code-block:: python
+
+    >>> client.wipe_dataset(new_dataset.id)
+
+Trying to get the dataset again will raise a "simulated" 404: Ckan
+will never delete datasets, it just marks them as "state: deleted",
+for administrative users, and returns a 403 for anonymous ones. We
+want to provide more consistency so we raise an exception.
+
+If you **really** want to get the deleted dataset, add
+``allow_deleted=True``.
+
+.. code-block:: python
+
+    >>> client.get_dataset('dfe41b34-5114-47be-8d94-759f942938fc')
+    HTTPError: HTTPError(404, '(logical) dataset state is deleted', original=None)
