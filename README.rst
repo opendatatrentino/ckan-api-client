@@ -41,6 +41,8 @@ Example usage
     >>> from ckan_api_client.high_level import CkanHighlevelClient
     >>> from ckan_api_client.objects import CkanDataset
 
+    >>> client = CkanHighlevelClient('http://127.0.0.1:5000', api_key='e70c15cc-2f07-4845-8c6e-3607df88e905')
+
 We don't have datasets yet on our clean instance:
 
 .. code-block:: python
@@ -52,9 +54,9 @@ Let's create a new dataset:
 
 .. code-block:: python
 
-    >>> new_dataset = client.create_dataset({
+    >>> new_dataset = client.create_dataset(CkanDataset({
     ...     'name': 'example-dataset',
-    ...     'title': 'My example dataset'})
+    ...     'title': 'My example dataset'}))
 
     >>> new_dataset
     CkanDataset({'maintainer': u'', 'name': u'example-dataset', 'author': u'', 'author_email': u'', 'title': 'My example dataset', 'notes': u'', 'owner_org': None, 'private': False, 'maintainer_email': u'', 'url': u'', 'state': u'active', 'extras': {}, 'groups': [], 'license_id': u'', 'type': u'dataset', 'id': u'dfe41b34-5114-47be-8d94-759f942938fc', 'resources': []})
