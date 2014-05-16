@@ -48,6 +48,7 @@ def test_ckandataset_creation():
         'url': '',
         'extras': {'foo': 'bar', 'baz': 'SPAM!'},
         'resources': [],
+        'tags': [],
     }
 
 

@@ -2,7 +2,7 @@ from ckan_api_client.utils import WrappedList
 
 from .base import BaseObject, MAPPING_TYPES
 from .fields import (StringField, GroupsField, ExtrasField, ListField,
-                     BoolField)
+                     BoolField, SetField)
 
 
 __all__ = ['ResourcesField', 'CkanDataset', 'CkanResource']
@@ -108,7 +108,7 @@ class CkanDataset(BaseObject):
     groups = GroupsField()
     resources = ResourcesField()
     # relationships = ListField()
-    tags = ListField()
+    tags = SetField()
 
 
 class CkanResource(BaseObject):
