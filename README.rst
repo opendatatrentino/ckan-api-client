@@ -1,7 +1,7 @@
 Ckan API client
 ###############
 
-This package provides a client for the `ckan <http://ckan.org>`_ API.
+This package provides an improved client for the `ckan <http://ckan.org>`_ API.
 
 Specifically, it includes:
 
