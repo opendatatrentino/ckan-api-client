@@ -33,6 +33,18 @@ a mirror copy is currently available on GitHub pages:
 https://opendatatrentino.github.io/ckan-api-client/
 
 
+Installation
+============
+
+Latest stable version, from pypi::
+
+    pip install ckan-api-client
+
+Latest from git master::
+
+    pip install http://git.io/ckan-api-client.tar.gz
+
+
 Example usage
 =============
 

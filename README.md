@@ -29,6 +29,21 @@ with that API, such as inconsistencies and bugs, trying to make
 sure problems are discovered earlier.
 
 
+## Installation
+
+Latest stable version, from pypi:
+
+```
+pip install ckan-api-client
+```
+
+Latest from git master:
+
+```
+pip install http://git.io/ckan-api-client.tar.gz
+```
+
+
 ## Documentation
 
 Documentation is available on Read The Docs:
