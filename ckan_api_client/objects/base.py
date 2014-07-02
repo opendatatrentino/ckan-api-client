@@ -273,6 +273,54 @@ class BaseObject(object):
 
         return True
 
+    def compare(self, other):
+        """
+        Compare differences between two objects.
+        To make things easier, we serialize objects first, and then compare
+        the json-like objects.
+        """
+
+        def _compare_dicts(self, left, right):
+            left_only = []
+            right_only = []
+            differing = []
+            all_keys = set(left.keys()).union(set(right.keys()))
+            for key in all_keys:
+                if key not in left:
+                    right_only.append(key)
+                elif key not in right:
+                    left_only.append(key)
+                else:
+                    differing.append((key, (left[key], right[key])))
+            total = len(left_only) + len(right_only) + len(differing)
+            return {
+                'distance': total,
+                'left_only': left_only,
+                'right_only': right_only,
+                'differences': differing,
+            }
+
+        def _compare_sequences(self, left, right):
+            result = {
+                'left_extra': [],
+                'right_extra': [],
+            }
+
+            # Create pairs of (distance, A, B, diff)
+            all_pairs = []
+            for l_item in left:
+                for r_item in right:
+                    diff = _compare(l_item, r_item)
+                    all_pairs.append((diff['distance'], l_item, r_item, diff))
+            all_pairs.sort(key=lambda x: x[0])
+
+        def _compare(self, left, right):
+            if all(isinstance(x, dict) for x in (left, right)):
+                return _compare_dicts(left, right)
+            if all(isinstance(x, (list, tuple)) for x in (left, right)):
+                return _compare_dicts(left, right)
+            pass
+
     def __eq__(self, other):
         return self.is_equivalent(other, ignore_key=False)
 
