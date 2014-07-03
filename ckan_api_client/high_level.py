@@ -1,9 +1,24 @@
+import logging
 import random
 import string
 
 from .objects import CkanDataset, CkanOrganization, CkanGroup
 from .low_level import CkanLowlevelClient
 from .exceptions import OperationFailure, HTTPError
+
+
+logger = logging.getLogger(__name__)
+
+
+FAIL_ON_MISMATCHING_OBJECT = False
+
+
+def _mismatching_object(message, expected, actual):
+    logger.warning(message)
+    logger.warning("Differences: {0!r}".format(expected.compare(actual)))
+
+    if FAIL_ON_MISMATCHING_OBJECT:
+        raise OperationFailure(message)
 
 
 class CkanHighlevelClient(object):
@@ -120,7 +135,8 @@ class CkanHighlevelClient(object):
         created = CkanDataset(data)
 
         if not created.is_equivalent(dataset):
-            raise OperationFailure("Created dataset doesn't match")
+            _mismatching_object("Created dataset doesn't match",
+                                dataset, created)
 
         return created
 
@@ -164,7 +180,8 @@ class CkanHighlevelClient(object):
 
         # Make sure the returned dataset matches the desired state
         if not updated.is_equivalent(dataset):
-            raise OperationFailure("Updated dataset doesn't match")
+            _mismatching_object("Updated dataset doesn't match",
+                                dataset, updated)
 
         return updated
 
@@ -289,7 +306,8 @@ class CkanHighlevelClient(object):
         created = CkanOrganization(data)
 
         if not created.is_equivalent(organization):
-            raise OperationFailure("Created organization doesn't match")
+            _mismatching_object("Created organization doesn't match",
+                                organization, created)
 
         return created
 
@@ -315,7 +333,8 @@ class CkanHighlevelClient(object):
         updated = CkanOrganization(data)
 
         if not updated.is_equivalent(organization):
-            raise OperationFailure("Updated organization doesn't match")
+            _mismatching_object("Updated organization doesn't match",
+                                organization, updated)
 
         return updated
 
@@ -412,7 +431,8 @@ class CkanHighlevelClient(object):
         created = CkanGroup(data)
 
         if not created.is_equivalent(group):
-            raise OperationFailure("Created group doesn't match")
+            _mismatching_object("Created group doesn't match",
+                                group, created)
 
         return created
 
@@ -429,7 +449,8 @@ class CkanHighlevelClient(object):
         updated = CkanGroup(data)
 
         if not updated.is_equivalent(group):
-            raise OperationFailure("Updated group doesn't match")
+            _mismatching_object("Updated group doesn't match",
+                                group, updated)
 
         return updated
 

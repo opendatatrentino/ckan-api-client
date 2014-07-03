@@ -8,6 +8,7 @@ version = '0.1-beta5'
 install_requires = [
     "requests",  # For performing HTTP requests
     "cliff",  # For the CLI
+    "differ",  # For comparing objects
 ]
 
 if sys.version_info < (2, 7):
