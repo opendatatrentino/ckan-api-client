@@ -15,9 +15,19 @@ class HTTPError(Exception):
     """
 
     def __init__(self, status_code, message, original=None):
-        self.status_code = status_code
-        self.message = message
-        self.original = original
+        self.args = (status_code, message, original)
+
+    @property
+    def status_code(self):
+        return self.args[0]
+
+    @property
+    def message(self):
+        return self.args[1]
+
+    @property
+    def original(self):
+        return self.args[2]
 
     def __str__(self):
         return ("{0}({1!r}, {2!r}, original={3!r})"
