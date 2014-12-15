@@ -10,27 +10,29 @@ from .exceptions import OperationFailure, HTTPError
 logger = logging.getLogger(__name__)
 
 
-FAIL_ON_MISMATCHING_OBJECT = False
-
-
-def _mismatching_object(message, expected, actual):
-    logger.warning(message)
-    logger.warning("Differences: {0!r}".format(expected.compare(actual)))
-
-    if FAIL_ON_MISMATCHING_OBJECT:
-        raise OperationFailure(message)
-
-
 class CkanHighlevelClient(object):
     """
     High-level client, handling CRUD of objects.
 
     This class only returns / handles CkanObjects, to make sure
     we are handling consistent data (they have validators in place)
+
+    :param base_url:
+        Base URL for the Ckan instance.
+
+    :param api_key:
+        API key to be used when accessing Ckan.
+        This is required for writing.
+
+    :param fail_on_inconsistency:
+        Whether to fail on "inconsistencies" (mismatching updated objects).
+        This is especially useful during development, in order to catch
+        many problems with the client itself (or new bugs in Ckan..).
     """
 
-    def __init__(self, base_url, api_key=None):
+    def __init__(self, base_url, api_key=None, fail_on_inconsistency=False):
         self._client = CkanLowlevelClient(base_url, api_key)
+        self._fail_on_inconsistency = fail_on_inconsistency
 
     # ------------------------------------------------------------
     # Datasets management
@@ -135,8 +137,8 @@ class CkanHighlevelClient(object):
         created = CkanDataset(data)
 
         if not created.is_equivalent(dataset):
-            _mismatching_object("Created dataset doesn't match",
-                                dataset, created)
+            self._mismatching_object("Created dataset doesn't match",
+                                     dataset, created)
 
         return created
 
@@ -180,8 +182,8 @@ class CkanHighlevelClient(object):
 
         # Make sure the returned dataset matches the desired state
         if not updated.is_equivalent(dataset):
-            _mismatching_object("Updated dataset doesn't match",
-                                dataset, updated)
+            self._mismatching_object("Updated dataset doesn't match",
+                                     dataset, updated)
 
         return updated
 
@@ -306,8 +308,8 @@ class CkanHighlevelClient(object):
         created = CkanOrganization(data)
 
         if not created.is_equivalent(organization):
-            _mismatching_object("Created organization doesn't match",
-                                organization, created)
+            self._mismatching_object("Created organization doesn't match",
+                                     organization, created)
 
         return created
 
@@ -333,8 +335,8 @@ class CkanHighlevelClient(object):
         updated = CkanOrganization(data)
 
         if not updated.is_equivalent(organization):
-            _mismatching_object("Updated organization doesn't match",
-                                organization, updated)
+            self._mismatching_object("Updated organization doesn't match",
+                                     organization, updated)
 
         return updated
 
@@ -431,8 +433,8 @@ class CkanHighlevelClient(object):
         created = CkanGroup(data)
 
         if not created.is_equivalent(group):
-            _mismatching_object("Created group doesn't match",
-                                group, created)
+            self._mismatching_object("Created group doesn't match",
+                                     group, created)
 
         return created
 
@@ -449,13 +451,20 @@ class CkanHighlevelClient(object):
         updated = CkanGroup(data)
 
         if not updated.is_equivalent(group):
-            _mismatching_object("Updated group doesn't match",
-                                group, updated)
+            self._mismatching_object("Updated group doesn't match",
+                                     group, updated)
 
         return updated
 
     def delete_group(self, id):
         return self._client.delete_group(id)
+
+    def _mismatching_object(self, message, expected, actual):
+        logger.warning(message)
+        logger.warning("Differences: {0!r}".format(expected.compare(actual)))
+
+        if self._fail_on_inconsistency:
+            raise OperationFailure(message)
 
 
 # ------------------------------------------------------------
